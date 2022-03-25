@@ -1,4 +1,5 @@
-node_modules
+front/node_modules
+back/node_modules
 dist
 
 # local env files
@@ -12,5 +13,8 @@ yarn-error.log*
 
 # Editor directories and files
 .vscode
+<<<<<<< HEAD:back/.gitignore
 
 package-lock.json
+=======
+>>>>>>> a34f76315f57e980abf9f1fe6af182fe912c2e81:.gitignore
