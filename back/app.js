@@ -7,6 +7,7 @@ const morgan = require("morgan");
 const app = express();
 const port = 3000;
 
+// definición de BigInt toJSON, para que no falle con base de datos.
 BigInt.prototype["toJSON"] = function () {
   return this.toString();
 };

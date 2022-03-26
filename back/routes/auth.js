@@ -9,7 +9,7 @@ const prisma = new PrismaClient();
 /**
  * Crea o regresa el token actualizado de un usuario
  * @param {prisma.usuario} user modelo de usuario
- * @returns {String} el token actualizado de dicho usuario
+ * @returns {string} el token actualizado de dicho usuario
  */
 async function obtainAuthToken(user) {
   if (user.token) return token;
@@ -24,22 +24,35 @@ async function obtainAuthToken(user) {
 }
 
 /**
+ * Crea una hash con 12 rondas de sal, a partir de una entrada y lo regresa
+ * @param {string} pwd contraseña en texto claro
+ * @returns hash de la contraseña
+ */
+const hashPassword = (pwd) =>
+  new Promise((res, rej) =>
+    bcrypt.hash(pwd, 12, (err, password) => {
+      if (err) return rej(err);
+      return res(password);
+    })
+  );
+
+/**
  * @swagger
  * /auth/login:
  *   post:
  *     summary: Login a user and returns a token.
  */
 router.post("/login", async (req, res) => {
-  const { email, password } = req.data;
+  const { email, contrasegna } = req.body;
   const user = await prisma.usuario.findFirst({
     where: {
       email,
     },
   });
   if (user) {
-    const match = await bcrypt.compare(password, user.password);
+    const match = await bcrypt.compare(contrasegna, user.contrasegna);
     if (match) {
-      const token = obtainAuthToken(user);
+      const token = await obtainAuthToken(user);
       return res.json({ token });
     }
   }
@@ -63,8 +76,18 @@ router.post("/register", async (req, res) => {
       error: "An account with that email already exists.",
     });
   }
-  const user = await prisma.usuario.create({ data: req.body });
+  console.log(req.body.contrasegna);
+  const user = await prisma.usuario.create({
+    data: {
+      ...req.body,
+      contrasegna: await hashPassword(req.body.contrasegna),
+    },
+  });
   return res.status(201).json(user);
 });
+
+//todo: dont return all user
+//todo: login
+//todo: validate body
 
 module.exports = router;
