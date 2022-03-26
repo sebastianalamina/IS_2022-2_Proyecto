@@ -2,6 +2,8 @@ const express = require("express");
 const { PrismaClient } = require("@prisma/client");
 const bcrypt = require("bcrypt");
 const crypto = require("crypto");
+const Joi = require("joi");
+const validate = require("../utils/middleware/validate");
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -42,23 +44,32 @@ const hashPassword = (pwd) =>
  *   post:
  *     summary: Login a user and returns a token.
  */
-router.post("/login", async (req, res) => {
-  const { email, contrasegna } = req.body;
-  const user = await prisma.usuario.findFirst({
-    where: {
-      email,
-    },
-  });
-  if (user) {
-    const match = await bcrypt.compare(contrasegna, user.contrasegna);
-    if (match) {
-      const token = await obtainAuthToken(user);
-      return res.json({ token });
+router.post(
+  "/login",
+  validate(
+    Joi.object({
+      email: Joi.string().email().required(),
+      contrasegna: Joi.string().required(),
+    })
+  ),
+  async (req, res) => {
+    const { email, contrasegna } = req.body;
+    const user = await prisma.usuario.findFirst({
+      where: {
+        email,
+      },
+    });
+    if (user) {
+      const match = await bcrypt.compare(contrasegna, user.contrasegna);
+      if (match) {
+        const token = await obtainAuthToken(user);
+        return res.json({ token });
+      }
     }
-  }
 
-  return res.status(401).json({ message: "Invalid credentials" });
-});
+    return res.status(401).json({ message: "Invalid credentials" });
+  }
+);
 
 /**
  * @swagger
@@ -66,28 +77,35 @@ router.post("/login", async (req, res) => {
  *   post:
  *     summary: Registra y regresa a un usuario
  */
-router.post("/register", async (req, res) => {
-  // Checking for email uniqueness
-  const userCount = await prisma.usuario.count({
-    where: { email: req.body.email },
-  });
-  if (userCount) {
-    return res.status(400).json({
-      error: "An account with that email already exists.",
+router.post(
+  "/register",
+  validate(
+    Joi.object({
+      email: Joi.string().email().required(),
+      contrasegna: Joi.string().required(),
+    })
+  ),
+  async (req, res) => {
+    // Checking for email uniqueness
+    const userCount = await prisma.usuario.count({
+      where: { email: req.body.email },
     });
+    if (userCount) {
+      return res.status(400).json({
+        error: "An account with that email already exists.",
+      });
+    }
+    console.log(req.body.contrasegna);
+    const user = await prisma.usuario.create({
+      data: {
+        ...req.body,
+        contrasegna: await hashPassword(req.body.contrasegna),
+      },
+    });
+    return res.status(201).json(user);
   }
-  console.log(req.body.contrasegna);
-  const user = await prisma.usuario.create({
-    data: {
-      ...req.body,
-      contrasegna: await hashPassword(req.body.contrasegna),
-    },
-  });
-  return res.status(201).json(user);
-});
+);
 
 //todo: dont return all user
-//todo: login
-//todo: validate body
 
 module.exports = router;
