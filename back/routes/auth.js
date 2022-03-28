@@ -101,11 +101,12 @@ router.post(
         ...req.body,
         contrasegna: await hashPassword(req.body.contrasegna),
       },
+      select: {
+        email: true,
+      },
     });
     return res.status(201).json(user);
   }
 );
-
-//todo: dont return all user
 
 module.exports = router;
