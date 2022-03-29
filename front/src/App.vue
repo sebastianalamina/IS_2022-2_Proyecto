@@ -3,15 +3,7 @@
 </script>
 
 <template>
-
-  <header>
-    Header
-  </header>
-
-  <footer>
-    Footer
-  </footer>
-
-  <RouterView />
   
+  <RouterView />
 </template>
+
