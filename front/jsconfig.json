@@ -4,5 +4,7 @@
     "lib": ["es5", "dom"],
     "types": ["cypress"]
   },
-  "include": ["./**/*"]
+  "include": [
+    "./src/**/*"
+  ]
 }
