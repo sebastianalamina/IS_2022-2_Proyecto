@@ -21,5 +21,11 @@ export default{
   <main>
     
   </main>
+
+  <RouterLink v-for="route in this.$router.options.routes" :key="route.path" :to="route.path">
+    <div>{{route.name}}</div>
+  </RouterLink>
+
   <Footer/>
+
 </template>
