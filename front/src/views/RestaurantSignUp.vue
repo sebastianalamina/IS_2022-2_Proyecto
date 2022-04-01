@@ -3,6 +3,8 @@ import NavBar from '../components/NavBar.vue'
 import Footer from '../components/Footer.vue'
 import RestaurantForm from '../components/RestaurantForm.vue'
 
+import axios from 'axios'  
+
 export default {
     components:{
         NavBar,
@@ -26,23 +28,15 @@ export default {
       
       submitForm: function(e){
         console.log('revisando formulario')
-        if (this.checarFormulario()) {
-          console.log('enviando datos')
-          console.log(JSON.stringify(this.formulario)) 
-          // TODO Agregar el envio de datos via http con REST supogno
-          /*
-            axios.post('/contact', this.form)
-              .then((res) => {
-                console.log('solicitud exitosa ')
-              })
-              .catch((error) => {
-                error.response.status
-              }).finally(() => {
-              TODO
-              }); */
+        if(this.checarFormulario) 
+        {
+          console.log('formulario correcto')
+          console.log(JSON.stringify(this.formulario))
+          axios.post('/restaurantes/nuevorestaurante', this.formulario)  
         }
-        else{
-          console.log('los datos no jalaron')
+        else
+        {
+          console.log('formulario incorrecto')
         }
       },
       checarFormulario: function (){
