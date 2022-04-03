@@ -13,9 +13,9 @@ model administrador {
   nombre              String                @db.Char(100)
   apatermo            String?               @db.Char(100)
   amaterno            String?               @db.Char(100)
-  correo              String                @db.VarChar(100)
-  contrasena          String                @db.VarChar(100)
+  idusuario           BigInt
   restaurante         restaurante           @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_admin")
+  usuario             usuario               @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   cocinero            cocinero[]
   mesero              mesero[]
   registrorestaurante registrorestaurante[]
@@ -26,13 +26,13 @@ model cliente {
   nombre         String           @db.Char(100)
   apatermo       String?          @db.Char(100)
   amaterno       String?          @db.Char(100)
-  correo         String           @db.VarChar(100)
-  contrasena     String           @db.VarChar(100)
   estado         String?          @db.VarChar(100)
   calle          String?          @db.VarChar(100)
   numero         Int?
   cp             Int?
   municipio      String?          @db.VarChar(100)
+  idusuario      BigInt?
+  usuario        usuario?         @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   ordenescliente ordenescliente[]
 }
 
@@ -43,10 +43,10 @@ model cocinero {
   nombre        String          @db.Char(100)
   apatermo      String?         @db.Char(100)
   amaterno      String?         @db.Char(100)
-  correo        String          @db.VarChar(100)
-  contrasena    String          @db.VarChar(100)
+  idusuario     BigInt?
   administrador administrador   @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_cocinero1")
   restaurante   restaurante     @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_cocinero2")
+  usuario       usuario?        @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   prepararorden prepararorden[]
 }
 
@@ -101,10 +101,10 @@ model mesero {
   nombre        String        @db.Char(100)
   apatermo      String?       @db.Char(100)
   amaterno      String?       @db.Char(100)
-  correo        String        @db.VarChar(100)
-  contrasena    String        @db.VarChar(100)
+  idusuario     BigInt?
   administrador administrador @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_mesero1")
   restaurante   restaurante   @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_mesero2")
+  usuario       usuario?      @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   entregamesa   entregamesa[]
 }
 
@@ -174,8 +174,8 @@ model repartidor {
   nombre           String             @db.Char(100)
   apatermo         String?            @db.Char(100)
   amaterno         String?            @db.Char(100)
-  correo           String             @db.VarChar(100)
-  contrasena       String             @db.VarChar(100)
+  idusuario        BigInt?
+  usuario          usuario?           @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   entregadomicilio entregadomicilio[]
 }
 
@@ -199,9 +199,14 @@ model restaurante {
 }
 
 model usuario {
-  email       String? @db.VarChar(255)
-  contrasegna String? @db.VarChar(255)
-  token       String? @db.VarChar(255)
-  rol         String? @db.VarChar(255)
-  idusuario   BigInt  @id @default(autoincrement())
+  email         String?         @db.VarChar(255)
+  contrasegna   String?         @db.VarChar(255)
+  token         String?         @db.VarChar(255)
+  rol           String?         @db.VarChar(255)
+  idusuario     BigInt          @id @default(autoincrement())
+  administrador administrador[]
+  cliente       cliente[]
+  cocinero      cocinero[]
+  mesero        mesero[]
+  repartidor    repartidor[]
 }
