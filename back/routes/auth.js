@@ -14,7 +14,7 @@ const prisma = new PrismaClient();
  * @returns {string} el token actualizado de dicho usuario
  */
 async function obtainAuthToken(user) {
-  if (user.token) return token;
+  if (user.token) return user.token;
   const token = crypto.randomBytes(40).toString("hex");
   await prisma.usuario.update({
     where: {
