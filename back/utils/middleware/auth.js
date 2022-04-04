@@ -1,5 +1,7 @@
 const { PrismaClient } = require("@prisma/client");
 
+const roles = require("../constants/roles");
+
 const prisma = new PrismaClient();
 
 /**
@@ -46,8 +48,39 @@ async function bearerAuth(req, res, next) {
   }
 }
 
-function hasRole(req, res, next) {}
+function hasRole() {
+  let roles = Array.from(arguments);
+  return function hasRole(req, res, next) {
+    if (roles.includes(req.user.rol)) return next();
+    return res.status(403).json({
+      error: `route only available to ${roles}.`,
+    });
+  };
+}
+
+const esInvitado = hasRole(roles.INVITADO);
+const esCliente = hasRole(roles.CLIENTE);
+const esMesero = hasRole(roles.MESERO);
+const esCocinero = hasRole(roles.COCINERO);
+const esAdministrador = hasRole(roles.ADMINISTRADOR);
+const esRepartidor = hasRole(roles.REPARTIDOR);
+
+const estaAutenticado = hasRole(
+  roles.CLIENTE,
+  roles.MESERO,
+  roles.COCINERO,
+  roles.ADMINISTRADOR,
+  roles.REPARTIDOR
+);
 
 module.exports = {
   bearerAuth,
+  hasRole,
+  esInvitado,
+  esCliente,
+  esMesero,
+  esCocinero,
+  esAdministrador,
+  esRepartidor,
+  estaAutenticado,
 };
