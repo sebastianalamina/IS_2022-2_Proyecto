@@ -45,3 +45,9 @@ async function bearerAuth(req, res, next) {
     }
   }
 }
+
+function hasRole(req, res, next) {}
+
+module.exports = {
+  bearerAuth,
+};

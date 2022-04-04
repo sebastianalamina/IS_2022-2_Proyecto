@@ -18,7 +18,7 @@ async function obtainAuthToken(user) {
   const token = crypto.randomBytes(40).toString("hex");
   await prisma.usuario.update({
     where: {
-      id: user.id,
+      idusuario: user.idusuario,
     },
     data: { token },
   });
@@ -83,6 +83,7 @@ router.post(
     Joi.object({
       email: Joi.string().email().required(),
       contrasegna: Joi.string().required(),
+      rol: Joi.string().required(),
     })
   ),
   async (req, res) => {
@@ -95,7 +96,6 @@ router.post(
         error: "An account with that email already exists.",
       });
     }
-    console.log(req.body.contrasegna);
     const user = await prisma.usuario.create({
       data: {
         ...req.body,
