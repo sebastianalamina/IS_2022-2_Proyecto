@@ -109,4 +109,52 @@ router.post(
   }
 );
 
+/**
+ * @swagger
+ * /auth/restaurant-signup:
+ *   post:
+ *     summary: Registra y regresa un restaurante.
+ *
+ * Observaciones: No se solicita el id del restaurante,
+ *                ¿Por default se debe incrementar?
+ *                Hace falta pedir el numero en el formulario
+ */
+router.post( // post es para escribir, get para solicitar
+  "/restaurant-signup",
+  validate(
+      Joi.object({ // Validando info
+	  nombre: Joi.string().required(),
+	  estado: Joi.string().required(),
+	  calle:  Joi.string().required(),
+	  //numero: Joi.number().required(),  Falta en formulario
+	  cp:     Joi.number().required(),
+	  muni:   Joi.string().required(),
+      })
+  ),
+  async (req, res) => {
+      // Checar unicidad en nombre de restaurante,
+      // ¿Debe ser sobre id?
+      // Si sí hay que solicitarlo de alguna forma y cambiar
+      // lo siguiente para checar id en lugar del nombre.
+      const restaurantCount = await prisma.restaurante.count({
+	  where: { nombre: req.body.nombre },
+      });
+      if(restaurantCount){ // !null
+	  return res.status(400).json({
+              error: "A restaurant with that name is already registered.",
+	  });
+      }
+      console.log(req.body.nombre);
+      const restaurante = await.prisma.restaurante.create(
+	  {
+	      data: {
+		  ...req.body, // info checada en Joi, preguntar a David
+	      },
+	  }
+      );
+
+      return.status(201).json(restaurante);
+  }
+);
+
 module.exports = router;
