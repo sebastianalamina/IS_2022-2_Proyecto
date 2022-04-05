@@ -19,6 +19,8 @@ app.use(helmet());
 app.use(morgan("short"));
 
 app.use("/auth", require("./routes/auth.js"));
+app.use("/menu",require("./routes/menu.js"))
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
@@ -27,3 +29,5 @@ app.get("/", (req, res) => {
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`);
 });
+
+
