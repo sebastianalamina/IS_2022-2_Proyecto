@@ -1,4 +1,6 @@
 <script>
+import {useAxios} from "../axios_common";
+import {useStore as useAuthStore} from "../stores/auth"
 
 // La longitud mínima que debe
 // cumplir cada nombre de usuario.
@@ -14,6 +16,7 @@ export default {
   },
   methods:{
     checkForm:function(e) {
+
 
       // Arreglo con los posibles
       // errores del form.
@@ -34,14 +37,28 @@ export default {
       // Si no hay errores, el form fue llenado correctamente.
       if(!this.errors.length)
         return true;
-
-      // ?
-      e.preventDefault();
+      return false;
     },
     validUsername:function() {
       // Si el usuario no cumple la longitud mínima, se agrega un error.
       if (this.username.length < MIN_USERNAME_LENGTH)
         this.errors.push("El usuario debe tener longitud al menos "+MIN_USERNAME_LENGTH+".");
+    },
+    login(e){
+      e.preventDefault();
+      const authStore = useAuthStore();
+      const axios = useAxios();
+
+      if(!this.checkForm()) return
+      axios.post("/auth/login", {
+        email:this.username, 
+        contrasegna: this.password
+      }).then((res)=>{
+        const token = res.data.token
+        authStore.login(token)
+        this.$router.push("/")
+      })
+      .catch(console.log)
     }
   }
 }
@@ -50,7 +67,7 @@ export default {
 
 <template>
 
-  <form id="login-box" @submit="checkForm"> <!-- action="/something" method="post"> -->
+  <form id="login-box" @submit="login"> <!-- action="/something" method="post"> -->
 
     <section id="user-zone">
       <label class="form-label">Usuario</label>
