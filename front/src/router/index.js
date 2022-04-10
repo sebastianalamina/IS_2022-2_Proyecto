@@ -33,7 +33,6 @@ const router = createRouter({
       },
     },
     {
-<<<<<<< HEAD
       path: "/restaurant-signup",
       name: "registro-restaurante",
       component: () => import("../views/RestaurantSignUp.vue"),
