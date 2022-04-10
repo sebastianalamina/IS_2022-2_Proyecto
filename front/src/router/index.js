@@ -33,9 +33,18 @@ const router = createRouter({
       },
     },
     {
+<<<<<<< HEAD
       path: "/restaurant-signup",
       name: "registro-restaurante",
       component: () => import("../views/RestaurantSignUp.vue"),
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
+      path: '/user-signup',
+      name: 'user-signup',
+      component: () => import('../views/UserSignUpView.vue'),
       meta: {
         requiresAuth: false,
       },
