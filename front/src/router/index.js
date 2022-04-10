@@ -48,6 +48,14 @@ const router = createRouter({
         requiresAuth: false,
       },
     },
+    {
+      path: '/view-employees',
+      name: 'ver-empleados',
+      component: () => import('../views/ViewEmployeesView.vue'),
+      meta: {
+        requiresAuth: false,
+      },
+    },
   ],
 });
 
