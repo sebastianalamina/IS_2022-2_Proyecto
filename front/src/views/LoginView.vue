@@ -106,7 +106,6 @@ export default {
 </template>
 
 <style>
-@import "@/assets/base.css";
 
 #login-box {
   margin: auto;
