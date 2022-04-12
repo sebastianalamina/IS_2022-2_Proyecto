@@ -36,7 +36,7 @@ export default {
     <div class="row">
         <div class="col-lg-6" v-for="card in cards">
             <center><h2>{{card.nombre}}</h2></center>
-            <img class="img_menu" src='@/assets/Hamburguesa.jpeg' alt='img'>
+            <img class="img_menu" :src="card.src" alt='img'>
             <input type="button" class="carrito" value="Añadir al carrito: " />
             <h3>{{card.costo}}$</h3>
         </div>
