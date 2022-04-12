@@ -48,6 +48,14 @@ const router = createRouter({
         requiresAuth: false,
       },
     },
+    {
+      path: '/modify-order-status',
+      name: 'modificar-estado-platillo',
+      component: () => import('../views/ModifyOrderStatusView.vue'),
+      meta: {
+        requiresAuth: false,
+      },
+    },
   ],
 });
 
