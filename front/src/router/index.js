@@ -56,6 +56,14 @@ const router = createRouter({
         requiresAuth: false,
       },
     },
+    {
+      path: '/view-order-status',
+      name: 'ver-estado-platillo',
+      component: () => import('../views/ViewOrderStatusView.vue'),
+      meta: {
+        requiresAuth: false,
+      },
+    },
   ],
 });
 
