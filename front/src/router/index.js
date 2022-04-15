@@ -1,6 +1,6 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import RestaurantSignUp from '../views/RestaurantSignUp.vue'
+
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,6 +22,11 @@ const router = createRouter({
       path: '/restaurant-signup',
       name: 'registro-restaurante',
       component: () => import('../views/RestaurantSignUp.vue')
+    },
+    {
+      path: '/inventario/:id',
+      name: 'inventario restaurante',
+      component: () => import('../views/Inventario.vue')
     }
   ]
 })
