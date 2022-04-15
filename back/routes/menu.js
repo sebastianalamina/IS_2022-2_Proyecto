@@ -8,7 +8,7 @@ const validate = require('../utils/middleware/validate')
 
 //@ts-check
 
-router.get('/display', validate(
+router.get('/', validate(
   Joi.object({
     id_menu: Joi.string().required(),
     id_restaurante: Joi.string().required(),
