@@ -33,7 +33,9 @@ model cliente {
   municipio      String?          @db.VarChar(100)
   idusuario      BigInt?
   usuario        usuario?         @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
-  ordenescliente ordenescliente[]
+  //ordenescliente ordenescliente[]
+  modificarCarrito modificarCarrito[]
+  carrito carrito[]
 }
 
 model cocinero {
@@ -113,28 +115,64 @@ model ordenenvio {
   costo            Int
   contenidoorden   contenidoorden[]
   entregadomicilio entregadomicilio[]
-  ordenescliente   ordenescliente[]
+  // ordenescliente   ordenescliente[]
   prepararorden    prepararorden[]
+  confcarrito confirmacionCarrito[]
 }
 
-model ordenescliente {
-  idcliente      String       @db.Char(18)
-  idordenenvio   String?      @db.Char(18)
-  idordennormal  String?      @db.Char(18)
-  metodopago     String?      @db.Char(18)
-  idordencliente String       @id @unique(map: "idordenescliente") @db.Char(255)
-  cliente        cliente      @relation(fields: [idcliente], references: [idcliente], onDelete: Cascade, map: "fk_oc1")
-  ordenenvio     ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_oc2")
-  ordennormal    ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_oc3")
+model modificarCarrito {
+  idcliente String @unique@db.Char(18)
+  idcarrito BigInt @unique
+  cliente cliente @relation(fields: [idcliente], references: [idcliente])
+  carrito carrito @relation(fields: [idcarrito], references: [idcarrito])
 }
+
+model carrito {
+  idcarrito BigInt @id @default(autoincrement())
+  costo Int
+  cliente cliente[]
+  modificarCarrito modificarCarrito[]
+  contenido contenidoCarrito[]
+  confcarrito confirmacionCarrito[]
+}
+
+model contenidoCarrito {
+  idcarrito BigInt 
+  idplatillo String @db.Char(18)
+  idcontenidocarrito BigInt @id @default(autoincrement())
+  carrito carrito @relation(fields: [idcarrito], references: [idcarrito])
+  platillo platillo @relation(fields: [idplatillo], references: [idplatillo])
+}
+
+model confirmacionCarrito {
+  idcarrito BigInt @unique
+  idordenenvio String?      @unique@db.Char(18)
+  idordennormal String?      @unique@db.Char(18)
+  metodopago String @db.Char(18)
+  carrito carrito @relation(fields: [idcarrito], references: [idcarrito])
+  ordenenvio ordenenvio? @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_cc")
+  ordennormal ordennormal?  @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_cc2")
+}
+
+//model ordenescliente {
+//  idcliente      String       @db.Char(18)
+//   idordenenvio   String?      @db.Char(18)
+//   idordennormal  String?      @db.Char(18)
+//   metodopago     String?      @db.Char(18)
+//   idordencliente String       @id @unique(map: "idordenescliente") @db.Char(255)
+//   cliente        cliente      @relation(fields: [idcliente], references: [idcliente], onDelete: Cascade, map: "fk_oc1")
+//   ordenenvio     ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_oc2")
+//   ordennormal    ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_oc3")
+// }
 
 model ordennormal {
   idordennormal  String           @id(map: "pk_on") @unique(map: "idordennormal") @db.Char(18)
   costo          Int
   contenidoorden contenidoorden[]
   entregamesa    entregamesa[]
-  ordenescliente ordenescliente[]
+  // ordenescliente ordenescliente[]
   prepararorden  prepararorden[]
+  confcarrito confirmacionCarrito[]
 }
 
 model platillo {
@@ -146,6 +184,7 @@ model platillo {
   costo          Int
   menu           menu             @relation(fields: [idmenu, idrestaurante, idfranquicia], references: [idmenu, idrestaurante, idfranquicia], onDelete: Cascade, map: "fk_paltillo1")
   contenidoorden contenidoorden[]
+  contenidocarrito contenidoCarrito[]
 
   @@id([idplatillo, idmenu, idrestaurante, idfranquicia], map: "pk_platillo")
 }
