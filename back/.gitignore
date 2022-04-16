@@ -16,7 +16,4 @@ yarn-error.log*
 
 package-lock.json
 
-node_modules/*
-!node_modules/@prisma/
-node_modules/@prisma/*
-!node_modules/@prisma/client/
+node_modules
