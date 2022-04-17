@@ -28,6 +28,8 @@ morgan.token("rol", function (req, res) {
 app.use(bearerAuth);
 app.use("/auth", require("./routes/auth.js"));
 app.use("/menu", require("./routes/menu.js"));
+app.use("/inventario", require("./routes/inventario.js"))
+
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

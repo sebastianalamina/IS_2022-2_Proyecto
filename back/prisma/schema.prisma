@@ -191,11 +191,21 @@ model restaurante {
   franquicia          franquicia            @relation(fields: [idfranquicia], references: [idfranquicia], onDelete: NoAction, onUpdate: NoAction, map: "fk_restaurante")
   administrador       administrador[]
   cocinero            cocinero[]
+  inventario          inventario[]
   menu                menu[]
   mesero              mesero[]
   registrorestaurante registrorestaurante[]
 
   @@id([idfranquicia, idrestaurante], map: "pk_restaurante")
+}
+
+
+model inventario {
+  idinventario  Int         @id @default(autoincrement())
+  nombre        String      @db.Char(100)
+  cantidad      Int
+  idrestaurante String      @db.Char(18)
+  restaurante   restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventario")
 }
 
 model usuario {
