@@ -7,6 +7,83 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model administrador {
+  idadmin             String                @id(map: "pk_admin") @unique(map: "idadmin") @db.Char(18)
+  idrestaurante       String                @db.Char(18)
+  nombre              String                @db.Char(100)
+  apatermo            String?               @db.Char(100)
+  amaterno            String?               @db.Char(100)
+  idusuario           BigInt
+  restaurante         restaurante           @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_admin")
+  usuario             usuario               @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
+  cocinero            cocinero[]
+  mesero              mesero[]
+  registrorestaurante registrorestaurante[]
+}
+
+model cliente {
+  idcliente      String           @id(map: "pk_cliente") @unique(map: "idcliente") @db.Char(18)
+  nombre         String           @db.Char(100)
+  apatermo       String?          @db.Char(100)
+  amaterno       String?          @db.Char(100)
+  estado         String?          @db.VarChar(100)
+  calle          String?          @db.VarChar(100)
+  numero         Int?
+  cp             Int?
+  municipio      String?          @db.VarChar(100)
+  idusuario      BigInt?
+  usuario        usuario?         @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
+  ordenescliente ordenescliente[]
+}
+
+model cocinero {
+  idcocinero    String          @id(map: "pk_cocinero") @unique(map: "idcocinero") @db.Char(18)
+  idadmin       String          @db.Char(18)
+  idrestaurante String          @db.Char(18)
+  nombre        String          @db.Char(100)
+  apatermo      String?         @db.Char(100)
+  amaterno      String?         @db.Char(100)
+  idusuario     BigInt?
+  administrador administrador   @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_cocinero1")
+  restaurante   restaurante     @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_cocinero2")
+  usuario       usuario?        @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
+  prepararorden prepararorden[]
+}
+
+model contenidoorden {
+  idordennormal    String?      @db.Char(18)
+  idordenenvio     String?      @db.Char(18)
+  idplatillo       String?      @db.Char(18)
+  idcontenidoorden BigInt       @id @default(autoincrement())
+  ordenenvio       ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_contenido2")
+  ordennormal      ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_contenido1")
+  platillo         platillo?    @relation(fields: [idplatillo], references: [idplatillo], onDelete: Cascade, map: "fk_contenido3")
+}
+
+model entregadomicilio {
+  idrepartidor       String     @db.Char(18)
+  idordenenvio       String     @db.Char(18)
+  estado             String     @db.Char(18)
+  identregadomicilio BigInt     @id @default(autoincrement())
+  ordenenvio         ordenenvio @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_or2")
+  repartidor         repartidor @relation(fields: [idrepartidor], references: [idrepartidor], onDelete: Cascade, map: "fk_or1")
+}
+
+model entregamesa {
+  idmesero      String      @db.Char(18)
+  idordennormal String      @db.Char(18)
+  estado        String      @db.Char(18)
+  identregamesa BigInt      @id @default(autoincrement())
+  mesero        mesero      @relation(fields: [idmesero], references: [idmesero], onDelete: Cascade, map: "fk_em1")
+  ordennormal   ordennormal @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_em2")
+}
+
+model franquicia {
+  idfranquicia String        @id(map: "pk_franquicia") @unique(map: "idfranquicia") @db.Char(18)
+  nombre       String        @db.VarChar(100)
+  restaurante  restaurante[]
+}
+
 model menu {
   idmenu        String      @unique @db.Char(18)
   idrestaurante String      @db.Char(18)
@@ -17,132 +94,47 @@ model menu {
   @@id([idmenu, idrestaurante, idfranquicia], map: "pk_menu")
 }
 
-model administrador {
-  idadmin             String                @id(map: "pk_admin") @db.Char(18)
-  idrestaurante       String                @db.Char(18)
-  nombre              String                @db.Char(100)
-  apatermo            String?               @db.Char(100)
-  amaterno            String?               @db.Char(100)
-  correo              String                @db.VarChar(100)
-  contrasena          String                @db.VarChar(100)
-  restaurante         restaurante           @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_admin")
-  cocinero            cocinero[]
-  mesero              mesero[]
-  registrorestaurante registrorestaurante[] @ignore
-}
-
-model cliente {
-  idcliente      String           @id(map: "pk_cliente") @db.Char(18)
-  nombre         String           @db.Char(100)
-  apatermo       String?          @db.Char(100)
-  amaterno       String?          @db.Char(100)
-  correo         String           @db.VarChar(100)
-  contrasena     String           @db.VarChar(100)
-  estado         String?          @db.VarChar(100)
-  calle          String?          @db.VarChar(100)
-  numero         Int?
-  cp             Int?
-  municipio      String?          @db.VarChar(100)
-  ordenescliente ordenescliente[] @ignore
-}
-
-model cocinero {
-  idcocinero    String          @id(map: "pk_cocinero") @db.Char(18)
-  idadmin       String          @db.Char(18)
-  idrestaurante String          @db.Char(18)
-  nombre        String          @db.Char(100)
-  apatermo      String?         @db.Char(100)
-  amaterno      String?         @db.Char(100)
-  correo        String          @db.VarChar(100)
-  contrasena    String          @db.VarChar(100)
-  administrador administrador   @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_cocinero1")
-  restaurante   restaurante     @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_cocinero2")
-  prepararorden prepararorden[] @ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model contenidoorden {
-  idordennormal String?      @db.Char(18)
-  idordenenvio  String?      @db.Char(18)
-  idplatillo    String?      @db.Char(18)
-  ordenenvio    ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_contenido2")
-  ordennormal   ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_contenido1")
-  platillo      platillo?    @relation(fields: [idplatillo], references: [idplatillo], onDelete: Cascade, map: "fk_contenido3")
-
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model entregadomicilio {
-  idrepartidor String     @db.Char(18)
-  idordenenvio String     @db.Char(18)
-  estado       String     @db.Char(18)
-  ordenenvio   ordenenvio @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_or2")
-  repartidor   repartidor @relation(fields: [idrepartidor], references: [idrepartidor], onDelete: Cascade, map: "fk_or1")
-
-  @@ignore
-}
-
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
-model entregamesa {
-  idmesero      String      @db.Char(18)
-  idordennormal String      @db.Char(18)
-  estado        String      @db.Char(18)
-  mesero        mesero      @relation(fields: [idmesero], references: [idmesero], onDelete: Cascade, map: "fk_em1")
-  ordennormal   ordennormal @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_em2")
-
-  @@ignore
-}
-
-model franquicia {
-  idfranquicia String        @id(map: "pk_franquicia") @db.Char(18)
-  nombre       String        @db.VarChar(100)
-  restaurante  restaurante[]
-}
-
 model mesero {
-  idmesero      String        @id(map: "pk_mesero") @db.Char(18)
+  idmesero      String        @id(map: "pk_mesero") @unique(map: "idmesero") @db.Char(18)
   idadmin       String        @db.Char(18)
   idrestaurante String        @db.Char(18)
   nombre        String        @db.Char(100)
   apatermo      String?       @db.Char(100)
   amaterno      String?       @db.Char(100)
-  correo        String        @db.VarChar(100)
-  contrasena    String        @db.VarChar(100)
+  idusuario     BigInt?
   administrador administrador @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_mesero1")
   restaurante   restaurante   @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_mesero2")
-  entregamesa   entregamesa[] @ignore
+  usuario       usuario?      @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
+  entregamesa   entregamesa[]
 }
 
 model ordenenvio {
-  idordenenvio     String             @id(map: "pk_oe") @db.Char(18)
+  idordenenvio     String             @id(map: "pk_oe") @unique(map: "idordenenvio") @db.Char(18)
   costo            Int
-  contenidoorden   contenidoorden[]   @ignore
-  entregadomicilio entregadomicilio[] @ignore
-  ordenescliente   ordenescliente[]   @ignore
-  prepararorden    prepararorden[]    @ignore
+  contenidoorden   contenidoorden[]
+  entregadomicilio entregadomicilio[]
+  ordenescliente   ordenescliente[]
+  prepararorden    prepararorden[]
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model ordenescliente {
-  idcliente     String       @db.Char(18)
-  idordenenvio  String?      @db.Char(18)
-  idordennormal String?      @db.Char(18)
-  metodopago    String?      @db.Char(18)
-  cliente       cliente      @relation(fields: [idcliente], references: [idcliente], onDelete: Cascade, map: "fk_oc1")
-  ordenenvio    ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_oc2")
-  ordennormal   ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_oc3")
-
-  @@ignore
+  idcliente      String       @db.Char(18)
+  idordenenvio   String?      @db.Char(18)
+  idordennormal  String?      @db.Char(18)
+  metodopago     String?      @db.Char(18)
+  idordencliente String       @id @unique(map: "idordenescliente") @db.Char(255)
+  cliente        cliente      @relation(fields: [idcliente], references: [idcliente], onDelete: Cascade, map: "fk_oc1")
+  ordenenvio     ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_oc2")
+  ordennormal    ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_oc3")
 }
 
 model ordennormal {
-  idordennormal  String           @id(map: "pk_on") @db.Char(18)
+  idordennormal  String           @id(map: "pk_on") @unique(map: "idordennormal") @db.Char(18)
   costo          Int
-  contenidoorden contenidoorden[] @ignore
-  entregamesa    entregamesa[]    @ignore
-  ordenescliente ordenescliente[] @ignore
-  prepararorden  prepararorden[]  @ignore
+  contenidoorden contenidoorden[]
+  entregamesa    entregamesa[]
+  ordenescliente ordenescliente[]
+  prepararorden  prepararorden[]
 }
 
 model platillo {
@@ -153,42 +145,38 @@ model platillo {
   nombre         String           @db.VarChar(100)
   costo          Int
   menu           menu             @relation(fields: [idmenu, idrestaurante, idfranquicia], references: [idmenu, idrestaurante, idfranquicia], onDelete: Cascade, map: "fk_paltillo1")
-  contenidoorden contenidoorden[] @ignore
+  contenidoorden contenidoorden[]
 
   @@id([idplatillo, idmenu, idrestaurante, idfranquicia], map: "pk_platillo")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model prepararorden {
-  idcocinero    String       @db.Char(18)
-  idordenenvio  String?      @db.Char(18)
-  idordennormal String?      @db.Char(18)
-  cocinero      cocinero     @relation(fields: [idcocinero], references: [idcocinero], onDelete: Cascade, map: "fk_po1")
-  ordenenvio    ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_po2")
-  ordennormal   ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_po3")
-
-  @@ignore
+  idcocinero     String       @db.Char(18)
+  idordenenvio   String?      @db.Char(18)
+  idordennormal  String?      @db.Char(18)
+  idpreparaorden String       @id @unique(map: "idpreparaorden") @db.Char(255)
+  cocinero       cocinero     @relation(fields: [idcocinero], references: [idcocinero], onDelete: Cascade, map: "fk_po1")
+  ordenenvio     ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_po2")
+  ordennormal    ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_po3")
 }
 
-/// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model registrorestaurante {
-  idadmin       String        @db.Char(18)
-  idrestaurante String        @db.Char(18)
-  fecha         DateTime      @db.Date
-  administrador administrador @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_reg1")
-  restaurante   restaurante   @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_reg2")
-
-  @@ignore
+  idadmin               String        @db.Char(18)
+  idrestaurante         String        @db.Char(18)
+  fecha                 DateTime      @db.Date
+  idregistrorestaurante String        @id @unique(map: "idregristrorestaurante") @db.Char(18)
+  administrador         administrador @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_reg1")
+  restaurante           restaurante   @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_reg2")
 }
 
 model repartidor {
-  idrepartidor     String             @id(map: "pk_repartidor") @db.Char(18)
+  idrepartidor     String             @id(map: "pk_repartidor") @unique(map: "idrepartidor") @db.Char(18)
   nombre           String             @db.Char(100)
   apatermo         String?            @db.Char(100)
   amaterno         String?            @db.Char(100)
-  correo           String             @db.VarChar(100)
-  contrasena       String             @db.VarChar(100)
-  entregadomicilio entregadomicilio[] @ignore
+  idusuario        BigInt?
+  usuario          usuario?           @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
+  entregadomicilio entregadomicilio[]
 }
 
 model restaurante {
@@ -206,10 +194,11 @@ model restaurante {
   inventario          inventario[]
   menu                menu[]
   mesero              mesero[]
-  registrorestaurante registrorestaurante[] @ignore
+  registrorestaurante registrorestaurante[]
 
   @@id([idfranquicia, idrestaurante], map: "pk_restaurante")
 }
+
 
 model inventario {
   idinventario  Int         @id @default(autoincrement())
@@ -217,4 +206,17 @@ model inventario {
   cantidad      Int
   idrestaurante String      @db.Char(18)
   restaurante   restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventario")
+}
+
+model usuario {
+  email         String?         @db.VarChar(255)
+  contrasegna   String?         @db.VarChar(255)
+  token         String?         @db.VarChar(255)
+  rol           String?         @db.VarChar(255)
+  idusuario     BigInt          @id @default(autoincrement())
+  administrador administrador[]
+  cliente       cliente[]
+  cocinero      cocinero[]
+  mesero        mesero[]
+  repartidor    repartidor[]
 }
