@@ -10,12 +10,12 @@ const validate = require('../utils/middleware/validate')
 
 router.get('/', validate(
   Joi.object({
-    id_menu: Joi.string().required(),
-    id_restaurante: Joi.string().required(),
-    id_franquicia: Joi.string().required()
+    id_menu: Joi.number().integer().required()  , 
+    id_restaurante: Joi.number().integer().required(),
+    id_franquicia: Joi.number().integer().required()
   }), 
-  parametersLocation="query")  ,
-   async (req,res)=> {
+  "query"),
+  async (req,res)=> {
   let id_restaurante = req.query.id_restaurante;
   let id_menu = req.query.id_menu;
   let id_franquicia = req.query.id_franquicia
