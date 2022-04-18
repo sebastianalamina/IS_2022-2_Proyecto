@@ -1,8 +1,8 @@
 <script>
 
 // Longitud del nombre de usuario.
-const MIN_ID_CLIENTE_LENGTH = 18
-const MAX_ID_CLIENTE_LENGTH = 18
+const MIN_ID_CLIENTE_LENGTH = 6
+const MAX_ID_CLIENTE_LENGTH = 15
 
 export default {
   data(){
