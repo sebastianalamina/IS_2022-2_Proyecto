@@ -3,6 +3,7 @@ import NavBar from '../components/NavBar.vue'
 import Footer from '../components/Footer.vue'
 import ModalInventario from '../components/ModalInvetario.vue'
 import axios from 'axios'
+import {useAxios} from '../axios_common'
 
 
 // TODO Hacer que el modal inventario sea una modal component de a deveras xd
@@ -47,7 +48,7 @@ export default {
         }, 
     }, 
     mounted() {
-        axios.get('http://localhost:3001/inventario',{
+        useAxios.get({
             params:{
                 id_restaurante: this.$route.params.id
             }
