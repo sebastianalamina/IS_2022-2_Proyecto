@@ -7,7 +7,6 @@ const prisma = new PrismaClient();
 const validate = require("../utils/middleware/validate");
 
 //@ts-check
-
 router.get(
   "/display",
   validate(
