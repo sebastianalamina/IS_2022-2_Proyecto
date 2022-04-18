@@ -39,7 +39,7 @@ router.get(
 		});
 
 		// ...Si no, devolvemos el error correspondiente.
-		if (!userCount) {
+		if (!id_entrega_count) {
 			return res.status(400).json({
 				error: `La tabla ${tabla_a_buscar} no contiene instancia de ID ${id_a_buscar} igual a ${id_entrega}`,
 			});
