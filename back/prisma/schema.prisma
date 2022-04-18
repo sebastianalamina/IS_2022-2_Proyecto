@@ -7,6 +7,13 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum estadoorden {
+  RECIBIDA
+  EN_PROCESO
+  EN_CAMINO
+  ENTREGADA
+}
+
 model administrador {
   idadmin             Int                   @id @default(autoincrement())
   idrestaurante       Int
@@ -129,6 +136,7 @@ model ordenescliente {
 model ordennormal {
   idordennormal  Int          @id @default(autoincrement())
   costo          Int
+  estado         estadoorden
   contenidoorden contenidoorden[]
   entregamesa    entregamesa[]
   ordenescliente ordenescliente[]
