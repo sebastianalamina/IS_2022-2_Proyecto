@@ -1,8 +1,8 @@
 <script>
 
 // Longitud del nombre de usuario.
-const MIN_ID_CLIENTE_LENGTH = 18
-const MAX_ID_CLIENTE_LENGTH = 18
+const MIN_ID_CLIENTE_LENGTH = 6
+const MAX_ID_CLIENTE_LENGTH = 15
 
 export default {
   data(){
@@ -125,31 +125,31 @@ export default {
       <section>
         <label class="form-label">Estado</label>
         <p class="error" v-if="estadoError">{{estadoError}}</p>
-        <input type="password" class="form-control" v-model="estado">
+        <input type="text" class="form-control" v-model="estado">
       </section>
 
       <section>
         <label class="form-label">Calle</label>
         <p class="error" v-if="calleError">{{calleError}}</p>
-        <input type="password" class="form-control" v-model="calle">
+        <input type="text" class="form-control" v-model="calle">
       </section>
 
       <section>
         <label class="form-label">Número (creo que de calle)</label>
         <p class="error" v-if="numeroError">{{numeroError}}</p>
-        <input type="password" class="form-control" v-model="numero">
+        <input type="text" class="form-control" v-model="numero">
       </section>
 
       <section>
         <label class="form-label">Código postal</label>
         <p class="error" v-if="cpError">{{cpError}}</p>
-        <input type="password" class="form-control" v-model="cp">
+        <input type="text" class="form-control" v-model="cp">
       </section>
 
       <section>
         <label class="form-label">Municipio</label>
         <p class="error" v-if="municipioError">{{municipioError}}</p>
-        <input type="password" class="form-control" v-model="municipio">
+        <input type="text" class="form-control" v-model="municipio">
       </section>
       
       <input class="btn btn-secondary" type="submit" value="Registrarse">

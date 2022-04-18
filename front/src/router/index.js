@@ -29,6 +29,7 @@ const router = createRouter({
       name: 'inventario restaurante',
       component: () => import('../views/Inventario.vue')
     },
+    {
       path: "/login",
       name: "login",
       component: () => import("../views/LoginView.vue"),
@@ -75,6 +76,11 @@ const router = createRouter({
       meta: {
         requiresAuth: false,
       },
+    },
+    {
+      path: '/menu',
+      name: 'menu',
+      component: () => import('../views/MenuView.vue')
     }
   ],
 });
