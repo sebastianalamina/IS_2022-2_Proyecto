@@ -11,12 +11,12 @@ export default {
     data() {
         return {
             cards: [
-                {nombre: 'Hamburguesa', src: '@/assets/Hamburguesa.jpeg', costo: 100},
-                {nombre: 'Hamburguesa', src: '@/assets/Hamburguesa.jpeg', costo: 100},
-                {nombre: 'Hamburguesa', src: '@/assets/Hamburguesa.jpeg', costo: 100},
-                {nombre: 'Hamburguesa', src: '@/assets/Hamburguesa.jpeg', costo: 100},
-                {nombre: 'Hamburguesa', src: '@/assets/Hamburguesa.jpeg', costo: 100},
-                {nombre: 'Hamburguesa', src: '@/assets/Hamburguesa.jpeg', costo: 100}
+                {nombre: 'Hamburguesa', src: 'src/assets/Hamburguesa.jpeg', costo: 100},
+                {nombre: 'Hamburguesa', src: 'src/assets/Hamburguesa.jpeg', costo: 100},
+                {nombre: 'Hamburguesa', src: 'src/assets/Hamburguesa.jpeg', costo: 100},
+                {nombre: 'Hamburguesa', src: 'src/assets/Hamburguesa.jpeg', costo: 100},
+                {nombre: 'Hamburguesa', src: 'src/assets/Hamburguesa.jpeg', costo: 100},
+                {nombre: 'Hamburguesa', src: 'src/assets/Hamburguesa.jpeg', costo: 100}
             ]
         }
     },
@@ -38,7 +38,7 @@ export default {
             <center><h2>{{card.nombre}}</h2></center>
             <img class="img_menu" :src="card.src" alt='img'>
             <input type="button" class="carrito" value="Añadir al carrito: " />
-            <h3>{{card.costo}}$</h3>
+            <h3>${{card.costo}}</h3>
         </div>
     </div>
 </div>
