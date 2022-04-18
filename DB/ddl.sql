@@ -1,5 +1,5 @@
 CREATE TABLE Cliente (
-    idCliente char(18) NOT NULL,
+    idCliente SERIAL  NOT NULL,
     nombre char(100) NOT NULL,
     aPatermo char(100),
     aMaterno char(100),
@@ -15,7 +15,7 @@ CREATE TABLE Cliente (
 );
 
 CREATE TABLE Repartidor (
-    idRepartidor char(18) NOT NULL,
+    idRepartidor SERIAL,
     nombre char(100) NOT NULL,
     aPatermo char(100),
     aMaterno char(100),
@@ -26,14 +26,14 @@ CREATE TABLE Repartidor (
 );
 
 CREATE TABLE Franquicia (
-    idFranquicia char(18) NOT NULL,
+    idFranquicia SERIAL,
     nombre VARCHAR(100) NOT NULL,
     CONSTRAINT pk_franquicia PRIMARY KEY(idFranquicia)
 );
 
 CREATE TABLE Restaurante (
-    idRestaurante CHAR(18) NOT NULL unique,
-    idFranquicia CHAR(18) NOT NULL,
+    idRestaurante SERIAL,
+    idFranquicia INT,
     nombre VARCHAR(100),
     estado varchar(100),
     calle varchar(100),
@@ -41,22 +41,22 @@ CREATE TABLE Restaurante (
     cp int,
     municipio VARCHAR(100),
 	CONSTRAINT fk_restaurante FOREIGN KEY(idFranquicia) REFERENCES Franquicia(idFranquicia),
-    CONSTRAINT pk_restaurante PRIMARY KEY(idFranquicia, idRestaurante)
+    CONSTRAINT pk_restaurant PRIMARY KEY(idFranquicia, idRestaurante)
 );
 
 CREATE TABLE Menu (
-    idMenu CHAR(18) NOT NULL unique,
-    idRestaurante CHAR(18) NOT NULL,
-    idFranquicia CHAR(18) NOT NULL,
+    idMenu SERIAL,
+    idRestaurante INT NOT NULL,
+    idFranquicia INT NOT NULL,
     CONSTRAINT pk_menu PRIMARY KEY(idMenu, idRestaurante, idFranquicia),
     CONSTRAINT fk_menu1 FOREIGN KEY(idRestaurante, idFranquicia) REFERENCES Restaurante(idRestaurante, idFranquicia) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE Platillo(
-    idPlatillo CHAR(18) NOT NULL UNIQUE,
-    idMenu CHAR(18) NOT NULL,
-    idRestaurante CHAR(18) NOT NULL,
-    idFranquicia CHAR(18) NOT NULL,
+    idPlatillo SERIAL,
+    idMenu INT NOT NULL,
+    idRestaurante INT NOT NULL,
+    idFranquicia INT NOT NULL,
     nombre VARCHAR(100) NOT NULL,
     costo int NOT NULL,
     CONSTRAINT pk_platillo PRIMARY KEY(idPlatillo, idMenu, idRestaurante, idFranquicia),
@@ -65,23 +65,23 @@ CREATE TABLE Platillo(
 );
 
 CREATE TABLE OrdenEnvio (
-    idOrdenEnvio CHAR(18) NOT NULL,
+    idOrdenEnvio INT NOT NULL,
     costo INT NOT NULL,
     CONSTRAINT pk_oe PRIMARY KEY(idOrdenEnvio),
     CONSTRAINT chk_costo CHECK(costo >= 0)
 );
 
 CREATE TABLE OrdenNormal(
-    idOrdenNormal CHAR(18) NOT NULL,
+    idOrdenNormal INT NOT NULL,
     costo int NOT NULL,
     CONSTRAINT pk_on PRIMARY KEY(idOrdenNormal),
     CONSTRAINT chk_costo CHECK(costo >= 0)
 );
 
 CREATE TABLE ContenidoOrden(
-    idOrdenNormal CHAR(18),
-    idOrdenEnvio CHAR(18),
-    idPlatillo CHAR(18),
+    idOrdenNormal INT,
+    idOrdenEnvio INT,
+    idPlatillo INT,
     CONSTRAINT fk_contenido1 FOREIGN KEY(idOrdenNormal) REFERENCES OrdenNormal(idOrdenNormal) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_contenido2 FOREIGN KEY(idOrdenEnvio) REFERENCES OrdenEnvio(idOrdenEnvio) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_contenido3 FOREIGN KEY(idPlatillo) REFERENCES Platillo(idPlatillo) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -89,17 +89,17 @@ CREATE TABLE ContenidoOrden(
 );
 
 CREATE TABLE EntregaDomicilio (
-    idRepartidor CHAR(18) NOT NULL,
-    idOrdenEnvio CHAR(18) NOT NULL,
+    idRepartidor INT NOT NULL,
+    idOrdenEnvio INT NOT NULL,
     estado CHAR(18) NOT NULL,
     CONSTRAINT fk_or1 FOREIGN KEY(idRepartidor) REFERENCES Repartidor(idRepartidor) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_or2 FOREIGN KEY(idOrdenEnvio) REFERENCES OrdenEnvio(idOrdenEnvio) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE OrdenesCliente(
-    idCliente CHAR(18) NOT NULL,
-    idOrdenEnvio CHAR(18),
-    idOrdenNormal CHAR(18),
+    idCliente INT NOT NULL,
+    idOrdenEnvio INT,
+    idOrdenNormal INT,
     metodoPago CHAR(18),
     CONSTRAINT fk_oc1 FOREIGN KEY(idCliente) REFERENCES Cliente(idCliente) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_oc2 FOREIGN KEY(idOrdenEnvio) REFERENCES OrdenEnvio(idOrdenEnvio) ON DELETE CASCADE ON UPDATE CASCADE,
@@ -108,8 +108,8 @@ CREATE TABLE OrdenesCliente(
 );
 
 CREATE TABLE Administrador (
-    idAdmin CHAR(18) NOT NULL,
-	idRestaurante CHAR(18) NOT NULL,
+    idAdmin SERIAL,
+	  idRestaurante INT NOT NULL,
     nombre char(100) NOT NULL,
     aPatermo char(100),
     aMaterno char(100),
@@ -120,9 +120,9 @@ CREATE TABLE Administrador (
 );
 
 CREATE TABLE Mesero (
-    idMesero char(18) NOT NULL,
-    idAdmin CHAR(18) NOT NULL,
-    idRestaurante CHAR(18) NOT NULL,
+    idMesero SERIAL,
+    idAdmin INT NOT NULL,
+    idRestaurante INT NOT NULL,
     nombre char(100) NOT NULL,
     aPatermo char(100),
     aMaterno char(100),
@@ -135,9 +135,9 @@ CREATE TABLE Mesero (
 );
 
 CREATE TABLE Cocinero (
-    idCocinero char(18) NOT NULL,
-    idAdmin CHAR(18) NOT NULL,
-    idRestaurante CHAR(18) NOT NULL,
+    idCocinero SERIAL NOT NULL,
+    idAdmin INT NOT NULL,
+    idRestaurante INT NOT NULL,
     nombre char(100) NOT NULL,
     aPatermo char(100),
     aMaterno char(100),
@@ -150,25 +150,25 @@ CREATE TABLE Cocinero (
 );
 
 CREATE TABLE RegistroRestaurante(
-    idAdmin CHAR(18) NOT NULL,
-    idRestaurante CHAR(18) NOT NULL,
+    idAdmin INT NOT NULL,
+    idRestaurante INT NOT NULL,
     fecha DATE NOT NULL,
     CONSTRAINT fk_reg1 FOREIGN KEY(idAdmin) REFERENCES Administrador(idAdmin) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_reg2 FOREIGN KEY(idRestaurante) REFERENCES Restaurante(idRestaurante) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE EntregaMesa (
-    idMesero CHAR(18) NOT NULL,
-    idOrdenNormal CHAR(18) NOT NULL,
+    idMesero SERIAL,
+    idOrdenNormal int NOT NULL,
     estado CHAR(18) NOT NULL,
     CONSTRAINT fk_em1 FOREIGN KEY(idMesero) REFERENCES Mesero(idMesero) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_em2 FOREIGN KEY(idOrdenNormal) REFERENCES OrdenNormal(idOrdenNormal) ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 CREATE TABLE PrepararOrden (
-    idCocinero CHAR(18) NOT NULL,
-    idOrdenEnvio CHAR(18),
-    idOrdenNormal CHAR(18),
+    idCocinero INT NOT NULL,
+    idOrdenEnvio INT,
+    idOrdenNormal INT,
     CONSTRAINT fk_po1 FOREIGN KEY(idCocinero) REFERENCES Cocinero(idCocinero) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_po2 FOREIGN KEY(idOrdenEnvio) REFERENCES OrdenEnvio(idOrdenEnvio) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_po3 FOREIGN KEY(idOrdenNormal) REFERENCES OrdenNormal(idOrdenNormal) ON DELETE CASCADE ON UPDATE CASCADE,

@@ -8,9 +8,9 @@ datasource db {
 }
 
 model menu {
-  idmenu        String      @unique @db.Char(18)
-  idrestaurante String      @db.Char(18)
-  idfranquicia  String      @db.Char(18)
+  idmenu        Int     @db.Integer @default(autoincrement())
+  idrestaurante Int      @db.Integer
+  idfranquicia  Int      @db.Integer
   restaurante   restaurante @relation(fields: [idrestaurante, idfranquicia], references: [idrestaurante, idfranquicia], onDelete: Cascade, map: "fk_menu1")
   platillo      platillo[]
 
@@ -18,8 +18,8 @@ model menu {
 }
 
 model administrador {
-  idadmin             String                @id(map: "pk_admin") @db.Char(18)
-  idrestaurante       String                @db.Char(18)
+  idadmin             Int                @id(map: "pk_admin") @db.Integer @default(autoincrement())
+  idrestaurante       Int                @db.Integer
   nombre              String                @db.Char(100)
   apatermo            String?               @db.Char(100)
   amaterno            String?               @db.Char(100)
@@ -32,7 +32,7 @@ model administrador {
 }
 
 model cliente {
-  idcliente      String           @id(map: "pk_cliente") @db.Char(18)
+  idcliente      Int           @id(map: "pk_cliente") @db.Integer @default(autoincrement())
   nombre         String           @db.Char(100)
   apatermo       String?          @db.Char(100)
   amaterno       String?          @db.Char(100)
@@ -47,9 +47,9 @@ model cliente {
 }
 
 model cocinero {
-  idcocinero    String          @id(map: "pk_cocinero") @db.Char(18)
-  idadmin       String          @db.Char(18)
-  idrestaurante String          @db.Char(18)
+  idcocinero    Int          @id(map: "pk_cocinero") @db.Integer @default(autoincrement())
+  idadmin       Int          @db.Integer
+  idrestaurante Int          @db.Integer
   nombre        String          @db.Char(100)
   apatermo      String?         @db.Char(100)
   amaterno      String?         @db.Char(100)
@@ -62,9 +62,9 @@ model cocinero {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model contenidoorden {
-  idordennormal String?      @db.Char(18)
-  idordenenvio  String?      @db.Char(18)
-  idplatillo    String?      @db.Char(18)
+  idordennormal Int?      @db.Integer
+  idordenenvio  Int?      @db.Integer
+  idplatillo    Int?      @db.Integer
   ordenenvio    ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_contenido2")
   ordennormal   ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_contenido1")
   platillo      platillo?    @relation(fields: [idplatillo], references: [idplatillo], onDelete: Cascade, map: "fk_contenido3")
@@ -74,8 +74,8 @@ model contenidoorden {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model entregadomicilio {
-  idrepartidor String     @db.Char(18)
-  idordenenvio String     @db.Char(18)
+  idrepartidor Int     @db.Integer
+  idordenenvio Int     @db.Integer
   estado       String     @db.Char(18)
   ordenenvio   ordenenvio @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_or2")
   repartidor   repartidor @relation(fields: [idrepartidor], references: [idrepartidor], onDelete: Cascade, map: "fk_or1")
@@ -85,8 +85,8 @@ model entregadomicilio {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model entregamesa {
-  idmesero      String      @db.Char(18)
-  idordennormal String      @db.Char(18)
+  idmesero      Int      @db.Integer
+  idordennormal Int      @db.Integer
   estado        String      @db.Char(18)
   mesero        mesero      @relation(fields: [idmesero], references: [idmesero], onDelete: Cascade, map: "fk_em1")
   ordennormal   ordennormal @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_em2")
@@ -95,15 +95,15 @@ model entregamesa {
 }
 
 model franquicia {
-  idfranquicia String        @id(map: "pk_franquicia") @db.Char(18)
+  idfranquicia Int        @id(map: "pk_franquicia") @db.Integer @default(autoincrement())
   nombre       String        @db.VarChar(100)
   restaurante  restaurante[]
 }
 
 model mesero {
-  idmesero      String        @id(map: "pk_mesero") @db.Char(18)
-  idadmin       String        @db.Char(18)
-  idrestaurante String        @db.Char(18)
+  idmesero      Int        @id(map: "pk_mesero") @db.Integer @default(autoincrement())
+  idadmin       Int        @db.Integer
+  idrestaurante Int        @db.Integer
   nombre        String        @db.Char(100)
   apatermo      String?       @db.Char(100)
   amaterno      String?       @db.Char(100)
@@ -115,7 +115,7 @@ model mesero {
 }
 
 model ordenenvio {
-  idordenenvio     String             @id(map: "pk_oe") @db.Char(18)
+  idordenenvio     Int             @id(map: "pk_oe") @db.Integer
   costo            Int
   contenidoorden   contenidoorden[]   @ignore
   entregadomicilio entregadomicilio[] @ignore
@@ -125,9 +125,9 @@ model ordenenvio {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model ordenescliente {
-  idcliente     String       @db.Char(18)
-  idordenenvio  String?      @db.Char(18)
-  idordennormal String?      @db.Char(18)
+  idcliente     Int       @db.Integer
+  idordenenvio  Int?      @db.Integer
+  idordennormal Int?      @db.Integer
   metodopago    String?      @db.Char(18)
   cliente       cliente      @relation(fields: [idcliente], references: [idcliente], onDelete: Cascade, map: "fk_oc1")
   ordenenvio    ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_oc2")
@@ -137,7 +137,7 @@ model ordenescliente {
 }
 
 model ordennormal {
-  idordennormal  String           @id(map: "pk_on") @db.Char(18)
+  idordennormal  Int           @id(map: "pk_on") @db.Integer
   costo          Int
   contenidoorden contenidoorden[] @ignore
   entregamesa    entregamesa[]    @ignore
@@ -146,10 +146,10 @@ model ordennormal {
 }
 
 model platillo {
-  idplatillo     String           @unique @db.Char(18)
-  idmenu         String           @db.Char(18)
-  idrestaurante  String           @db.Char(18)
-  idfranquicia   String           @db.Char(18)
+  idplatillo     Int           @unique @db.Integer @default(autoincrement())
+  idmenu         Int              @db.Integer 
+  idrestaurante  Int           @db.Integer
+  idfranquicia   Int           @db.Integer
   nombre         String           @db.VarChar(100)
   costo          Int
   menu           menu             @relation(fields: [idmenu, idrestaurante, idfranquicia], references: [idmenu, idrestaurante, idfranquicia], onDelete: Cascade, map: "fk_paltillo1")
@@ -160,9 +160,9 @@ model platillo {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model prepararorden {
-  idcocinero    String       @db.Char(18)
-  idordenenvio  String?      @db.Char(18)
-  idordennormal String?      @db.Char(18)
+  idcocinero    Int       @db.Integer
+  idordenenvio  Int?      @db.Integer
+  idordennormal Int?      @db.Integer
   cocinero      cocinero     @relation(fields: [idcocinero], references: [idcocinero], onDelete: Cascade, map: "fk_po1")
   ordenenvio    ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_po2")
   ordennormal   ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_po3")
@@ -172,8 +172,8 @@ model prepararorden {
 
 /// The underlying table does not contain a valid unique identifier and can therefore currently not be handled by the Prisma Client.
 model registrorestaurante {
-  idadmin       String        @db.Char(18)
-  idrestaurante String        @db.Char(18)
+  idadmin       Int        @db.Integer
+  idrestaurante Int       @db.Integer
   fecha         DateTime      @db.Date
   administrador administrador @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_reg1")
   restaurante   restaurante   @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_reg2")
@@ -182,7 +182,7 @@ model registrorestaurante {
 }
 
 model repartidor {
-  idrepartidor     String             @id(map: "pk_repartidor") @db.Char(18)
+  idrepartidor     Int             @id(map: "pk_repartidor") @db.Integer @default(autoincrement())
   nombre           String             @db.Char(100)
   apatermo         String?            @db.Char(100)
   amaterno         String?            @db.Char(100)
@@ -192,8 +192,8 @@ model repartidor {
 }
 
 model restaurante {
-  idrestaurante       String                @unique @db.Char(18)
-  idfranquicia        String                @db.Char(18)
+  idrestaurante       Int               @db.Integer @default(autoincrement()) @unique
+  idfranquicia        Int                @db.Integer
   nombre              String?               @db.VarChar(100)
   estado              String?               @db.VarChar(100)
   calle               String?               @db.VarChar(100)
