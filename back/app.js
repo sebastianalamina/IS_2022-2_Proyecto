@@ -28,13 +28,17 @@ morgan.token("rol", function (req, res) {
 app.use(bearerAuth);
 app.use("/auth", require("./routes/auth.js"));
 app.use("/menu", require("./routes/menu.js"));
-app.use("/inventario", require("./routes/inventario.js"))
-
+app.use("/inventario", require("./routes/inventario.js"));
+app.use("/estado-platillo", require("./routes/estado-platillo.js"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+const isEntryPoint = require.main === module;
+
+if (isEntryPoint)
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
+else module.exports = app;
