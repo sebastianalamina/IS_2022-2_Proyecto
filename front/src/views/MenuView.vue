@@ -12,6 +12,7 @@ export default {
     data() {
         return {
             cards: []
+
         }
     },
     methods: {
@@ -46,7 +47,7 @@ export default {
             <h2>{{card.nombre}}</h2>
             <img class="img_menu" :src="card.src" alt='imagen nos disponible'>
             <input type="button" class="carrito" value="Añadir al carrito: " />
-            <h3>{{card.costo}}$</h3>
+            <h3>${{card.costo}}</h3>
         </div>
     </div>
 </div>
