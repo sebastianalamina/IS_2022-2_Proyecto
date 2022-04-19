@@ -13,7 +13,8 @@
     "axios": "^0.26.1",
     "bootstrap": "^5.1.3",
     "node-fetch": "^3.2.3",
-    "pinia": "^2.0.11",
+    "pinia": "^2.0.13",
+    "pinia-plugin-persistedstate": "^1.5.1",
     "vue": "^3.2.31",
     "vue-router": "^4.0.12"
   },
