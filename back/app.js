@@ -35,6 +35,10 @@ app.get("/", (req, res) => {
   res.send("Hello World!");
 });
 
-app.listen(port, () => {
-  console.log(`Example app listening on port ${port}`);
-});
+const isEntryPoint = require.main === module;
+
+if (isEntryPoint)
+  app.listen(port, () => {
+    console.log(`Example app listening on port ${port}`);
+  });
+else module.exports = app;

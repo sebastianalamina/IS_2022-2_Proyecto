@@ -4,7 +4,7 @@ const Joi = require("joi");
 
 const router = express.Router();
 const prisma = new PrismaClient();
-const validate = require('../utils/middleware/validate')
+const validate = require("../utils/middleware/validate");
 
 router.post('/', validate(
    Joi.object({
