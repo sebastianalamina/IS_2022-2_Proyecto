@@ -61,6 +61,7 @@ export default {
 }
 
 .derecha{
+  padding-top: 0px !important;
   float: right;
 }
 
