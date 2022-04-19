@@ -10,7 +10,7 @@ describe("Ejemplo", () => {
       .then((res) => {
         //aqui podemos probar la respuesta del servidor
         // console.log(res.body); //res.body si es un json
-        console.log(res.text);
+        //console.log(res.text);
         // al inicio de test defino a done como argumento
         // cuando acabe llama a done es muy importante
         done();
