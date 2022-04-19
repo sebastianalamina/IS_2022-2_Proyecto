@@ -1,5 +1,10 @@
-import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
+
+import { createRouter, createWebHistory } from 'vue-router'
+import HomeView from '../views/HomeView.vue'
+import LoginView from '../views/LoginView.vue'
+import RestaurantSignUp from '../views/RestaurantSignUp.vue'
+import MenuView from '../views/MenuView.vue'
+import ClientsView from '../views/ClientsView.vue'
 import { useStore as useAuthStore } from "../stores/auth";
 
 const router = createRouter({
@@ -16,9 +21,6 @@ const router = createRouter({
     {
       path: "/about",
       name: "about",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("../views/AboutView.vue").catch,
       meta: {
         requiresAuth: false,
@@ -81,8 +83,23 @@ const router = createRouter({
       path: '/menu',
       name: 'menu',
       component: () => import('../views/MenuView.vue')
-    }
-  ],
+    },
+    {
+	path: '/inicio',
+	name: 'inicio',
+	component: () => import('../views/ClientsView.vue')
+    },
+    {
+	path: '/inicioW',
+	name: 'inicioW',
+	component: () => import('../views/WaiterView.vue')
+    },
+    {
+	path: '/inicioW/ordenes',
+	name: 'inicioW_ordenes',
+	component: () => import('../views/OrdenesView.vue')
+    },
+  ]
 });
 
 router.beforeEach((to) => {
