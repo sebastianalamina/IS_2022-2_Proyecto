@@ -25,6 +25,11 @@ const router = createRouter({
       },
     },
     {
+      path: '/inventario/:id',
+      name: 'inventario restaurante',
+      component: () => import('../views/Inventario.vue')
+    },
+    {
       path: "/login",
       name: "login",
       component: () => import("../views/LoginView.vue"),
@@ -48,6 +53,35 @@ const router = createRouter({
         requiresAuth: false,
       },
     },
+    {
+      path: '/view-employees',
+      name: 'ver-empleados',
+      component: () => import('../views/ViewEmployeesView.vue'),
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
+      path: '/view-order-status',
+      name: 'ver-estado-platillo',
+      component: () => import('../views/ViewOrderStatusView.vue'),
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
+      path: '/modify-order-status',
+      name: 'modificar-estado-platillo',
+      component: () => import('../views/ModifyOrderStatusView.vue'),
+      meta: {
+        requiresAuth: false,
+      },
+    },
+    {
+      path: '/menu',
+      name: 'menu',
+      component: () => import('../views/MenuView.vue')
+    }
   ],
 });
 

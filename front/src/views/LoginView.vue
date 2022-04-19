@@ -106,11 +106,10 @@ export default {
 </template>
 
 <style>
-@import "@/assets/base.css";
 
 #login-box {
   margin: auto;
-  width: 20%;
+  width: 30%;
   border: 3px solid black;
   padding: 50px;
 }
