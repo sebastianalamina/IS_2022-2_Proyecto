@@ -19,7 +19,11 @@ app.use(bodyParser.json({ limit: "10mb", extended: true }));
 app.use(cors());
 app.use(helmet());
 
-app.use(morgan(":method :rol :url :status - :response-time ms"));
+app.use(
+  morgan(":method :rol :url :status - :response-time ms", {
+    skip: (req, res) => process.env.NODE_ENV === "test",
+  })
+);
 morgan.token("rol", function (req, res) {
   if (!req.authenticated) return "visitante";
   return req.user.rol;

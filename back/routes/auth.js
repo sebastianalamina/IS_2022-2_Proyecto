@@ -105,7 +105,7 @@ router.post(
         email: true,
       },
     });
-    return res.status(201).json(user);
+    return res.status(200).json(user);
   }
 );
 
