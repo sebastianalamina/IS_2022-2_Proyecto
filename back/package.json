@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "pretest": "node __test__/utils/backup.js && yes | npx prisma migrate reset",
-    "test": "jest || :",
-    "posttest": "node __test__/utils/reload.js && rm dump.sql"
+    "pretest": "node utils/scripts/backup.js  && yes | npx prisma migrate reset ",
+    "test": "jest -i --watchAll|| :",
+    "posttest": "yes | npx prisma migrate reset && node utils/scripts/reload.js && rm dump.sql"
   },
   "author": "",
   "license": "ISC",
@@ -24,10 +24,15 @@
     "pg": "^8.7.3"
   },
   "devDependencies": {
+    "@faker-js/faker": "^6.1.2",
+    "@types/jest": "^27.4.1",
     "chai": "^4.3.6",
     "jest": "^27.5.1",
+    "jest-mock-extended": "^2.0.4",
     "mocha": "^9.2.2",
     "prisma": "^3.12.0",
-    "supertest": "^6.2.2"
+    "supertest": "^6.2.2",
+    "ts-jest": "^27.1.4",
+    "typescript": "^4.6.3"
   }
 }
