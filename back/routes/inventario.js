@@ -74,7 +74,7 @@ router.get('/',validate(
 ),async (req,res)=>{
 	  // Checking
 	  const userCount = await prisma.restaurante.count({
-	  where: { idrestaurante: req.query.id_restaurante },
+	  where: { idrestaurante: 1 },
 	  });
 
 	  if (!userCount) {

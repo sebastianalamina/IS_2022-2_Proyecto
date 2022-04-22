@@ -6,7 +6,7 @@ import RestaurantForm from '../components/RestaurantForm.vue'
 
 import { useAxios } from '../axios_common'
 
-const instance = useAxios();
+
 
 export default {
     components:{
@@ -30,6 +30,7 @@ export default {
     methods:{
       
       submitForm: function(e){
+        const instance = useAxios();
         console.log('revisando formulario')
         if(this.checarFormulario) 
         {
