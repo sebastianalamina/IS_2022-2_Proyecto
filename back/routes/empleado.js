@@ -18,18 +18,18 @@ router.get(
 	'/',
 	async (req, res) => {
 
-		let tablas_a_buscar = ['administrador', 'cocinero', 'mesero', 'repartidor']
+		// let tablas_a_buscar = ['administrador', 'cocinero', 'mesero', 'repartidor']
 		// let ids_a_buscar = ['idadmin', 'idcocinero', 'idmesero', 'idrepartidor']
 		let json_a_devolver = {}
 
-		// Recopilamos a los empleados de la BD...
-		for (var i = 0; i < tablas_a_buscar.length; i++) {
-			tabla_actual = tablas_a_buscar.at(i)
-			json_a_devolver[tabla_actual] = await prisma.tabla_actual.findMany()
-		}
+		// Recopilamosa los empleados de la BD...
+		json_a_devolver['administrador'] = await prisma.administrador.findMany();
+		json_a_devolver['cocinero'] = await prisma.cocinero.findMany();
+		json_a_devolver['mesero'] = await prisma.mesero.findMany();
+		json_a_devolver['repartidor'] = await prisma.repartidor.findMany();
 
 		// Debug temporal:
-		console.log(json_a_devolver)
+		console.log(json_a_devolver);
 		return res.status(201).json(json_a_devolver);
 	}
 );
