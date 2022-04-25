@@ -1,29 +1,25 @@
 <script>
+import {useAxios} from "../axios_common";
 
 export default {
+  mounted() {
+    this.getEmployees();
+  },
   data(){
     return{
-      empleados:[
-        {
-          img: 'Empleado.png',
-          nombre:"A",
-          puesto:"Mesero",
-          estado:"Estado",
-        }, {
-          img: 'Empleado.png',
-          nombre:"B",
-          puesto:"Mesero",
-          estado:"Estado",
-        }, {
-          img: 'Empleado.png',
-          nombre:"C",
-          puesto:"Mesero",
-          estado:"Estado",
-        },
-      ],
+      empleados: null,
     }
   },
   methods:{
+    getEmployees() {
+      const axios = useAxios();
+
+      axios.get('/empleado')
+        .then((res) => {
+          this.empleados = res.data;
+        })
+        .catch(console.log)
+    },
   }
 }
 
@@ -32,15 +28,21 @@ export default {
 <template>
 
   <div class="columna">
-    <div class="empleado" v-for="empleado in empleados">
-      <img :src="'src/assets/'+empleado.img">
-      {{empleado.nombre}}
+  <div v-for="(lista_empleados, puesto) in empleados">
+    <h1>Empleados tipo {{puesto}}</h1>
+    <div v-if="lista_empleados.length == 0">No hay empleados tipo {{puesto}} registrados en la Base de Datos.</div>
+    <div class="empleado" v-for="empleado in lista_empleados">
+      <!-- <img :src="'src/assets/'+empleado.img"> -->
+      {{empleado.nombre}} {{empleado.apatermo}} {{empleado.amaterno}}
       <div class="derecha">
-        {{empleado.estado}}
+        ID usuario: {{empleado.idusuario}}
       </div>
       <br>
-      {{empleado.puesto}}
+      <div v-if="puesto !== 'repartidor'">
+        ID restaurante: {{empleado.idrestaurante}}
+      </div>
     </div>
+  </div>
   </div>
 
 </template>
