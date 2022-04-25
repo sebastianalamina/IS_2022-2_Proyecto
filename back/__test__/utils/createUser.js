@@ -11,6 +11,7 @@ var user = {
         data: {
           email: faker.internet.email(),
           contrasegna: faker.internet.password(),
+          token: "token",
         },
       });
       return this._singleton;
