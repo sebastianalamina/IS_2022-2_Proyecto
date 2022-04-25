@@ -21,8 +21,8 @@ import Footer from '../components/Footer.vue'
 .topnav {
   overflow: hidden;
   background-color: #e9e9e9;
-  //position: fixed;
-  //z-index: 1
+  position: fixed;
+  z-index: 1
 }
 
 .topnav a {

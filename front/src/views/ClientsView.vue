@@ -12,7 +12,7 @@
       <a class="active" href="">Inicio</a>
       <a href="/foros">Foros</a>     <!-- Alta prioridad-->
       <a href="/ordenes">Ordenes</a> <!-- Esta ya esta, pero no en main-->
-      <a href="/carritos">Carritos</a> <!-- Igual que arriba -->
+      <a href="/carrito">Carritos</a> <!-- Igual que arriba -->
       <input type="text" placeholder="Buscar.."> <!-- Conectarse a la BD para mostrar los R-->
   </div>
         

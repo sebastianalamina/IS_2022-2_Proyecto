@@ -99,6 +99,11 @@ const router = createRouter({
 	name: 'inicioW_ordenes',
 	component: () => import('../views/OrdenesView.vue')
     },
+    {
+      path: '/carrito',
+      name: 'carrito',
+      component: () => import('../views/CarritoView.vue')
+    }
   ]
 });
 
