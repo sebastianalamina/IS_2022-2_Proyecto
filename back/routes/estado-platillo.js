@@ -34,9 +34,7 @@ router.get(
 		let id_a_buscar = es_domicilio ? 'identregadomicilio' : 'identregamesa';
 
 		// Verificamos que la orden se encuentre en la BD...
-		const id_entrega_count = await prisma.tabla_a_buscar.count({
-			where: { id_a_buscar: id_entrega },
-		});
+		let id_entrega_count = await orden_count(es_domicilio, id_entrega);
 
 		// ...Si no, devolvemos el error correspondiente.
 		if (!id_entrega_count) {
@@ -46,13 +44,20 @@ router.get(
 		}
 
 		// ...Si sí, recuperamos la instancia correspondiente.
-		const orden = await prisma.tabla_a_buscar.findFirst({
-			where: { id_a_buscar: id_entrega }
-		});
+		let orden;
+		if (es_domicilio) {
+			orden = await prisma.entregadomicilio.findFirst({
+				where: { identregadomicilio : id_entrega }
+			});
+		} else {
+			orden = await prisma.entregamesa.findFirst({
+				where: { identregamesa : id_entrega }
+			});
+		}
 
 		// Debug temporal:
-		console.log(orden)
-		res.json(orden);
+		console.log(orden);
+		return res.status(201).json(orden);
 	}
 );
 
@@ -84,9 +89,7 @@ router.post(
 		let id_a_buscar = es_domicilio ? 'identregadomicilio' : 'identregamesa';
 
 		// Verificamos que la orden se encuentre en la BD...
-		const id_entrega_count = await prisma.tabla_a_buscar.count({
-			where: { id_a_buscar: id_entrega },
-		});
+		let id_entrega_count = orden_count(es_domicilio, id_entrega);
 
 		// ...Si no, devolvemos el error correspondiente.
 		if (!id_entrega_count) {
@@ -96,16 +99,42 @@ router.post(
 		}
 
 		// ...Si sí, actualizamos la instancia correspondiente.
-		const orden_a_modificar = await prisma.tabla_a_buscar.update({
-			where: { id_a_buscar: id_entrega },
-			data: { estado: nuevo_estado }
-		});
+		let orden_a_modificar;
+		if (es_domicilio) {
+			orden_a_modificar = await prisma.entregadomicilio.update({
+				where: { identregadomicilio : id_entrega },
+				data: { estado : nuevo_estado }
+			});
+		} else {
+			orden_a_modificar = await prisma.entregamesa.update({
+				where: { identregamesa : id_entrega },
+				data: { estado : nuevo_estado }
+			});
+		}
 
 		// Debug temporal:
-		console.log(orden_a_modificar)
+		console.log(orden_a_modificar);
 		return res.status(201).json(orden_a_modificar);
 	}
 );
+
+/* Función que determina si existe cierta orden, según
+su id_entrega (ya sea identregadomicilio o identregamesa)
+y según la tabla a la que pertenece (entregadomicilio o
+entregamesa), lo cual lo determina el parámetro es_domicilio. */
+async function orden_count(es_domicilio, id_entrega) {
+	let id_entrega_count;
+	if (es_domicilio) {
+		id_entrega_count = await prisma.entregadomicilio.count({
+			where: { identregadomicilio : id_entrega },
+		});
+	} else {
+		id_entrega_count = await prisma.entregamesa.count({
+			where: { identregamesa : id_entrega }
+		});
+	}
+	return id_entrega_count;
+}
 
 // Incluimos el "router" dentro de lo
 // que este archivo ha de exportar.
