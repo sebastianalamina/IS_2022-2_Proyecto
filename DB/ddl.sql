@@ -40,8 +40,8 @@ CREATE TABLE Restaurante (
     numero int,
     cp int,
     municipio VARCHAR(100),
-	CONSTRAINT fk_restaurante FOREIGN KEY(idFranquicia) REFERENCES Franquicia(idFranquicia),
-    CONSTRAINT pk_restaurant PRIMARY KEY(idFranquicia, idRestaurante)
+	  CONSTRAINT fk_restaurante FOREIGN KEY(idFranquicia) REFERENCES Franquicia(idFranquicia),
+    CONSTRAINT pk_restaurante PRIMARY KEY(idFranquicia, idRestaurante)
 );
 
 CREATE TABLE Menu (
@@ -173,4 +173,12 @@ CREATE TABLE PrepararOrden (
     CONSTRAINT fk_po2 FOREIGN KEY(idOrdenEnvio) REFERENCES OrdenEnvio(idOrdenEnvio) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT fk_po3 FOREIGN KEY(idOrdenNormal) REFERENCES OrdenNormal(idOrdenNormal) ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT chk_tipo CHECK((idOrdenEnvio IS NULL AND idOrdenNormal IS NOT NULL) OR (idOrdenEnvio IS NOT NULL AND idOrdenNormal IS NULL))
+);
+
+CREATE TABLE Inventario (
+idInventario SERIAL PRIMARY KEY,
+nombre CHAR(100) ,
+cantidad INT ,
+idRestaurante CHAR(18),
+CONSTRAINT fk_inventario FOREIGN KEY(idRestaurante) REFERENCES Restaurante(idRestaurante)
 );

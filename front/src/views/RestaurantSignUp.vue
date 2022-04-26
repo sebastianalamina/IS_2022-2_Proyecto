@@ -3,7 +3,10 @@ import NavBar from '../components/NavBar.vue'
 import Footer from '../components/Footer.vue'
 import RestaurantForm from '../components/RestaurantForm.vue'
 
-import axios from 'axios'  
+
+import { useAxios } from '../axios_common'
+
+
 
 export default {
     components:{
@@ -27,12 +30,16 @@ export default {
     methods:{
       
       submitForm: function(e){
+        //create a 
+        const instance = useAxios();
         console.log('revisando formulario')
         if(this.checarFormulario) 
         {
           console.log('formulario correcto')
           console.log(JSON.stringify(this.formulario))
-          axios.post('/restaurantes/nuevorestaurante', this.formulario)  
+          instance.post('/restaurantes',{
+            ...this.formulario
+          })
         }
         else
         {

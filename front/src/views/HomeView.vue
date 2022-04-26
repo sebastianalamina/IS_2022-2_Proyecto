@@ -1,31 +1,28 @@
 <script setup>
-import NavBar1 from '../components/NavBar.vue'
+import NavBar from "../components/NavBar.vue";
+import Footer from "../components/Footer.vue";
+import { useAxios } from "../axios_common";
 
+const axios = useAxios();
 
-
-</script>
-<script>
-
-import NavBar from '../components/NavBar.vue'
-import Footer from '../components/Footer.vue';
-export default{
-  components:{
-    NavBar,
-    Footer
-  }
+function sendAxiosAuth() {
+  axios.get("/").then(console.log);
 }
 </script>
 
 <template>
-<NavBar/>
+  <NavBar />
   <main>
-    
+    <button @click="sendAxiosAuth"></button>
   </main>
 
-  <RouterLink v-for="route in this.$router.options.routes" :key="route.path" :to="route.path">
-    <div>{{route.name}}</div>
+  <RouterLink
+    v-for="route in this.$router.options.routes"
+    :key="route.path"
+    :to="route.path"
+  >
+    <div>{{ route.name }}</div>
   </RouterLink>
 
-  <Footer/>
-
+  <Footer />
 </template>
