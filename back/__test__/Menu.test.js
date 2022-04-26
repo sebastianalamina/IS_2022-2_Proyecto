@@ -14,7 +14,11 @@ describe("/menu", () => {
     test("paginación no falla al al acabarse los elementos", () => {});
   });
   // crea un elemento
-  test("POST /", () => {});
+  describe("POST /", () => {
+    test("creación", () => {});
+    test("permisos", () => {});
+  });
+
   // regresa un elemento con id
   describe("GET /?id", () => {
     //trae todos los elementos del menu, páginados, y filtrados

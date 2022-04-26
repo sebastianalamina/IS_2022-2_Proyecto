@@ -9,5 +9,7 @@ module.exports = exists =
       where: body,
     });
     if (count == 0)
-      throw new Error(`${collection} with ${JSON.stringify(q)} has 0 elements`);
+      throw new Error(
+        `Hay 0 ${collection}s con: ${JSON.stringify(body, null, 2)}`
+      );
   };

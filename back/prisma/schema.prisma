@@ -89,10 +89,16 @@ model entregamesa {
   ordennormal   ordennormal @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_em2")
 }
 
+<<<<<<< HEAD
 
 model menu {
   idmenu        Int         @id @default(autoincrement())
   idrestaurante Int
+=======
+model menu {
+  idmenu        Int          @id @default(autoincrement())
+  idrestaurante Int     
+>>>>>>> a163fdf (work in progress)
   restaurante   restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_menu1")
   platillo      platillo[]
 }
@@ -180,15 +186,13 @@ model ordennormal {
 }
 
 model platillo {
-  idplatillo       Int                @id @default(autoincrement())
-  idmenu           Int
-  idrestaurante    Int
-  nombre           String             @db.VarChar(100)
-  costo            Int
-  menu             menu               @relation(fields: [idmenu], references: [idmenu], onDelete: Cascade, map: "fk_paltillo1")
-  contenidoorden   contenidoorden[]
-  contenidocarrito contenidoCarrito[]
-
+  idplatillo     Int              @id @default(autoincrement())
+  idmenu         Int           
+  idrestaurante  Int
+  nombre         String           @db.VarChar(100)
+  costo          Int
+  menu           menu             @relation(fields: [idmenu], references: [idmenu], onDelete: Cascade, map: "fk_paltillo1")
+  contenidoorden contenidoorden[]
 }
 
 model prepararorden {

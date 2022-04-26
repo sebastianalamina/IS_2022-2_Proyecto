@@ -5,9 +5,12 @@ const { faker } = require("@faker-js/faker");
 const app = require("../app");
 const validate = require("./utils/validate.js");
 const exists = require("./utils/exists");
+const createUser = require("./utils/createUser");
 const { PrismaClient } = require("@prisma/client");
+let roles = require("../utils/constants/roles");
 
 const prisma = new PrismaClient();
+roles = Object.values(roles).map((x) => x.toLowerCase());
 
 async function getUserRol(rol, query) {
   let baseUser = await prisma.usuario.findFirst({ where: query });
@@ -59,7 +62,7 @@ describe("/auth", () => {
         })
         .catch(done);
     });
-    test("creación de cliente", () => {
+    test("creación de cliente", (done) => {
       const rol = "cliente";
       request(app)
         .post("/auth/register")
@@ -76,7 +79,7 @@ describe("/auth", () => {
         })
         .catch(done);
     });
-    test("creación de cocinero", () => {
+    test("creación de cocinero", (done) => {
       const rol = "cocinero";
       request(app)
         .post("/auth/register")
@@ -93,7 +96,7 @@ describe("/auth", () => {
         })
         .catch(done);
     });
-    test("creación de mesero", () => {
+    test("creación de mesero", (done) => {
       const rol = "mesero";
       request(app)
         .post("/auth/register")
@@ -110,7 +113,7 @@ describe("/auth", () => {
         })
         .catch(done);
     });
-    test("creación de repartidor", () => {
+    test("creación de repartidor", (done) => {
       const rol = "repartidor";
       request(app)
         .post("/auth/register")
@@ -127,27 +130,51 @@ describe("/auth", () => {
         })
         .catch(done);
     });
-    test("Middleware: permiso correcto", () => {});
-    test("Falla con rol no existente", () => {});
+    test("Falla con rol no existente", (done) => {
+      const rol = "repartidor";
+      request(app)
+        .post("/auth/register")
+        .send({
+          email: faker.internet.email(),
+          contrasegna: faker.internet.password(),
+          rol: "rol no existente",
+        })
+        .expect(400)
+        .end(done);
+    });
   });
 
-  test("POST /login", function (done) {
-    // request(app)
-    //   .post("/auth/login")
-    //   .send({
-    //     email: usuario,
-    //     contrasegna: password,
-    //   })
-    //   .expect(200)
-    //   .expect(
-    //     validate(
-    //       Joi.object({
-    //         token: Joi.string(),
-    //       })
-    //     )
-    //   )
-    //   .end(done);
-    done();
+  describe("POST /login", () => {
+    test("Regresa un token", async function () {
+      let contrasegna = faker.internet.password();
+      const user = await createUser.getUser({ contrasegna });
+      await request(app)
+        .post("/auth/login")
+        .send({
+          email: user.email,
+          contrasegna: contrasegna,
+        })
+        .expect(200)
+        .expect(
+          validate(
+            Joi.object({
+              token: Joi.string(),
+            })
+          )
+        );
+    });
   });
-  test("POST /rol", () => {});
+
+  test("POST /rol", (done) => {
+    const rol = "mesero";
+    createUser
+      .getUser({ rol })
+      .then((user) =>
+        request(app)
+          .post("/auth/rol")
+          .set("Authorization", `Bearer ${user.token}`)
+          .expect(({ body }) => expect(body.rol).toBe(rol))
+      )
+      .catch(done);
+  });
 });
