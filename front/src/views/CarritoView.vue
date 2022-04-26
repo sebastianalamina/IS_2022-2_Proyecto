@@ -41,6 +41,9 @@
                     <button class="b-elimina-item">Elimina</button>
                 </div>
             </div>
+            <div class="confirmar">
+                <button class="b-confirmar">Confirmar</button>
+            </div>
         </div>
     <Footer/>
 </template>
@@ -151,4 +154,7 @@
     font-size: 20px;
 }
 
+.confirmar{
+    margin: 5px;
+}
 </style>
