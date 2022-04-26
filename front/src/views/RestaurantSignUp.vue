@@ -30,6 +30,7 @@ export default {
     methods:{
       
       submitForm: function(e){
+        //create a 
         const instance = useAxios();
         console.log('revisando formulario')
         if(this.checarFormulario) 

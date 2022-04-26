@@ -17,8 +17,19 @@ Para hacer la conexion a la base de datos es necesario tener lo siguiente:
 * Abrir el puerto 5432 (esto es por default)
 * Nombrar la base de datos como "mi_restaurante"
 
+Para crear uan version de la base de datos basada en el schema de prisma  se utiliza el siguiente comando:
+```
+npx prisma push
+```
+
+Para poblar la base de datos con datos de prueba se utiliza el siguiente comando: 
+```
+npx prisma db seed
+```
+
 
 ## Testeo 
+
 Ejecutar lo siguiente:
 ```
 npm run pretest
