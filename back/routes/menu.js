@@ -8,12 +8,11 @@ const validate = require("../utils/middleware/validate");
 
 //@ts-check
 router.get(
-  "/display",
+  "/",
   validate(
     Joi.object({
-      id_menu: Joi.string().required(),
-      id_restaurante: Joi.string().required(),
-      id_franquicia: Joi.string().required(),
+      id_menu: Joi.number().integer().required(),
+      id_restaurante: Joi.number().integer().required(),
     }),
     "query"
   ),
@@ -25,11 +24,10 @@ router.get(
       where: {
         idmenu: id_menu,
         idrestaurante: id_restaurante,
-        idfranquicia: id_franquicia,
       },
     });
     console.log(platillo);
-    res.json(platillo);
+    res.status(200).json(platillo);
   }
 );
 
