@@ -104,6 +104,11 @@ const router = createRouter({
       name: 'ordenes_cliente',
       component: () => import('../views/OrdenesClienteView.vue')
     }
+    {
+      path: '/carrito',
+      name: 'carrito',
+      component: () => import('../views/CarritoView.vue')
+    }
   ]
 });
 
