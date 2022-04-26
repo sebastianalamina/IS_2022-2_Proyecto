@@ -3,8 +3,10 @@
 import NavBar from '../components/NavBar.vue'
 import Footer from '../components/Footer.vue'
 import axios from 'axios'
+import { useAxios } from '../axios_common'
 
 export default {
+    props: ['idrestaurante', 'idmenu'],
      components:{
         NavBar,
         Footer,
@@ -21,12 +23,13 @@ export default {
         }
     },
     mounted(){
-        console.log(this.$route.query.menu);
-        axios.get("http://localhost:3001/menu/",{
+
+        const instance = useAxios();
+        console.log(this.idrestaurante);
+        instance.get("/menu/",{
         params:{
-           id_menu:this.$route.query.menu ,
-           id_restaurante:this.$route.query.restaurante,
-           id_franquicia:this.$route.query.franquicia
+            id_menu : this.idmenu,
+           id_restaurante : this.idrestaurante ,
         }
         }).then((res)=>{
             this.cards = res.data
