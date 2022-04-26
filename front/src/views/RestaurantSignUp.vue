@@ -15,12 +15,12 @@ export default {
     data(){
       return{ 
         formulario:{
-          nombre : '',
-          estado :'', 
-          calle :'',
+          nombre : null,
+          estado :null, 
+          calle :null,
           cp : null,
           numero: null,
-          municipio :'',
+          municipio :null,
         },
         errores : [],
       }
