@@ -1,4 +1,6 @@
 <script>
+import {useAxios} from "../axios_common";
+import {useStore as useAuthStore} from "../stores/auth"
 
 export default {
   data(){
@@ -12,6 +14,8 @@ export default {
       password1Error:null,
       rol:null,
       rolError:null,
+      resultado:null,
+      resultadoError:null,
     }
   },
   methods:{
@@ -37,8 +41,31 @@ export default {
       if (!this.rol)
         this.rolError = "Campo requerido."
 
+      return !this.correoError && !this.password0Error && !this.password1Error && !this.rolError
+
+    },
+    register:function(e) {
       // Evita que se recargue la página.
       e.preventDefault();
+
+      //const authStore = useAuthStore();
+      const axios = useAxios();
+
+      if(!this.checkForm()) return
+      this.resultado = null
+      this.resultadoError = null
+
+      axios.post("/auth/register", {
+        email:this.correo,
+        contrasegna: this.password0,
+        rol: this.rol,
+      }).then((res)=>{
+        if (res.status == 200)
+          this.resultado = "Usuario creado con éxito."
+      })
+      .catch((error) => {
+        this.resultadoError = error.response.data.error
+      })
     },
   }
 }
@@ -48,12 +75,12 @@ export default {
 <template>
 
   <div class="mitad izquierda">
-    <form id="signup-box" @submit="checkForm"> <!-- action="/something" method="post"> -->
+    <form id="signup-box" @submit="register"> <!-- action="/something" method="post"> -->
 
       <section>
         <label class="form-label">* Correo electrónico</label>
         <p class="error" v-if="correoError">{{correoError}}</p>
-        <input type="text" class="form-control" v-model="correo">
+        <input type="email" class="form-control" v-model="correo">
       </section>
 
       <section>
@@ -79,7 +106,10 @@ export default {
           <option>Repartidor</option>
         </select>
       </section>
-      
+
+      <p class="resultado" v-if="resultado">{{resultado}}</p>
+      <p class="error" v-if="resultadoError">{{resultadoError}}</p>
+
       <input class="btn btn-secondary" type="submit" value="Registrarse">
 
     </form>
@@ -111,7 +141,10 @@ p.error {
   font-size: 12px;
 }
 
-
+p.resultado {
+  color:  green;
+  font-size: 12px;
+}
 
 .mitad {
   height: 100%;
