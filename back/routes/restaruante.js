@@ -9,6 +9,7 @@ const Joi = require("joi");
 const router = express.Router();
 const prisma = new PrismaClient();
 const validate = require("../utils/middleware/validate");
+const { json } = require("express");
 
 /**
  * @swagger
@@ -41,8 +42,39 @@ router.post( // post es para escribir, get para solicitar
 	    },
 	  });
 
-      res.status(201).json(restaurante);
+      res.status(301).json(restaurante);
   }
 );
+
+router.get(
+	"",
+	async (req,res)=>{
+		console.log("ruta vacia ");
+		const restaurante = await prisma.restaurante.findMany();
+		res.json(restaurante);
+	}
+)
+
+router.get(
+	"/",
+	validate(
+		Joi.object({
+			idrestaurante : Joi.number().integer(),
+		})
+		,
+	),
+	async (req,res)=>{
+		console.log("ruta no vacia");
+		const restaurante = await prisma.restaurante.findFirst({
+			where : {
+				...req.query
+			}
+		});
+
+		console.log(JSON.stringify(req.query))
+		
+		res.json(restaurante);
+	}
+)
 
 module.exports = router;
