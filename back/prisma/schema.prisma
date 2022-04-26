@@ -52,7 +52,7 @@ model cocinero {
   idadmin       Int
   idrestaurante Int
   nombre        String          @db.Char(100)
-  apatermo      String?         @db.Char(100)
+  apaterno      String?         @db.Char(100)
   amaterno      String?         @db.Char(100)
   idusuario     Int
   administrador administrador   @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_cocinero1")
@@ -89,16 +89,10 @@ model entregamesa {
   ordennormal   ordennormal @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_em2")
 }
 
-model franquicia {
-  idfranquicia Int           @id @default(autoincrement())
-  nombre       String        @db.VarChar(100)
-  restaurante  restaurante[]
-}
 
 model menu {
   idmenu        Int         @id @default(autoincrement())
   idrestaurante Int
-  idfranquicia  Int
   restaurante   restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_menu1")
   platillo      platillo[]
 }
@@ -189,7 +183,6 @@ model platillo {
   idplatillo       Int                @id @default(autoincrement())
   idmenu           Int
   idrestaurante    Int
-  idfranquicia     Int
   nombre           String             @db.VarChar(100)
   costo            Int
   menu             menu               @relation(fields: [idmenu], references: [idmenu], onDelete: Cascade, map: "fk_paltillo1")
@@ -229,14 +222,12 @@ model repartidor {
 
 model restaurante {
   idrestaurante       Int                   @id @default(autoincrement())
-  idfranquicia        Int
   nombre              String?               @db.VarChar(100)
   estado              String?               @db.VarChar(100)
   calle               String?               @db.VarChar(100)
   numero              Int?
   cp                  Int?
   municipio           String?               @db.VarChar(100)
-  franquicia          franquicia            @relation(fields: [idfranquicia], references: [idfranquicia], onDelete: NoAction, onUpdate: NoAction, map: "fk_restaurante")
   administrador       administrador[]
   cocinero            cocinero[]
   inventario          inventario[]
