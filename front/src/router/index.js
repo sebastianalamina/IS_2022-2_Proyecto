@@ -99,6 +99,11 @@ const router = createRouter({
 	name: 'inicioW_ordenes',
 	component: () => import('../views/OrdenesView.vue')
     },
+    {
+      path: '/ordenes',
+      name: 'ordenes_cliente',
+      component: () => import('../views/OrdenesClienteView.vue')
+    }
   ]
 });
 
