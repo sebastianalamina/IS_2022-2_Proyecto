@@ -103,7 +103,7 @@ const router = createRouter({
       path: '/ordenes',
       name: 'ordenes_cliente',
       component: () => import('../views/OrdenesClienteView.vue')
-    }
+    },
     {
       path: '/carrito',
       name: 'carrito',
