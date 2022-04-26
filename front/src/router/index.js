@@ -80,8 +80,9 @@ const router = createRouter({
       },
     },
     {
-      path: '/menu',
+      path: '/menu/:idrestaurante/:idmenu',
       name: 'menu',
+      props : true,
       component: () => import('../views/MenuView.vue')
     },
     {
