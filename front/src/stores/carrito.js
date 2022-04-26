@@ -13,34 +13,41 @@ export const useCarrito = defineStore("carrito", {
   state: () => ({
     platillos: {},
   }),
-  // getters: {
-  //   isLogged: (state) => state.token != null,
-  // },
+  getters: {
+    platillosArray: (state) =>
+      Object.values(state.platillos).filter((x) => !!x),
+  },
   actions: {
     // Acción para aumentar en uno el platillo
     increase(platillo) {
-      if (!"id" in platillo) throw new Error("platillo debe tener id");
-      if (platillo.id in this.platillos)
-        this.platillos[platillo.id] = createplatillo(
+      console.log(platillo.idplatillo);
+      if (!"idplatillo" in platillo)
+        throw new Error("platillo debe tener idplatillo");
+      if (platillo.idplatillo in this.platillos)
+        this.platillos[platillo.idplatillo] = createplatillo(
           platillo,
-          this.platillos[platillo.id].cantidad + 1
+          this.platillos[platillo.idplatillo].cantidad + 1
         );
-      else this.platillos[platillo.id] = createplatillo(platillo, 0);
+      else this.platillos[platillo.idplatillo] = createplatillo(platillo, 1);
     },
     set(platillo, cantidad) {
-      this.platillos[platillo.id] = createplatillo(platillo, cantidad);
+      this.platillos[platillo.idplatillo] = createplatillo(platillo, cantidad);
     },
     decrease(platillo) {
-      if (platillo.id in this.platillos)
-        this.platillos[platillo.id] = createplatillo(
+      if (platillo.idplatillo in this.platillos)
+        this.platillos[platillo.idplatillo] = createplatillo(
           platillo,
-          this.platillos[platillo.id].cantidad - 1
+          this.platillos[platillo.idplatillo].cantidad - 1
         );
-      if (this.platillos[platillo.id].cantidad <= 0)
-        delete this.platillos[platillo.id];
+      if (this.platillos[platillo.idplatillo].cantidad <= 0)
+        delete this.platillos[platillo.idplatillo];
     },
     remove(platillo) {
-      delete this.platillos[platillo.id];
+      delete this.platillos[platillo.idplatillo];
+    },
+    clean() {
+      this.platillos = [];
     },
   },
+  persist: true,
 });

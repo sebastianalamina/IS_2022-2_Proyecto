@@ -19,6 +19,10 @@ export default {
     getSrc(name) {
       return require("@/assets/${name}.jpeg");
     },
+    addPlatillo(platillo) {
+      let carrito = useCarrito();
+      carrito.increase(platillo);
+    },
   },
   mounted() {
     const instance = useAxios();
@@ -36,9 +40,6 @@ export default {
       .catch((err) => {
         console.log(err);
       });
-    let carrito = useCarrito();
-    carrito.add(1);
-    console.log(carrito);
   },
 };
 </script>
@@ -57,7 +58,12 @@ export default {
         >
           <h2>{{ card.nombre }}</h2>
           <img class="img_menu" :src="card.src" alt="imagen nos disponible" />
-          <input type="button" class="carrito" value="Añadir al carrito: " />
+          <input
+            type="button"
+            class="carrito"
+            value="Añadir al carrito: "
+            @click="addPlatillo(card)"
+          />
           <h3>${{ card.costo }}</h3>
         </div>
       </div>

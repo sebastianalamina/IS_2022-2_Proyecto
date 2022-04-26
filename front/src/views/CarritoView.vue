@@ -1,43 +1,32 @@
 <script>
 import NavBar from "../components/NavBar.vue";
 import Footer from "../components/Footer.vue";
+import { useCarrito } from "../stores/carrito";
+import { mapStores } from "pinia";
 
 export default {
   data() {
-    return {
-      cards: [
-        {
-          nombre: "Hamburguesa",
-          src: "src/assets/Hamburguesa.jpeg",
-          costo: 100,
-          cantidad: 1,
-        },
-        {
-          nombre: "Hamburguesa",
-          src: "src/assets/Hamburguesa.jpeg",
-          costo: 100,
-          cantidad: 1,
-        },
-        {
-          nombre: "Hamburguesa",
-          src: "src/assets/Hamburguesa.jpeg",
-          costo: 100,
-          cantidad: 1,
-        },
-        {
-          nombre: "Hamburguesa",
-          src: "src/assets/Hamburguesa.jpeg",
-          costo: 100,
-          cantidad: 1,
-        },
-        {
-          nombre: "Hamburguesa",
-          src: "src/assets/Hamburguesa.jpeg",
-          costo: 100,
-          cantidad: 1,
-        },
-      ],
-    };
+    return {};
+  },
+  computed: {
+    ...mapStores(useCarrito),
+  },
+  mounted() {
+    this.cards = this.carritoStore.platillosArray;
+  },
+  methods: {
+    aumenta(platillo) {
+      this.carritoStore.increase(platillo);
+    },
+    disminuye(platillo) {
+      this.carritoStore.decrease(platillo);
+    },
+    elimina(platillo) {
+      this.carritoStore.remove(platillo);
+    },
+    eliminaTodo() {
+      this.carritoStore.clean();
+    },
   },
 };
 </script>
@@ -47,9 +36,15 @@ export default {
   <div class="contenedor-carrito">
     <div class="cabecera">
       <h3 class="titulo">Tu carrito</h3>
-      <button class="b-eliminar-todo">Eliminar todo</button>
+      <button class="b-eliminar-todo" @click="eliminaTodo()">
+        Eliminar todo
+      </button>
     </div>
-    <div class="item-carrito" v-for="card in cards" v-bind:key="card.nombre">
+    <div
+      class="item-carrito"
+      v-for="card in this.carritoStore.platillosArray"
+      v-bind:key="card.nombre"
+    >
       <div class="contenedor-img">
         <img class="imagen-item" :src="card.src" />
       </div>
@@ -58,12 +53,12 @@ export default {
         <h3 class="item-info">Más información</h3>
       </div>
       <div class="contador"></div>
-      <button class="b-contador">-</button>
+      <button class="b-contador" @click="disminuye(card)">-</button>
       <div class="count">{{ card.cantidad }}</div>
-      <button class="b-contador">+</button>
+      <button class="b-contador" @click="aumenta(card)">+</button>
       <div class="precios">
         <div class="cantidad">${{ card.costo }}</div>
-        <button class="b-elimina-item">Elimina</button>
+        <button class="b-elimina-item" @click="elimina(card)">Elimina</button>
       </div>
     </div>
     <div class="confirmar">
