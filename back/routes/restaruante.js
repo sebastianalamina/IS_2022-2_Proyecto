@@ -8,6 +8,7 @@ const Joi = require("joi");
 
 const router = express.Router();
 const prisma = new PrismaClient();
+const validate = require("../utils/middleware/validate");
 
 /**
  * @swagger
@@ -20,7 +21,7 @@ const prisma = new PrismaClient();
  *                Hace falta pedir el numero en el formulario
  */
 router.post( // post es para escribir, get para solicitar
-  "/restaurant-signup",
+  "/",
   validate(
       Joi.object({ // Con los datos de la base de datos a dia de hoy 6/04
 	  nombre: Joi.string().required(),
@@ -28,19 +29,19 @@ router.post( // post es para escribir, get para solicitar
 	  calle:  Joi.string().required(),
 	  numero: Joi.number().required(),  
 	  cp:     Joi.number().required(),
-	  muni:   Joi.string().required(),
+	  municipio:  Joi.string().required(),
       })
   ),
   async (req, res) => {
-      const restaurante = await.prisma.restaurante.create(
+      const restaurante = await prisma.restaurante.create(
 	  {
-	      data: {
-		  ...req.body, // info checada en Joi
-	      },
-	  }
-      );
+	    data: {
+		idfranquicia: 1,
+		...req.body, // info checada en Joi
+	    },
+	  });
 
-      return.status(201).json(restaurante);
+      res.status(201).json(restaurante);
   }
 );
 
