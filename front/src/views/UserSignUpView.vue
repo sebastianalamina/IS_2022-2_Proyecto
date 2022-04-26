@@ -60,10 +60,13 @@ export default {
         contrasegna: this.password0,
         rol: this.rol,
       }).then((res)=>{
-        if (res.status == 200)
+        if (res.status == 200) {
           this.resultado = "Usuario creado con éxito."
+          this.$router.push("/login")
+        }
       })
       .catch((error) => {
+        console.log(error)
         this.resultadoError = error.response.data.error
       })
     },
