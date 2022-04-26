@@ -19,11 +19,6 @@ app.use(bodyParser.json({ limit: "10mb", extended: true }));
 app.use(cors());
 app.use(helmet());
 
-<<<<<<< HEAD
-app.use("/auth", require("./routes/auth.js"));
-app.use("/menu",require("./routes/menu.js"))
-app.use("/restaurant",require("./routes/restaurant.js"))
-=======
 app.use(
   morgan(":method :rol :url :status - :response-time ms", {
     skip: (req, res) => process.env.NODE_ENV === "test",
@@ -33,7 +28,6 @@ morgan.token("rol", function (req, res) {
   if (!req.authenticated) return "visitante";
   return req.user.rol;
 });
->>>>>>> origin/main
 
 app.use(bearerAuth);
 app.use("/auth", require("./routes/auth.js"));

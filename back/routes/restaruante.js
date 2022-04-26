@@ -16,7 +16,7 @@ const validate = require("../utils/middleware/validate");
  *   post:
  *     summary: Registra y regresa un restaurante.
  */
-router.post( // post es para escribir, get para solicitar
+router.post(
   "/",
   validate(
       Joi.object({ 
@@ -32,7 +32,6 @@ router.post( // post es para escribir, get para solicitar
       const restaurante = await prisma.restaurante.create(
 	  {
 	    data: {
-		idfranquicia: 1,
 		...req.body, // info checada en Joi
 	    },
 	  });

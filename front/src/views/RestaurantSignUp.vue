@@ -1,7 +1,6 @@
 <script>
 import NavBar from '../components/NavBar.vue'
 import Footer from '../components/Footer.vue'
-import RestaurantForm from '../components/RestaurantForm.vue'
 
 
 import { useAxios } from '../axios_common'
@@ -12,7 +11,6 @@ export default {
     components:{
         NavBar,
         Footer,
-        RestaurantForm
     },
     data(){
       return{ 
@@ -30,16 +28,15 @@ export default {
     methods:{
       
       submitForm: function(e){
-        //create a 
         const instance = useAxios();
         console.log('revisando formulario')
         if(this.checarFormulario) 
         {
           console.log('formulario correcto')
           console.log(JSON.stringify(this.formulario))
-          instance.post('/restaurantes',{
+          instance.post('/restaurante',{
             ...this.formulario
-          })
+          });
         }
         else
         {
@@ -84,16 +81,47 @@ export default {
 <div class="container-fluid">
     <div class="row">
         <div class="col-lg-6">
-    <restaurant-form
-    :nombre="formulario.nombre"
-    :calle="formulario.calle"
-    :cp="formulario.cp"
-    :estado="formulario.estado"
-    :errores="errores"
-    :submitMethod="submitForm"
-    :numero="formulario.numero"
-    :municipio="formulario.municipio" 
-    />
+    <form @submit.prevent="submitForm">
+
+  <div class="form-row">
+    <div class="form-group col-md-6">
+      <label>Nombre del restaurante</label>
+      <input v-model="formulario.nombre"  type="text" class="form-control"  placeholder="Nombre">
+    </div>
+    <div class="form-group col-md-6">
+      <label >Estado </label>
+      <input v-model="formulario.estado" type="text" class="form-control" placeholder="Estado">
+    </div>
+    <div class="form-group col-md-6">
+      <label >calle</label>
+      <input v-model="formulario.calle" type="text" class="form-control"  placeholder="Calle">
+    </div>
+    <div class="form-group col-md-6">
+      <label >numero</label>
+      <input v-model="formulario.numero" type="text" class="form-control"  placeholder="Calle">
+    </div>
+    <div class="form-group col-md-6">
+      <label >Codigo postal</label>
+      <input v-model="formulario.cp" type="text" class="form-control"  placeholder="codigo postal" >
+    </div>
+    <div class="form-group col-md-6">
+      <label >Municipio.</label>
+      <input v-model="formulario.municipio" type="text" class="form-control" placeholder="municipio">
+    </div>
+  </div>
+
+  <div v-if="errores.length != 0"  >
+    <b>Corrija los siguientes errores:
+    </b>
+    <ul>
+      <li  v-for="(error,i) in errores" :key="i" >
+        {{error}}
+      </li>
+    </ul>
+  </div>
+  
+  <button type="submit" class="btn btn-primary">Crear restaurante</button>
+</form>  
     
         </div>
         <div class="col-lg-6">
