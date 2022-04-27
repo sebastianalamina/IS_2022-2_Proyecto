@@ -2,6 +2,8 @@
 import NavBar from "../components/NavBar.vue";
 import Footer from "../components/Footer.vue";
 import { useAxios } from "../axios_common";
+import { useCarrito } from "../stores/carrito";
+
 
 export default {
   props: ["idrestaurante", "idmenu"],
@@ -18,6 +20,11 @@ export default {
     getSrc(name) {
       return require("@/assets/${name}.jpeg");
     },
+    addPlatillo(platillo) {
+      let carrito = useCarrito();
+      carrito.increase(platillo);
+    },
+
   },
   mounted() {
     const instance = useAxios();
@@ -53,7 +60,13 @@ export default {
         >
           <h2>{{ card.nombre }}</h2>
           <img class="img_menu" :src="card.src" alt="imagen nos disponible" />
-          <input type="button" class="carrito" value="Añadir al carrito: " />
+          <input
+            type="button"
+            class="carrito"
+            value="Añadir al carrito: "
+            @click="addPlatillo(card)"
+          />
+
           <h3>${{ card.costo }}</h3>
         </div>
       </div>
