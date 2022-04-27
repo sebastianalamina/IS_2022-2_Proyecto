@@ -4,6 +4,7 @@ import Footer from "../components/Footer.vue";
 import { useAxios } from "../axios_common";
 import { useCarrito } from "../stores/carrito";
 
+
 export default {
   props: ["idrestaurante", "idmenu"],
   components: {
@@ -23,6 +24,7 @@ export default {
       let carrito = useCarrito();
       carrito.increase(platillo);
     },
+
   },
   mounted() {
     const instance = useAxios();
@@ -64,6 +66,7 @@ export default {
             value="Añadir al carrito: "
             @click="addPlatillo(card)"
           />
+
           <h3>${{ card.costo }}</h3>
         </div>
       </div>

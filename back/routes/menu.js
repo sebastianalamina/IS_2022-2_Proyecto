@@ -9,6 +9,10 @@ const validate = require("../utils/middleware/validate");
 //@ts-check
 router.get(
   "/",
+  (req, res, next) => {
+    console.log("hola");
+    next();
+  },
   validate(
     Joi.object({
       id_menu: Joi.number().integer().required(),
@@ -19,14 +23,12 @@ router.get(
   async (req, res) => {
     let id_restaurante = req.query.id_restaurante;
     let id_menu = req.query.id_menu;
-    let id_franquicia = req.query.id_franquicia;
     const platillo = await prisma.platillo.findMany({
       where: {
         idmenu: id_menu,
         idrestaurante: id_restaurante,
       },
     });
-    console.log(platillo);
     res.status(200).json(platillo);
   }
 );
