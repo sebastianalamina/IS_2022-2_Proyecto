@@ -14,9 +14,33 @@ const roles = [
 
 async function seed(){ 
 
+    //Creamos 20 clientes
+    for (let i=0; i<20; i++){
+        const id_usuario_cliente = await client.usuario.create({
+            data : {
+                email : faker.internet.email(),
+                contrasegna : faker.internet.password(),
+                token : faker.random.alphaNumeric(20),
+                rol: "CLIENTE",
+            },
+            select : {
+                idusuario : true,
+            }
+        });
+
+        await client.repartidor.create({
+            data : {
+                nombre : faker.name.firstName(),
+                apatermo : faker.name.middleName(),
+                amaterno : faker.name.findName(),
+                idusuario : id_usuario_cliente.idusuario,
+            }
+        })
+    }
+
     //Creamos las entradas referentes a los restaurantes
+    // Creamos 4 restaurantes
     for (let i=0;i<3;i++){
-        // Creamos 4 restaurantes
         const id_restaurante = await client.restaurante.create({
             data:{
                 nombre : faker.name.firstName(),
@@ -30,6 +54,20 @@ async function seed(){
                 idrestaurante:true
             }
         });
+
+        // Le asignamos 100 resena a cada restaurante
+
+        await client.resena.createMany({
+            data: Array(100).fill(
+                {
+                    idrestaurante: id_restaurante.idrestaurante,
+                    texto : faker.lorem.sentence({words:100}),
+                    idusuario : parseInt(faker.datatype.number({min:1,max:15})),
+                    classificacion : parseInt(faker.datatype.number({min:1,max:5})),
+                    date : faker.date.past(),
+                }
+            ),
+        }); 
 
         const id_usuario_administrador = await client.usuario.create({
             data:{
@@ -160,29 +198,7 @@ async function seed(){
         })
     }
 
-    //Creamos 20 clientes
-    for (let i=0; i<20; i++){
-        const id_usuario_cliente = await client.usuario.create({
-            data : {
-                email : faker.internet.email(),
-                contrasegna : faker.internet.password(),
-                token : faker.random.alphaNumeric(20),
-                rol: "CLIENTE",
-            },
-            select : {
-                idusuario : true,
-            }
-        });
-
-        await client.repartidor.create({
-            data : {
-                nombre : faker.name.firstName(),
-                apatermo : faker.name.middleName(),
-                amaterno : faker.name.findName(),
-                idusuario : id_usuario_cliente.idusuario,
-            }
-        })
-    }
+    
     
 
     console.log("Database sembrada")
