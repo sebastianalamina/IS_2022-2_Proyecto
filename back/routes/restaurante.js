@@ -17,14 +17,12 @@ const { hasRole } = require("../utils/middleware/auth")
  *   post:
  *     summary: Registra y regresa un restaurante.
  *
- * Observaciones: No se solicita el id del restaurante,
- *                ¿Por default se debe incrementar?
- *                Hace falta pedir el numero en el formulario
  */
-router.post( // post es para escribir, get para solicitar
+router.post(
   "/",
+  hasRole(["ADMIN"]),
   validate(
-      Joi.object({ // Con los datos de la base de datos a dia de hoy 6/04
+      Joi.object({ 
 	  nombre: Joi.string().required(),
 	  estado: Joi.string().required(),
 	  calle:  Joi.string().required(),
@@ -37,7 +35,6 @@ router.post( // post es para escribir, get para solicitar
       const restaurante = await prisma.restaurante.create(
 	  {
 	    data: {
-		idfranquicia: 1,
 		...req.body, // info checada en Joi
 	    },
 	  });
@@ -46,30 +43,43 @@ router.post( // post es para escribir, get para solicitar
   }
 );
 
+/***
+ * @swagger
+ * /restaurante/idrestaurante:
+ *  get: 
+ * 		summary : Returns the restaurante with the given id
+ * 
+ */
+router.get("/:idrestaurante",
+  validate(
+	  Joi.object({
+		idrestaurante: Joi.number().integer().required(),
+	  }),
+	"params"),	
+	  async (req, res) => {
+		  const restaurante = await prisma.restaurante.findFirst({
+			  where: {
+				  idrestaurante: req.params.idrestaurante,
+			  },
+		  });
+		  res.json(restaurante);
+	  }
+)
+
 
 router.get(
 	"/",
 	validate(
 		Joi.object({
-			idrestaurante : Joi.number().integer(),
-		}),
-		"query"
-	),
+			skip : Joi.number().integer().min(0).default(0),
+		}), "query"),
 	async (req,res)=>{
-		if (Object.keys(req.query).length === 0){
-			console.log("query vacio");
-			const restaurante = await prisma.restaurante.findMany();
-			res.json(restaurante)
-		}else{
-			console.log("query no vacio");
-			console.log(JSON.stringify(req.query))
-			const restaurante = await prisma.restaurante.findFirst({
-				where : {
-					...req.query
-				}
-			});	
-			res.json(restaurante);
-		}	
+		const restaurante = await prisma.restaurante.findMany({
+			skip : req.query.skip,
+			take: 10,
+		});
+
+		res.json(restaurante)			
 	}
 )
 
