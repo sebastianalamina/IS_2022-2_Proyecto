@@ -5,7 +5,7 @@ import LoginView from "../views/LoginView.vue";
 import RestaurantSignUp from "../views/RestaurantSignUp.vue";
 import MenuView from "../views/MenuView.vue";
 import ClientsView from "../views/ClientsView.vue";
-=
+
 import { useStore as useAuthStore } from "../stores/auth";
 
 const router = createRouter({
