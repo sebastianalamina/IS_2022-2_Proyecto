@@ -39,13 +39,13 @@ router.post(
 	    },
 	  });
 
-      res.status(301).json(restaurante);
+      res.json(restaurante);
   }
 );
 
 /***
  * @swagger
- * /restaurante/idrestaurante:
+ * /restaurante/:idrestaurante
  *  get: 
  * 		summary : Returns the restaurante with the given id
  * 
@@ -72,11 +72,13 @@ router.get(
 	validate(
 		Joi.object({
 			skip : Joi.number().integer().min(0).default(0),
+			take : Joi.number().integer().min(1).default(10),
 		}), "query"),
 	async (req,res)=>{
+		const {skip,take} = req.query;
 		const restaurante = await prisma.restaurante.findMany({
-			skip : req.query.skip,
-			take: 10,
+			skip,
+			take,
 		});
 
 		res.json(restaurante)			
