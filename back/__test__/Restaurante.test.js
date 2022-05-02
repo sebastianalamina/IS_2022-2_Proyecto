@@ -6,7 +6,12 @@ describe("/menu", () => {
     userData = await user.getUser();
   });
 
-  test("GET /", () => {});
+  describe("GET /", () => {
+    test("paginacion de 1 elemento", () => {});
+    test("paginacion de 10 elemento", async () => {});
+    test("paginacion trae elementos distintos en distintas paginas", async () => {});
+    test("paginación no falla al al acabarse los elementos", async () => {});
+  });
   test("POST /", () => {});
   test("GET /?id", () => {});
 });

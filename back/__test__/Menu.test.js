@@ -16,18 +16,47 @@ describe("/menu", () => {
       return request(app)
         .get("/menu?skip=0&take=1")
         .set("Authorization", `Bearer ${userData.token}`)
-        .set("Rol", "MESERO")
+        .set("Rol", `Rol "MESERO" `)
         .expect(200)
         .then((res) => {
           expect(res.body.length).toBe(1);
         });
     });
-    test("paginacion de 10 elemento", () => {});
-    test("paginacion trae elementos distintos en distintas paginas", () => {});
-    test("paginación no falla al al acabarse los elementos", () => {});
+    test("paginacion de 10 elemento", async () => {
+      return request(app)
+        .get("/menu?skip=0&take=10")
+        .set("Authorization", `Bearer ${userData.token}`)
+        .set("Rol", `Rol "MESERO" `)
+        .expect(200)
+        .then((res) => {
+          expect(res.body.length).toBe(10);
+        });
+    });
+    test("paginacion trae elementos distintos en distintas paginas", async () => {
+
+      const res = await request(app)
+      .get("/menu?skip=0&take=10")
+      .set("Authorization", `Bearer ${userData.token}`)
+      .set("Rol", "MESERO");
+
+      const res2 = await request(app)
+      .get("/menu?skip=10&take=10")
+      .set("Authorization", `Bearer ${userData.token}`)
+      .set("Rol", "MESERO");
+
+      expect(res.body !== res2.body).toBe(true);
+    });
+
+    test("paginación no falla al al acabarse los elementos", async () => {
+      return request(app)
+        .get("/menu?skip=0&take=10000")
+        .set("Authorization", `Bearer ${userData.token}`)
+        .set("Rol", `Rol "MESERO" `)
+        .expect(200) 
+    });
   });
   // crea un elemento
-  test("POST /", () => {
+  test("POST /", async () => {
     return request(app)
     .post("/menu")
     .send({

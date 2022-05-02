@@ -13,7 +13,7 @@ const { estaAutenticado } = require("../utils/middleware/auth");
 
 router.get(
   "/:idmenu",
-  //estaAutenticado,
+  estaAutenticado,
   validate(
     Joi.object({
       idmenu: Joi.number().required(),
@@ -44,7 +44,7 @@ router.get(
 
 router.get(
   "/",
-  //estaAutenticado,
+  estaAutenticado,
   validate(
     Joi.object({
       skip: Joi.number().integer().min(0),
@@ -65,7 +65,7 @@ router.get(
 
 router.post(
   "/", 
-  // hasRole("administrador"),
+  hasRole("administrador"),
   validate(
     Joi.object({
       idrestaurante: Joi.number().required(),
