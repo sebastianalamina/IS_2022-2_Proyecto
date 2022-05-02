@@ -15,6 +15,13 @@ const { estaAutenticado } = require("../utils/middleware/auth");
  */
 router.get("/",
     estaAutenticado,
+    validate(
+        Joi.object({
+            skip : Joi.number().integer().min(0).default(0),
+            take : Joi.number().integer().min(1).default(10)
+        }),
+        "query"
+    ), 
     async (req, res) => { 
 		const resenas = await prisma.resena.findMany();
 		res.json(resenas)
