@@ -39,7 +39,7 @@ async function bearerAuth(req, res, next) {
       },
     });
     if (!user) {
-      return res.status(400).json({ error: "Invalid token" });
+      return next();
     } else {
       req.user = user;
       req.authenticated = true;

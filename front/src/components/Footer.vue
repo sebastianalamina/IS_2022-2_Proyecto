@@ -1,5 +1,5 @@
 <template>
-    <footer class="footer  py-3 bg-light">
+    <footer class="footer fixed-bottom  py-3 bg-light">
   <div class="container">
     <span class="text-muted">Place sticky footer content here.</span>
   </div>

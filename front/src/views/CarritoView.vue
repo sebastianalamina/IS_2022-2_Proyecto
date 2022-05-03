@@ -5,6 +5,10 @@ import { useCarrito } from "../stores/carrito";
 import { mapStores } from "pinia";
 
 export default {
+  components: {
+    NavBar,
+    Footer,
+  },
   data() {
     return {};
   },
@@ -27,6 +31,9 @@ export default {
     eliminaTodo() {
       this.carritoStore.clean();
     },
+    calculaTotal(){
+      this.carritoStore.platillosArray;
+    }
   },
 };
 </script>
@@ -60,6 +67,9 @@ export default {
         <div class="cantidad">${{ card.costo }}</div>
         <button class="b-elimina-item" @click="elimina(card)">Elimina</button>
       </div>
+    </div>
+    <div>
+    <p>Consumo total: {{ this.carritoStore.totalPagar}} $ </p>      
     </div>
     <div class="confirmar">
       <button class="b-confirmar">Confirmar</button>

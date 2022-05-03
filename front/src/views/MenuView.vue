@@ -22,6 +22,7 @@ export default {
     },
     addPlatillo(platillo) {
       let carrito = useCarrito();
+      console.log("este es el id del platillo",platillo.idplatillo)
       carrito.increase(platillo);
     },
 
@@ -30,7 +31,7 @@ export default {
     const instance = useAxios();
     console.log(this.idrestaurante);
     instance
-      .get("/menu/", {
+      .get("/menu", {
         params: {
           id_menu: this.idmenu,
           id_restaurante: this.idrestaurante,
@@ -40,6 +41,7 @@ export default {
         this.cards = res.data;
       })
       .catch((err) => {
+        console.log("aaaa")
         console.log(err);
       });
   },
@@ -59,6 +61,7 @@ export default {
           v-bind:key="card.idplatillo"
         >
           <h2>{{ card.nombre }}</h2>
+          <p> {{ card.idplatillo}} </p>
           <img class="img_menu" :src="card.src" alt="imagen nos disponible" />
           <input
             type="button"

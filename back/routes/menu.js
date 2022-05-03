@@ -8,11 +8,7 @@ const validate = require("../utils/middleware/validate");
 
 //@ts-check
 router.get(
-  "/",
-  (req, res, next) => {
-    console.log("hola");
-    next();
-  },
+  "/", 
   validate(
     Joi.object({
       id_menu: Joi.number().integer().required(),
