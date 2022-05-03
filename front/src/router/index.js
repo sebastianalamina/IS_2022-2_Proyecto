@@ -105,6 +105,11 @@ const router = createRouter({
       name: "carrito",
       component: () => import("../views/CarritoView.vue"),
     },
+    {
+      path: "/lista-restaurantes",
+      name: "lista de restaurantes",
+      component: () => import("../views/RestaurantList.vue"),
+    }
   ],
 });
 
