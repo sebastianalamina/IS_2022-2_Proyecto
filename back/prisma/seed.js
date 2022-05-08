@@ -113,7 +113,7 @@ async function seed() {
         },
       });
 
-      for (let k = 0; k < 4; k++) {
+      for (let k = 0; k < 25; k++) {
         // Creamos los cuatro platillos de cada uno de los menus
         await client.platillo.create({
           data: {
