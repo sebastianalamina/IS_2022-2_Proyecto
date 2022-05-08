@@ -1,6 +1,8 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useStore as useAuthStore } from "../stores/auth";
 
+import HomeView  from "../views/HomeView.vue"
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -108,6 +110,12 @@ const router = createRouter({
       path: "/lista-restaurantes",
       name: "lista de restaurantes",
       component: () => import("../views/RestaurantList.vue"),
+    },
+    {
+      path: "/restaurante/:idrestaurante",
+      name: "vista de restaurante individual",
+      props: true,
+      component: () => import("../views/Restaurante.vue")
     }
   ],
 });
