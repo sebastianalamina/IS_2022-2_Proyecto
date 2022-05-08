@@ -1,81 +1,78 @@
 <script>
 import {useAxios} from "../axios_common";
 import {useStore as useAuthStore} from "../stores/auth"
+import NavBar from "../components/NavBar.vue"
+import Footer from "../components/Footer.vue";
 
-export default {
-  data(){
-    return{
-      errors:[], // Arreglo de posibles errores del form.
-      correo:null,
-      correoError:null,
-      password0:null,
-      password0Error:null,
-      password1:null,
-      password1Error:null,
-      rol:null,
-      rolError:null,
-      resultado:null,
-      resultadoError:null,
-    }
-  },
-  methods:{
-    checkForm:function(e) {
-
-      // Chequeo del correo electrónico.
-      this.correoError = null
-      if (!this.correo)
-        this.correoError = "Campo requerido."
-
-      // Chequeo de la contraseña.
-      this.password0Error = null
-      this.password1Error = null
-      if (!this.password0)
-        this.password0Error = "Campo requerido."
-      if (!this.password1)
-        this.password1Error = "Campo requerido."
-      else if (this.password0 != this.password1)
-        this.password1Error = "Las contraseñas no coinciden."
-
-      // Chequeo del rol.
-      this.rolError = null
-      if (!this.rol)
-        this.rolError = "Campo requerido."
-
-      return !this.correoError && !this.password0Error && !this.password1Error && !this.rolError
-
+export default { 
+    data() {
+        return {
+            errors: [],
+            correo: null,
+            correoError: null,
+            password0: null,
+            password0Error: null,
+            password1: null,
+            password1Error: null,
+            rol: null,
+            rolError: null,
+            resultado: null,
+            resultadoError: null,
+        };
     },
-    register:function(e) {
-      // Evita que se recargue la página.
-      e.preventDefault();
-
-      //const authStore = useAuthStore();
-      const axios = useAxios();
-
-      if(!this.checkForm()) return
-      this.resultado = null
-      this.resultadoError = null
-
-      axios.post("/auth/register", {
-        email:this.correo,
-        contrasegna: this.password0,
-        rol: this.rol,
-      }).then((res)=>{
-        if (res.status == 200) {
-          this.resultado = "Usuario creado con éxito."
-          this.$router.push("/login")
-        }
-      })
-      .catch((error) => {
-        console.log(error)
-        this.resultadoError = error.response.data.error
-      })
+    methods: {
+        checkForm: function (e) {
+            // Chequeo del correo electrónico.
+            this.correoError = null;
+            if (!this.correo)
+                this.correoError = "Campo requerido.";
+            // Chequeo de la contraseña.
+            this.password0Error = null;
+            this.password1Error = null;
+            if (!this.password0)
+                this.password0Error = "Campo requerido.";
+            if (!this.password1)
+                this.password1Error = "Campo requerido.";
+            else if (this.password0 != this.password1)
+                this.password1Error = "Las contraseñas no coinciden.";
+            // Chequeo del rol.
+            this.rolError = null;
+            if (!this.rol)
+                this.rolError = "Campo requerido.";
+            return !this.correoError && !this.password0Error && !this.password1Error && !this.rolError;
+        },
+        register: function (e) {
+            // Evita que se recargue la página.
+            e.preventDefault();
+            //const authStore = useAuthStore();
+            const axios = useAxios();
+            if (!this.checkForm())
+                return;
+            this.resultado = null;
+            this.resultadoError = null;
+            axios.post("/auth/register", {
+                email: this.correo,
+                contrasegna: this.password0,
+                rol: this.rol,
+            }).then((res) => {
+                if (res.status == 200) {
+                    this.resultado = "Usuario creado con éxito.";
+                    this.$router.push("/login");
+                }
+            })
+                .catch((error) => {
+                console.log(error);
+                this.resultadoError = error.response.data.error;
+            });
+        },
     },
-  }
+    components: { NavBar, Footer }
 }
 
 </script>
 
 <template>
+  <NavBar/>
 
   <div class="mitad izquierda">
     <form id="signup-box" @submit="register"> <!-- action="/something" method="post"> -->
@@ -124,6 +121,7 @@ export default {
       <p>¡Ahora puedes pedir mesa antes de llegar al restaurante!</p>
     </section>
   </div>
+
 
 </template>
 

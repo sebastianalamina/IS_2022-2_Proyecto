@@ -12,8 +12,11 @@ const Joi = require("joi");
 // Middleware.
 const validate = require('../utils/middleware/validate');
 
-/* Este GET no requiere nada y devuelve a
-todos los empleados en formato JSON. */
+/**
+ * @swagger	
+ * empeleado/ 
+ * Returns a list of each type of empleados in the database.
+ */
 router.get(
 	'/',
 	async (req, res) => {
@@ -21,8 +24,9 @@ router.get(
 		// let tablas_a_buscar = ['administrador', 'cocinero', 'mesero', 'repartidor']
 		// let ids_a_buscar = ['idadmin', 'idcocinero', 'idmesero', 'idrepartidor']
 		let json_a_devolver = {}
-
 		// Recopilamosa los empleados de la BD...
+		req.user.rol 
+
 		json_a_devolver['administrador'] = await prisma.administrador.findMany();
 		json_a_devolver['cocinero'] = await prisma.cocinero.findMany();
 		json_a_devolver['mesero'] = await prisma.mesero.findMany();
