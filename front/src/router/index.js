@@ -1,12 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
-
-import LoginView from "../views/LoginView.vue";
-import RestaurantSignUp from "../views/RestaurantSignUp.vue";
-import MenuView from "../views/MenuView.vue";
-import ClientsView from "../views/ClientsView.vue";
-=
 import { useStore as useAuthStore } from "../stores/auth";
+
+import HomeView  from "../views/HomeView.vue"
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -111,6 +106,17 @@ const router = createRouter({
       name: "carrito",
       component: () => import("../views/CarritoView.vue"),
     },
+    {
+      path: "/lista-restaurantes",
+      name: "lista de restaurantes",
+      component: () => import("../views/RestaurantList.vue"),
+    },
+    {
+      path: "/restaurante/:idrestaurante",
+      name: "vista de restaurante individual",
+      props: true,
+      component: () => import("../views/Restaurante.vue")
+    }
   ],
 });
 

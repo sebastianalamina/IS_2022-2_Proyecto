@@ -12,6 +12,7 @@ const { estaAutenticado } = require("../utils/middleware/auth");
 //@ts-check
 
 router.get(
+
   "/:idmenu",
   estaAutenticado,
   validate(

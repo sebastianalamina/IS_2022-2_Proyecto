@@ -19,13 +19,10 @@ Para hacer la conexion a la base de datos es necesario tener lo siguiente:
 
 Para crear uan version de la base de datos basada en el schema de prisma  se utiliza el siguiente comando:
 ```
-npx prisma push
+npx prisma reset
 ```
 
-Para poblar la base de datos con datos de prueba se utiliza el siguiente comando: 
-```
-npx prisma db seed
-```
+
 
 
 ## Testeo 
