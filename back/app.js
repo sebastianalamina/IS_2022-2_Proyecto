@@ -36,6 +36,7 @@ app.use("/inventario", require("./routes/inventario.js"));
 app.use("/estado-platillo", require("./routes/estado-platillo.js"));
 app.use("/empleado", require("./routes/empleado.js"));
 app.use("/restaurante", require("./routes/restaurante.js"));
+app.use("/resenas", require("./routes/resenas.js"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

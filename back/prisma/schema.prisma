@@ -42,6 +42,7 @@ model cliente {
   usuario          usuario?           @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   modificarCarrito modificarCarrito[]
   carrito          carrito[]
+  resena           resena[]
 }
 
 model cocinero {
@@ -112,7 +113,6 @@ model ordenenvio {
   costo            Int
   contenidoorden   contenidoorden[]
   entregadomicilio entregadomicilio[]
-  // ordenescliente   ordenescliente[]
   prepararorden    prepararorden[]
   confcarrito      confirmacionCarrito[]
 }
@@ -161,7 +161,6 @@ model ordennormal {
   estado         estadoorden
   contenidoorden contenidoorden[]
   entregamesa    entregamesa[]
-  // ordenescliente ordenescliente[]
   prepararorden  prepararorden[]
   confcarrito    confirmacionCarrito[]
 }
@@ -242,16 +241,15 @@ model usuario {
   cocinero      cocinero[]
   mesero        mesero[]
   repartidor    repartidor[]
-  resena        resena[]
 }
 
 model resena {
   idresena       Int         @id @default(autoincrement())
   idrestaurante  Int
-  idusuario      Int
+  idcliente      Int
   classificacion Int
   date           DateTime    @db.Date
   texto          String      @db.VarChar(255)
-  usuario        usuario     @relation(fields: [idusuario], references: [idusuario], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena")
   restaurante    restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena2")
+  cliente        cliente     @relation(fields: [idcliente], references: [idcliente], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena3")
 }
