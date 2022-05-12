@@ -117,6 +117,12 @@ const router = createRouter({
       props: true,
       component: () => import("../views/Restaurante.vue"),
     },
+    {
+      path: "/ordenes",
+      name: "ordenes pendientes",
+      props: true,
+      component: () => import("../views/OrdenesPendientes.vue"),
+    },
     // {
     //   path: "/resenas/:idrestaurante",
     //   name: "vista de resenas de restaurante",
