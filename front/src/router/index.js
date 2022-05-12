@@ -117,12 +117,12 @@ const router = createRouter({
       props: true,
       component: () => import("../views/Restaurante.vue"),
     },
-    {
-      path: "/resenas/:idrestaurante",
-      name: "vista de resenas de restaurante",
-      props: true,
-      component: () => import("../views/ReviewListView.vue"),
-    },
+    // {
+    //   path: "/resenas/:idrestaurante",
+    //   name: "vista de resenas de restaurante",
+    //   props: true,
+    //   component: () => import("../views/ReviewListView.vue"),
+    // },
   ],
 });
 
