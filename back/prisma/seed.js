@@ -8,6 +8,7 @@ const roles = ["CLIENTE", "MESERO", "COCINERO", "ADMINISTRADOR", "REPARTIDOR"];
 
 async function seed() {
   //Creamos las entradas referentes a los restaurantes
+  let restaurantes = [];
   for (let i = 0; i < 3; i++) {
     // Creamos 4 restaurantes
     const id_restaurante = await client.restaurante.create({
@@ -23,6 +24,8 @@ async function seed() {
         idrestaurante: true,
       },
     });
+
+    restaurantes.push(id_restaurante);
 
     const id_usuario_administrador = await client.usuario.create({
       data: {
@@ -153,27 +156,52 @@ async function seed() {
   }
 
   //Creamos 20 clientes
+  let clientes = [];
   for (let i = 0; i < 20; i++) {
-    const id_usuario_cliente = await client.usuario.create({
-      data: {
+    const id_cliente = await client.usuario.create({
+      data: { 
         email: faker.internet.email(),
         contrasegna: faker.internet.password(),
-        token: faker.random.alphaNumeric(20),
+        token : faker.datatype.uuid(),
         rol: "CLIENTE",
       },
-      select: {
-        idusuario: true,
-      },
-    });
+      select:{
+        idusuario:true
+      }
+      });
 
-    await client.repartidor.create({
-      data: {
-        nombre: faker.name.firstName(),
-        apatermo: faker.name.middleName(),
-        amaterno: faker.name.findName(),
-        idusuario: id_usuario_cliente.idusuario,
-      },
-    });
+    const cliente = await client.cliente.create({
+      data:{
+            nombre: faker.name.firstName(),
+            apatermo : faker.name.middleName(),
+            amaterno : faker.name.lastName(),
+            estado : faker.address.state(),
+            calle : faker.address.streetName(),
+            numero : faker.datatype.number(),
+            cp : parseInt(faker.address.zipCode()),
+            municipio : faker.address.county(),
+            idusuario : id_cliente.idusuario
+        },
+        select:{
+         idcliente: true 
+        }
+    })
+    clientes.push(cliente);
+  }
+
+  for(let i = 0; i < restaurantes.length; i++){
+    for(let j = 0; j <clientes.length; j++){
+      console.log(restaurantes[i].idrestaurante);
+      await client.resena.create({
+        data: {
+          classificacion: faker.random.number({min:1, max:5}),
+          texto : faker.lorem.sentence(),
+          date : faker.date.recent(),
+          idrestaurante : restaurantes[i].idrestaurante,
+          idcliente : clientes[j].idcliente
+        }
+      })
+    }
   }
 
   console.log("Database sembrada");

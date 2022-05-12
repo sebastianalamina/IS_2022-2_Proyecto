@@ -61,6 +61,13 @@ router.get("/:idrestaurante",
 			  where: {
 				  idrestaurante: req.params.idrestaurante,
 			  },
+			  include:{
+				  _count: {
+					  select:{
+						  resena : true
+					  }
+				  }
+			  }
 		  });
 		  res.json(restaurante);
 	  }

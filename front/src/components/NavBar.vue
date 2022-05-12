@@ -13,7 +13,7 @@ export default{
 <template>
   <!-- As a link -->
 <nav class="navbar sticky-top navbar-light bg-light">
-  <a class="navbar-brand" href="/">Tu restaurante  </a>
+  <a class="navbar-brand" href="/"> Find my food  </a>
   <a href="/carrito"> Carrito: {{store.cantidadPlatillos}}</a>
 </nav>
 
