@@ -91,11 +91,11 @@ const router = createRouter({
       name: "inicioW",
       component: () => import("../views/WaiterView.vue"),
     },
-    {
-      path: "/inicioW/ordenes",
-      name: "inicioW_ordenes",
-      component: () => import("../views/OrdenesView.vue"),
-    },
+    // {
+    //   path: "/inicioW/ordenes",
+    //   name: "inicioW_ordenes",
+    //   component: () => import("../views/OrdenesView.vue"),
+    // },
     {
       path: "/ordenes",
       name: "ordenes_cliente",
@@ -115,14 +115,14 @@ const router = createRouter({
       path: "/restaurante/:idrestaurante",
       name: "vista de restaurante",
       props: true,
-      component: () => import("../views/Restaurante.vue")
+      component: () => import("../views/Restaurante.vue"),
     },
     {
       path: "/resenas/:idrestaurante",
       name: "vista de resenas de restaurante",
-      props :true,
-      component : ()=> import("../views/ReviewListView.vue")
-    }
+      props: true,
+      component: () => import("../views/ReviewListView.vue"),
+    },
   ],
 });
 
