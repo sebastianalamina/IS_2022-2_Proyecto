@@ -13,7 +13,8 @@ export default {
 },
     data(){
         return {
-            restaurante : {}
+            restaurante : {},
+            maxPages : 0,
         };
     },
     props:[
@@ -25,6 +26,7 @@ export default {
         .then((res)=>{
             console.log(res.data)
             this.restaurante = res.data
+            this.maxPages = res.data._count.resena
         })
         .catch((err)=> {
             console.log(err)
@@ -41,7 +43,10 @@ export default {
 <p>{{restaurante.calle}} {{restaurante.numero}} {{restaurante.estado}}, {{restaurante.municipio}}</p>
 <a :href="'/menu/' + restaurante.idrestaurante + '/1'"> menu del restaurante</a>
 <br>
-<a :href="'/resenas/' + restaurante.idrestaurante ">resenas restaurante</a>
+
+
+<router-link :to="{ path : '/resenas/' + restaurante.idrestaurante , query:{max : this.maxPages } }"> Resenas </router-link>
+
 <Footer/>
 </template>
 

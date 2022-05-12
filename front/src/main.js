@@ -17,6 +17,7 @@ mergeGlobalConfig({
 });
 
 const app = createApp(App);
+app.use(VuesticPlugin);
 
 const pinia = createPinia();
 pinia.use(piniaPluginPersistedstate);

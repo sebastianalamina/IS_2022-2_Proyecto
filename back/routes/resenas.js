@@ -14,7 +14,7 @@ const { estaAutenticado } = require("../utils/middleware/auth");
  *  description: Obtiene todas las reseñas almacenadas en la base de datos
  */
 router.get("/",
-    estaAutenticado,
+    //estaAutenticado,
     validate(
         Joi.object({
             skip : Joi.number().integer().min(0).default(0),
@@ -37,7 +37,7 @@ router.get("/",
  * utilizando el id del restaurante como parametro y tomando skip y take.
  */
 router.get("/:idrestaurante",
-    estaAutenticado,
+    //estaAutenticado,
     validate(
         Joi.object({ 
             idrestaurante: Joi.number().integer().required(),
@@ -59,6 +59,20 @@ router.get("/:idrestaurante",
             },
             skip,
             take,
+            include :{
+               cliente : {
+                   select :{
+                       nombre:true,
+                       amaterno : true,
+                       apatermo : true,
+                   },
+               }, 
+               restaurante:{
+                   select:{
+                       nombre: true
+                   }
+               }
+            }
         });
         res.json(resenas);
     });
@@ -70,25 +84,39 @@ router.get("/:idrestaurante",
  * en el body. 
  */
 router.post("/",
-    estaAutenticado,
+    //estaAutenticado,
     validate(
         Joi.object({
             idrestaurante: Joi.number().integer().required(),
             idusuario: Joi.number().integer().required(),
-            comentario: Joi.string().required(),
-            calificacion: Joi.number().integer().required(),
+            texto: Joi.string().required(),
+            classificacion: Joi.number().integer().required(),
+            date : Joi.date().iso()
         }),
         "body"),
     async (req, res) => {
-        const { idrestaurante, idusuario, comentario, calificacion } = req.body;
+        const { idrestaurante, idusuario, texto, classificacion, date } = req.body;
         const resena = await prisma.resena.create({
-            data: {
-                idrestaurante,
-                idusuario,
-                comentario,
-                calificacion,
+            data: { 
+                texto : texto,
+                classificacion : classificacion,
+                date : date ,
+                idcliente : idusuario,
+                idrestaurante : idrestaurante , 
             },
+            include :{
+               cliente : {
+                   select :{
+                       nombre:true,
+                       amaterno : true,
+                       apatermo : true,
+                   },
+               }, 
+            }
+            
         });
         res.json(resena);
     }
 );
+
+module.exports = router;
