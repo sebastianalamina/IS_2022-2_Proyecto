@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import { useStore as useAuthStore } from "../stores/auth";
 
-import HomeView  from "../views/HomeView.vue"
+import HomeView from "../views/HomeView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -108,15 +108,15 @@ const router = createRouter({
     },
     {
       path: "/lista-restaurantes",
-      name: "lista de restaurantes",
+      name: "restaurantes",
       component: () => import("../views/RestaurantList.vue"),
     },
     {
       path: "/restaurante/:idrestaurante",
-      name: "vista de restaurante individual",
+      name: "vista de restaurante",
       props: true,
-      component: () => import("../views/Restaurante.vue")
-    }
+      component: () => import("../views/Restaurante.vue"),
+    },
   ],
 });
 

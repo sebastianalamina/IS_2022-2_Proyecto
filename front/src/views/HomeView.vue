@@ -11,7 +11,6 @@ function sendAxiosAuth() {
 </script>
 
 <template>
-  <NavBar />
   <main>
     <button @click="sendAxiosAuth"></button>
   </main>
