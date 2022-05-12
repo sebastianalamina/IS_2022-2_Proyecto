@@ -6,10 +6,11 @@ export default {
     components:{    
     NavBar,
     Footer
-},
-    props:[
-        "idrestaurante",
-    ],
+    },
+    props: {
+        idrestaurante : null,
+        maxPagination : 0
+    },
     data(){
         return {
             resenas : [],
@@ -18,7 +19,6 @@ export default {
               texto: null,
               calificacion : null
             },
-            maxPagination: 0,
             pagActual : 0,
         }
     },
@@ -96,18 +96,14 @@ export default {
         .catch((err)=>{
             console.log(err);
         });
-        console.log(this.$route.query.max)
-        this.maxPagination = Math.ceil(parseInt(this.$route.query.max) / 10) 
     }
 
 }
 </script>
 
 <template>
-<NavBar/>
 
 <div class="container pt-3 pb-3">
-<h1>Resenas del restaurante {{this.resenas[0].restaurante.nombre}}</h1>
 
 <div class="container">
   <button class="btn btn-primary" @click="this.showForm"> Anadir resena</button>
@@ -132,34 +128,19 @@ export default {
 </form>
 </div>
 
-<div class="container pt-4">
-<nav aria-label="Page navigation example">
-  <ul class="pagination">
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Previous">
-        <span aria-hidden="true">&laquo;</span>
-      </a>
-    </li>
-    <li class="page-item" v-for="i in parseInt(this.maxPagination)" :key="i"><a class="page-link"  @click="this.getPage(i)">{{i}}</a></li> 
-    <li class="page-item">
-      <a class="page-link" href="#" aria-label="Next">
-        <span aria-hidden="true">&raquo;</span>
-      </a>
-    </li>
-  </ul>
-</nav>
-<div class="card" v-for="resena in resenas" :key="resena.idresena">
-    <div class="card-body bt-3">
-        <h4>Nombre del usuario: {{ resena.cliente.nombre + resena.cliente.amaterno + resena.cliente.apatermo}} </h4>
-        Fecha de publicacion : {{resena.date}}
-        <h5> Calificacion : {{resena.classificacion}}</h5>
+<div>
+  
+<div  v-for="resena in resenas" :key="resena.idresena">
+    <div >
+        Nombre del usuario: {{ resena.cliente.nombre + resena.cliente.amaterno + resena.cliente.apatermo}} 
+         Fecha de publicacion : {{resena.date}}
+        Calificacion : {{resena.classificacion}}
        {{resena.texto}} 
     </div>
 </div>
 </div>
 </div>
 
-<Footer/>
 </template>
 
 

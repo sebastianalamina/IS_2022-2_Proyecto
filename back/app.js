@@ -13,7 +13,7 @@ const port = 3001;
 BigInt.prototype["toJSON"] = function () {
   return this.toString();
 };
-
+app.disable('etag')
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(bodyParser.json({ limit: "10mb", extended: true }));
 app.use(cors());
