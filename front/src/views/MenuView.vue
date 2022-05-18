@@ -1,16 +1,10 @@
 <script>
-import NavBar from "../components/NavBar.vue";
-import Footer from "../components/Footer.vue";
 import { useAxios } from "../axios_common";
 import { useCarrito } from "../stores/carrito";
 
-
 export default {
   props: ["idrestaurante", "idmenu"],
-  components: {
-    NavBar,
-    Footer,
-  },
+  components: {},
   data() {
     return {
       cards: [],
@@ -22,26 +16,20 @@ export default {
     },
     addPlatillo(platillo) {
       let carrito = useCarrito();
-      console.log("este es el id del platillo",platillo.idplatillo)
+      console.log("este es el id del platillo", platillo.idplatillo);
       carrito.increase(platillo);
     },
-
   },
   mounted() {
     const instance = useAxios();
     console.log(this.idrestaurante);
     instance
-      .get("/menu", {
-        params: {
-          id_menu: this.idmenu,
-          id_restaurante: this.idrestaurante,
-        },
-      })
+      .get(`/menu/${this.idmenu}`)
       .then((res) => {
+        console.log(res);
         this.cards = res.data;
       })
       .catch((err) => {
-        console.log("aaaa")
         console.log(err);
       });
   },
@@ -49,7 +37,6 @@ export default {
 </script>
 
 <template>
-  <NavBar />
   <h1>Menu del Restaurante:</h1>
   <form id="login-box" @submit="checkForm">
     <!-- action="/something" method="post"> -->
@@ -61,7 +48,7 @@ export default {
           v-bind:key="card.idplatillo"
         >
           <h2>{{ card.nombre }}</h2>
-          <p> {{ card.idplatillo}} </p>
+          <p>{{ card.idplatillo }}</p>
           <img class="img_menu" :src="card.src" alt="imagen nos disponible" />
           <input
             type="button"
@@ -75,8 +62,6 @@ export default {
       </div>
     </div>
   </form>
-
-  <Footer />
 </template>
 
 <style scoped>

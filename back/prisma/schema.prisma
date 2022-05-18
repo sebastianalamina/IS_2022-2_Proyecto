@@ -14,6 +14,7 @@ enum estadoorden {
   ENTREGADA
 }
 
+//"idrestaurante" es uno-uno porque se quitó "registrorestaurante"
 model administrador {
   idadmin             Int                   @id @default(autoincrement())
   idrestaurante       Int
@@ -27,7 +28,7 @@ model administrador {
   mesero              mesero[]
   registrorestaurante registrorestaurante[]
 }
-
+// Juntar atributos en usuario
 model cliente {
   idcliente        Int                @id @default(autoincrement())
   nombre           String             @db.Char(100)
@@ -45,6 +46,7 @@ model cliente {
   resena           resena[]
 }
 
+//Quitar (y de otras tablas)
 model cocinero {
   idcocinero    Int             @id @default(autoincrement())
   idadmin       Int
@@ -59,6 +61,7 @@ model cocinero {
   prepararorden prepararorden[]
 }
 
+//Verificar modificaciones sobre ordennormal y ordenenvio
 model contenidoorden {
   idcontenidoorden Int          @id @default(autoincrement())
   idordennormal    Int?
@@ -69,6 +72,8 @@ model contenidoorden {
   platillo         platillo?    @relation(fields: [idplatillo], references: [idplatillo], onDelete: Cascade, map: "fk_contenido3")
 }
 
+//Quitar "estado" (lo tendrá orden)
+//Verificar modificaciones sobre ordennormal y ordenenvio
 model entregadomicilio {
   identregadomicilio Int        @id @default(autoincrement())
   idrepartidor       Int
@@ -78,6 +83,7 @@ model entregadomicilio {
   repartidor         repartidor @relation(fields: [idrepartidor], references: [idrepartidor], onDelete: Cascade, map: "fk_or1")
 }
 
+// Quitar completamente
 model entregamesa {
   identregamesa Int         @id @default(autoincrement())
   idmesero      Int
@@ -108,6 +114,7 @@ model mesero {
   entregamesa   entregamesa[]
 }
 
+//Quitar
 model ordenenvio {
   idordenenvio     Int                   @id @default(autoincrement())
   costo            Int
@@ -118,6 +125,7 @@ model ordenenvio {
 }
 
 //relacion cliente carrito
+//Quitar
 model modificarCarrito {
   idcliente Int     @unique
   idcarrito BigInt  @unique
@@ -126,6 +134,7 @@ model modificarCarrito {
 }
 
 //carritos
+//Quitar
 model carrito {
   idcarrito        BigInt                @id @default(autoincrement())
   costo            Int
@@ -136,6 +145,7 @@ model carrito {
 }
 
 //contenido del carrito del usuario
+//Quitar
 model contenidoCarrito {
   idcarrito          BigInt
   idplatillo         Int
@@ -145,6 +155,7 @@ model contenidoCarrito {
 }
 
 //relaciona carrito con las ordenes
+//Quitar
 model confirmacionCarrito {
   idcarrito     BigInt       @unique
   idordenenvio  Int
@@ -155,6 +166,7 @@ model confirmacionCarrito {
   ordennormal   ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_cc2")
 }
 
+//Quitar (juntar en Orden)
 model ordennormal {
   idordennormal  Int                   @id @default(autoincrement())
   costo          Int
@@ -165,6 +177,9 @@ model ordennormal {
   confcarrito    confirmacionCarrito[]
 }
 
+
+// agregar compo
+// img Sting varchar(1000)
 model platillo {
   idplatillo       Int                @id @default(autoincrement())
   idmenu           Int
@@ -176,6 +191,7 @@ model platillo {
   contenidocarrito contenidoCarrito[]
 }
 
+//Quitar
 model prepararorden {
   idpreparaorden Int          @id @default(autoincrement())
   idcocinero     Int
@@ -186,6 +202,7 @@ model prepararorden {
   ordennormal    ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_po3")
 }
 
+//Quitar
 model registrorestaurante {
   idregistrorestaurante Int           @id @default(autoincrement())
   idadmin               Int
@@ -205,6 +222,7 @@ model repartidor {
   entregadomicilio entregadomicilio[]
 }
 
+//Quitar "cocinero" de aquí
 model restaurante {
   idrestaurante       Int                   @id @default(autoincrement())
   nombre              String?               @db.VarChar(100)
@@ -222,6 +240,7 @@ model restaurante {
   resena              resena[]
 }
 
+//Quitar
 model inventario {
   idinventario  Int         @id @default(autoincrement())
   nombre        String      @db.Char(100)
@@ -230,6 +249,9 @@ model inventario {
   restaurante   restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventario")
 }
 
+//Juntar atributos de los usuarios aquí
+//Checar typos (apatermo)
+// confirmado bool
 model usuario {
   email         String?         @db.VarChar(255)
   contrasegna   String?         @db.VarChar(255)
@@ -243,13 +265,20 @@ model usuario {
   repartidor    repartidor[]
 }
 
+//classificacion
+//idcliente tiene que ser unique
 model resena {
   idresena       Int         @id @default(autoincrement())
   idrestaurante  Int
-  idcliente      Int
+  idcliente      Int         @unique
   classificacion Int
   date           DateTime    @db.Date
   texto          String      @db.VarChar(255)
   restaurante    restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena2")
   cliente        cliente     @relation(fields: [idcliente], references: [idcliente], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena3")
 }
+
+//agregar  mesa 
+//idmesa PK
+//idrestarurante FK
+//ocupado bool
