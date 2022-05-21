@@ -85,12 +85,6 @@ export default {
       </ul>
     </p>
 
-    <section id="social-buttons">
-      <button class="btn btn-outline-primary">Facebook</button>
-      <button class="btn btn-outline-danger">Google</button>
-      <button class="btn btn-outline-dark">Apple</button>
-    </section>
-
     <section id="forgotten-pass">
       <a href="#">
         Olvidé mi contraseña
@@ -120,11 +114,6 @@ export default {
 
 #pass-zone {
   padding-bottom: 30px;
-}
-
-#social-buttons {
-  padding-top: 30px;
-  padding-bottom: 10px;
 }
 
 #forgotten-pass {
