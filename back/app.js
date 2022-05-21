@@ -13,7 +13,7 @@ const port = 3001;
 BigInt.prototype["toJSON"] = function () {
   return this.toString();
 };
-app.disable('etag')
+app.disable("etag");
 app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
 app.use(bodyParser.json({ limit: "10mb", extended: true }));
 app.use(cors());
@@ -37,6 +37,7 @@ app.use("/estado-platillo", require("./routes/estado-platillo.js"));
 app.use("/empleado", require("./routes/empleado.js"));
 app.use("/restaurante", require("./routes/restaurante.js"));
 app.use("/resenas", require("./routes/resenas.js"));
+app.use("/orden", require("./routes/orden.js"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

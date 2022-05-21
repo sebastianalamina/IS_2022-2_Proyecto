@@ -117,6 +117,12 @@ const router = createRouter({
       props: true,
       component: () => import("../views/Restaurante.vue"),
     },
+    {
+      path: "/repartidor/orden",
+      name: "ordenes de repartidor",
+      props: true,
+      component: () => import("../views/repartidor/Ordenes.vue"),
+    },
     // {
     //   path: "/resenas/:idrestaurante",
     //   name: "vista de resenas de restaurante",

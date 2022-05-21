@@ -43,8 +43,9 @@ model orden {
   esCarrito        Boolean
   pagado           Boolean
   costo            Int
+  identregadomicilio Int?
   contenido        contenidoorden[]
-  entrega          entregadomicilio[]
+  entrega          entregadomicilio? 
 }
 
 //quité orden normal y orden envio
