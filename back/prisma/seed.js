@@ -33,6 +33,8 @@ async function seed() {
         contrasegna: faker.internet.password(),
         token: faker.random.alphaNumeric(20),
         rol: roles[3],
+        confirmado: faker.datatype.boolean(), // ¡Poblando con usuarios que ya confirmaron su correo, y con usuarios que no!
+        nombre: faker.name.firstName(), // Llenando sólo el nombre de los usuarios.
       },
       select: {
         idusuario: true,
@@ -44,9 +46,10 @@ async function seed() {
       data: {
         idusuario: id_usuario_administrador.idusuario,
         idrestaurante: id_restaurante.idrestaurante,
-        nombre: faker.name.firstName(),
-        apatermo: faker.name.lastName(),
-        amaterno: faker.name.middleName(),
+        // Nombre completo ahora en tabla "Usuario".
+        //nombre: faker.name.firstName(),
+        //apatermo: faker.name.lastName(),
+        //amaterno: faker.name.middleName(),
       },
       select: {
         idadmin: true,
@@ -54,6 +57,7 @@ async function seed() {
     });
 
     //Creamos dos cocineros para el restaurante
+    /*
     for (let n = 0; n < 2; n++) {
       const id_usuario_cocinero = await client.usuario.create({
         data: {
@@ -61,6 +65,8 @@ async function seed() {
           contrasegna: faker.internet.password(),
           token: faker.random.alphaNumeric(20),
           rol: roles[2],
+          confirmado: faker.datatype.boolean(), // ¡Poblando con usuarios que ya confirmaron su correo, y con usuarios que no!
+          nombre: faker.name.firstName(), // Llenando sólo el nombre de los usuarios.
         },
         select: {
           idusuario: true,
@@ -71,13 +77,15 @@ async function seed() {
         data: {
           idadmin: id_administrador.idadmin,
           idrestaurante: id_restaurante.idrestaurante,
-          nombre: faker.name.firstName(),
-          apaterno: faker.name.middleName(),
-          amaterno: faker.name.lastName(),
+          // Nombre completo ahora en tabla "Usuario".
+          //nombre: faker.name.firstName(),
+          //apaterno: faker.name.middleName(),
+          //amaterno: faker.name.lastName(),
           idusuario: id_usuario_cocinero.idusuario,
         },
       });
     }
+    */
 
     // Creamos tres meseros para el restaurante
     for (let n = 0; n < 3; n++) {
@@ -87,6 +95,8 @@ async function seed() {
           contrasegna: faker.internet.password(),
           token: faker.random.alphaNumeric(20),
           rol: roles[1],
+          confirmado: faker.datatype.boolean(), // ¡Poblando con usuarios que ya confirmaron su correo, y con usuarios que no!
+          nombre: faker.name.firstName(), // Llenando sólo el nombre de los usuarios.
         },
         select: {
           idusuario: true,
@@ -97,9 +107,10 @@ async function seed() {
         data: {
           idadmin: id_administrador.idadmin,
           idrestaurante: id_restaurante.idrestaurante,
-          nombre: faker.name.firstName(),
-          apatermo: faker.name.middleName(),
-          amaterno: faker.name.lastName(),
+          // Nombre completo ahora en tabla "Usuario".
+          //nombre: faker.name.firstName(),
+          //apaterno: faker.name.middleName(),
+          //amaterno: faker.name.lastName(),
           idusuario: id_usuario_meseros.idusuario,
         },
       });
@@ -124,10 +135,25 @@ async function seed() {
             idrestaurante: id_restaurante.idrestaurante,
             nombre: faker.commerce.productName(),
             costo: parseInt(faker.commerce.price(0, 1000, 0)),
+            img: faker.internet.url(), // Poblando imágenes con enlaces.
           },
         });
       }
     }
+
+    // Agregamos un número arbitrario de mesas.
+    for (let i = 0; i < faker.datatype.number({min:6, max:40}); i++) {
+      await client.mesa.create({
+        data: {
+          idrestaurante: id_restaurante.idrestaurante,
+          ocupada: faker.datatype.boolean(), // Poblando con mesas ocupadas y disponibles.
+        },
+        select: {
+          idmesa: true,
+        },
+      });
+    }
+
   }
 
   // Creamos 10 repartidores
@@ -139,6 +165,8 @@ async function seed() {
         contrasegna: faker.internet.password(),
         token: faker.random.alphaNumeric(20),
         rol: "REPARTIDOR",
+        confirmado: faker.datatype.boolean(), // ¡Poblando con usuarios que ya confirmaron su correo, y con usuarios que no!
+        nombre: faker.name.firstName(), // Llenando sólo el nombre de los usuarios.
       },
       select: {
         idusuario: true,
@@ -147,9 +175,10 @@ async function seed() {
 
     await client.repartidor.create({
       data: {
-        nombre: faker.name.firstName(),
-        apatermo: faker.name.middleName(),
-        amaterno: faker.name.findName(),
+        // Nombre completo ahora en tabla "Usuario".
+        //nombre: faker.name.firstName(),
+        //apaterno: faker.name.middleName(),
+        //amaterno: faker.name.lastName(),
         idusuario: id_usuario_repartidor.idusuario,
       },
     });
@@ -164,6 +193,8 @@ async function seed() {
         contrasegna: faker.internet.password(),
         token : faker.datatype.uuid(),
         rol: "CLIENTE",
+        confirmado: faker.datatype.boolean(), // ¡Poblando con usuarios que ya confirmaron su correo, y con usuarios que no!
+        nombre: faker.name.firstName(), // Llenando sólo el nombre de los usuarios.
       },
       select:{
         idusuario:true
@@ -172,14 +203,16 @@ async function seed() {
 
     const cliente = await client.cliente.create({
       data:{
-            nombre: faker.name.firstName(),
-            apatermo : faker.name.middleName(),
-            amaterno : faker.name.lastName(),
-            estado : faker.address.state(),
-            calle : faker.address.streetName(),
-            numero : faker.datatype.number(),
-            cp : parseInt(faker.address.zipCode()),
-            municipio : faker.address.county(),
+            // Nombre completo ahora en tabla "Usuario".
+            // nombre: faker.name.firstName(),
+            // apatermo : faker.name.middleName(),
+            // amaterno : faker.name.lastName(),
+            // Dirección completa ahora en tabla "Usuario".
+            // estado : faker.address.state(),
+            // calle : faker.address.streetName(),
+            // numero : faker.datatype.number(),
+            // cp : parseInt(faker.address.zipCode()),
+            // municipio : faker.address.county(),
             idusuario : id_cliente.idusuario
         },
         select:{
@@ -191,10 +224,10 @@ async function seed() {
 
   for(let i = 0; i < restaurantes.length; i++){
     for(let j = 0; j <clientes.length; j++){
-      console.log(restaurantes[i].idrestaurante);
+      //console.log(restaurantes[i].idrestaurante);
       await client.resena.create({
         data: {
-          classificacion: faker.random.number({min:1, max:5}),
+          classificacion: faker.datatype.number({min:1, max:5}),
           texto : faker.lorem.sentence(),
           date : faker.date.recent(),
           idrestaurante : restaurantes[i].idrestaurante,
