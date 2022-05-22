@@ -7,7 +7,8 @@ export default {
   },
   data(){
     return{
-      empleados: null,
+      empleados_a_enseñar: null,
+      id: null,
     }
   },
   methods:{
@@ -17,9 +18,34 @@ export default {
       axios.get('/empleado')
         .then((res) => {
           this.empleados = res.data;
+          this.empleados_a_enseñar = JSON.parse(JSON.stringify(this.empleados))
         })
-        .catch(console.log)
+        .catch((error) => {
+          console.log(error)
+        });
     },
+    filtrarID(e) {
+      // Para que no recargue la página.
+      e.preventDefault();
+
+      // Reiniciando la lista.
+      this.empleados_a_enseñar = JSON.parse(JSON.stringify(this.empleados))
+
+      // Si no se introduce ID, no se hace nada.
+      if (this.id == null || this.id == "")
+        return
+
+      // Filtrando...
+      let llave;
+      for (llave in this.empleados) {
+        this.empleados_a_enseñar[llave] = this.empleados[llave].filter((x) => {
+          console.log(x)
+          console.log(x["idrestaurante"], this.id)
+          return x['idrestaurante'] == parseInt(this.id);
+        });
+      }
+
+    }
   }
 }
 
@@ -27,9 +53,15 @@ export default {
 
 <template>
 
-  <div class="columna">
-  <div v-for="(lista_empleados, puesto) in empleados">
+  <div class="total">
+  <div v-for="(lista_empleados, puesto) in empleados_a_enseñar" class="columna">
     <h1>Empleados tipo {{puesto}}</h1>
+    <div class="derecha" v-if="puesto !== 'repartidor'">
+      Filtrar por ID restaurante:
+      <form @submit="filtrarID">
+        <input type="number" v-model="this.id">
+      </form>
+    </div>
     <div v-if="lista_empleados.length == 0">No hay empleados tipo {{puesto}} registrados en la Base de Datos.</div>
     <div class="empleado" v-for="empleado in lista_empleados">
       <!-- <img :src="'src/assets/'+empleado.img"> -->
@@ -49,10 +81,16 @@ export default {
 
 <style>
 
-.columna {
+.total {
   padding-top: 20px;
-  width: 60%;
+  width: 95%;
   margin: auto;
+}
+
+.columna {
+  padding-right: 20px;
+  float: left;
+  width: 33%;
 }
 
 .empleado {
@@ -65,6 +103,18 @@ export default {
 .derecha{
   padding-top: 0px !important;
   float: right;
+}
+
+h1{
+  display: inline;
+}
+
+form{
+  display: inline;
+}
+
+input{
+  width: 70px;
 }
 
 img{
