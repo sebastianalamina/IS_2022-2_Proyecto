@@ -39,8 +39,6 @@ export default {
       let llave;
       for (llave in this.empleados) {
         this.empleados_a_enseñar[llave] = this.empleados[llave].filter((x) => {
-          console.log(x)
-          console.log(x["idrestaurante"], this.id)
           return x['idrestaurante'] == parseInt(this.id);
         });
       }
