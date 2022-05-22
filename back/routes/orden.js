@@ -10,6 +10,25 @@ const prisma = new PrismaClient();
 
 // TODO:  agregar restaurantes a la base de datos y query
 
+async function bloqueaSiTieneOrdenesPendientes(req, res, next) {
+  const repartidor = await prisma.repartidor.findFirst({
+    where: { idusuario: req.user.idusuario },
+  });
+  const ordenesPendientes = await prisma.entregadomicilio.count({
+    where: {
+      idrepartidor: repartidor.idrepartidor,
+      orden: {
+        estado: { not: estadoorden.ENTREGADA },
+      },
+    },
+  });
+  if (ordenesPendientes > 0)
+    return res.status(403).send({
+      error: "No puedes tomar mas ordenes, ya tienes una activa.",
+    });
+  next();
+}
+
 router.get(
   "/disponibles",
   //hasRole(roles.REPARTIDOR),
@@ -19,7 +38,9 @@ router.get(
     }),
     "query"
   ),
+  bloqueaSiTieneOrdenesPendientes,
   async (req, res) => {
+    //if repartidor tiene ordenes sin entregar no puede tomar mas ordenes
     const ordenesADomicilioDisponibles = {
       estado: { in: [estadoorden.EN_PROCESO, estadoorden.RECIBIDA] },
       entrega: { is: null },
@@ -29,7 +50,9 @@ router.get(
       where: ordenesADomicilioDisponibles,
     });
     if (numOrdenes == 0 || numOrdenes <= req.query.skip)
-      return res.send({ orden: null });
+      return res
+        .status(403)
+        .send({ orden: null, error: "No hay mas ordenes disponibles" });
     skip = (req.user.idusuario + req.query.skip) % numOrdenes;
     orden = await prisma.orden.findFirst({
       where: ordenesADomicilioDisponibles,
@@ -48,6 +71,7 @@ router.get(
     }),
     "params"
   ),
+  bloqueaSiTieneOrdenesPendientes,
   async (req, res) => {
     const count = await prisma.orden.count({
       where: {
@@ -57,7 +81,7 @@ router.get(
         domicilio: { not: undefined },
       },
     });
-    if (count == 0) return res.send({ error: "order not available" });
+    if (count == 0) return res.send({ error: "orden no disponible" });
     const repartidor = await prisma.repartidor.findFirst({
       where: { idusuario: req.user.idusuario },
     });
