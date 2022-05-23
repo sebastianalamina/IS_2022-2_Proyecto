@@ -13,6 +13,7 @@ let skip = 0;
 
 async function aceptar() {
   await axios.get(`/orden/${numOrden.value}/aceptar`);
+  //TODO: enviar al usuario a página informativa
 }
 function rechazar() {
   skip++;

@@ -94,4 +94,49 @@ router.get(
     res.send({ entrega });
   }
 );
+
+router.post(
+  "/:id/estado",
+  validate(
+    Joi.object({
+      id: Joi.number().integer(),
+    }),
+    "params"
+  ),
+  validate(
+    Joi.object({
+      estado: Joi.string().valid(...Object.values(estadoorden)),
+    })
+  ),
+  async (req, res) => {
+    const orden = await prisma.orden.update({
+      where: { idorden: req.params.id },
+      data: { estado: req.body.estado },
+    });
+    res.json(orden);
+  }
+);
+
+router.get(
+  "/pendiente",
+  //hasRole(roles.REPARTIDOR),
+  async (req, res) => {
+    const repartidor = await prisma.repartidor.findFirst({
+      where: { idusuario: req.user.idusuario },
+    });
+    const orden = await prisma.entregadomicilio.findFirst({
+      where: {
+        idrepartidor: repartidor.idrepartidor,
+        orden: {
+          estado: { not: estadoorden.ENTREGADA },
+        },
+      },
+      include: {
+        orden: true,
+      },
+    });
+    res.json(orden);
+  }
+);
+
 module.exports = router;
