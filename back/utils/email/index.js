@@ -2,16 +2,24 @@ const nodemailer = require("nodemailer");
 const fs = require("fs").promises;
 var hogan = require("hogan.js");
 
-// // construct template string
-// var template = "Hello {{world}}!";
-
-// // compile template
-// var hello = hogan.compile(template);
-
+/**
+ * Mailer class representa una instancia de enviador de correo.
+ * @example
+ * new Mailer().send({
+ *  to: "davidalencia@gmail.com",
+ *  subject: "otra prueba",
+ *  //message: "hi",
+ *  html: "utils/email/templates/confirmaCorreo.mustache",
+ *  context: {
+ *    username: "david",
+ *  },
+ *});
+ */
 class Mailer {
-  static myemail = "findmyrestaurant@outlook.es";
-  static mypass = "encuentramirestaurante1";
+  static myemail = "findmyrestaurant@outlook.es"; //nuestro correo
+  static mypass = "encuentramirestaurante1"; //nuestra contraseña
   constructor() {
+    //singleton para tener una sola conexion con al servidor de correos
     if (Mailer.transport == undefined)
       Mailer.transport = nodemailer.createTransport({
         host: "smtp-mail.outlook.com", // hostname "Hotmail"
@@ -27,6 +35,15 @@ class Mailer {
       });
   }
 
+  /**
+   * Método para enviar un correo
+   * @param {object} info
+   * @param {string} info.to A quien va el correo
+   * @param {string} info.subject El asunto del correo
+   * @param {string?} info.message Mensaje del correo
+   * @param {string?} info.html Ruta donde se encuentra el archivo en mustache
+   * @param {object?} info.context Objeto con las variables del archivo mustache
+   */
   async send(info) {
     if (info.html != undefined) await this.sendTemplate(info);
     else await this.sendMessage(info);
@@ -66,13 +83,4 @@ class Mailer {
   }
 }
 
-new Mailer().send({
-  to: "davidalencia@gmail.com",
-  subject: "otra prueba",
-  //message: "hi",
-  //html: "<h1>hola {{username}}<h1/>",
-  html: "utils/email/templates/confirmaCorreo.mustache",
-  context: {
-    username: "david",
-  },
-});
+module.exports = Mailer;
