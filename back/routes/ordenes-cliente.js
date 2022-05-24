@@ -10,6 +10,37 @@ const { hasRole } = require("../utils/middleware/auth");
 const { estaAutenticado } = require("../utils/middleware/auth");
 
 
+//crea una orden
+router.post("/",
+    estaAutenticado,
+    hasRole("cliente"),
+    validate(
+        Joi.object({
+            idorden: Joi.number().integer.required(),
+            mesa: Joi.string(),
+            domicilio: Joi.string(),
+            estado: Joi.number().integer().required(),
+            esCarrito: Joi.boolean().required(),
+            pagado: Joi.boolean().required(),
+            costo: Joi.number().required()
+        }),
+        "body"
+    ),
+    async (req,res) => {
+        const {idorden, mesa, domicilio, estado, esCarrito, pagado, costo} = req.body;
+        const orden = await prisma.orden.create({
+            idorden : idorden,
+            mesa : mesa,
+            domicilio : domicilio,
+            estado : estado,
+            esCarrito : esCarrito,
+            pagado : pagado,
+            costo : costo,
+        });
+        res.json(orden)
+    }
+)
+
 //Regresa la orden dado un id
 router.get("/:idorden",
     validate(
@@ -48,37 +79,6 @@ router.get("/:idorden/platillos",
             }
         });
         res.json(platillos)
-    }
-)
-
-//crea una orden
-router.post("/",
-    estaAutenticado,
-    hasRole("cliente"),
-    validate(
-        Joi.object({
-            idorden: Joi.number().integer.required(),
-            mesa: Joi.string(),
-            domicilio: Joi.string(),
-            estado: Joi.number().integer().required(),
-            esCarrito: Joi.boolean().required(),
-            pagado: Joi.boolean().required(),
-            costo: Joi.number().required()
-        }),
-        "body"
-    ),
-    async (req,res) => {
-        const {idorden, mesa, domicilio, estado, esCarrito, pagado, costo} = req.body;
-        const orden = await prisma.orden.create({
-            idorden : idorden,
-            mesa : mesa,
-            domicilio : domicilio,
-            estado : estado,
-            esCarrito : esCarrito,
-            pagado : pagado,
-            costo : costo,
-        });
-        res.json(orden)
     }
 )
 
