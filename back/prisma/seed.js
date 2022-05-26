@@ -148,9 +148,6 @@ async function seed() {
           idrestaurante: id_restaurante.idrestaurante,
           ocupada: faker.datatype.boolean(), // Poblando con mesas ocupadas y disponibles.
         },
-        select: {
-          idmesa: true,
-        },
       });
     }
 
