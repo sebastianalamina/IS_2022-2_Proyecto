@@ -34,10 +34,11 @@ app.use("/auth", require("./routes/auth.js"));
 app.use("/menu", require("./routes/menu.js"));
 app.use("/inventario", require("./routes/inventario.js"));
 app.use("/estado-platillo", require("./routes/estado-platillo.js"));
+app.use("/mesa", require("./routes/mesa.js"));
+app.use("/ordenes-mesa", require("./routes/ordenes-mesa.js"));
 app.use("/empleado", require("./routes/empleado.js"));
 app.use("/restaurante", require("./routes/restaurante.js"));
 app.use("/resenas", require("./routes/resenas.js"));
-app.use("/ordenes-cliente", require("./routes/ordenes-cliente.js"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
