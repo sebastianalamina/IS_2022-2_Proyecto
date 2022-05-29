@@ -16,7 +16,7 @@ router.post("/",
     hasRole("cliente"),
     validate(
         Joi.object({
-            idorden: Joi.number().integer.required(),
+            idorden: Joi.number().integer().required(),
             mesa: Joi.string(),
             domicilio: Joi.string(),
             estado: Joi.number().integer().required(),
@@ -45,7 +45,7 @@ router.post("/",
 router.get("/:idorden",
     validate(
         Joi.object({
-            idorden: Joi.number.integer().required(),
+            idorden: Joi.number().integer().required(),
         }),
         "params"
     ),
@@ -67,7 +67,7 @@ router.get("/:idorden",
 router.get("/:idorden/platillos",
     validate(
         Joi.object({
-            idorden: Joi.number.integer().required(),
+            idorden: Joi.number().integer().required(),
         }),
         "params"
     ),
@@ -89,7 +89,7 @@ router.post('/:idorden/:idplatillo',
     validate(
         Joi.object({
             idorden: Joi.number().integer().required(),
-            idplatillo: Joi.number.integer().required(),
+            idplatillo: Joi.number().integer().required(),
         }),
         "body"
     ),
@@ -110,7 +110,7 @@ router.delete('/:idorden/:idplatillo',
     validate(
         Joi.object({
             idorden: Joi.number().integer().required(),
-            idplatillo: Joi.number.integer().required(),
+            idplatillo: Joi.number().integer().required(),
         }),
         "body"
     ),
