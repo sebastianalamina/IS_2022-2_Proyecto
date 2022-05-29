@@ -17,6 +17,7 @@ router.post("/",
     validate(
         Joi.object({
             idorden: Joi.number().integer().required(),
+            idcliente: Joi.number().integer().required(),
             mesa: Joi.string(),
             domicilio: Joi.string(),
             estado: Joi.number().integer().required(),
@@ -63,6 +64,53 @@ router.get("/:idorden",
     }
 )
 
+//Regresa el carrito de un cliente
+router.get("/:idcliente/carrito",
+     validate(
+        Joi.object({
+            idcliente: Joi.number().integer().required(),
+        }),
+        "params"
+    ),
+    async (req, res) => {
+
+        const orden = await prisma.orden.findFirst({
+            where: {
+                idcliente: req.params.idcliente,
+                esCarrito: true
+            },
+
+        });
+
+        res.json(orden)
+
+    }
+)
+
+//ordenes de un cliente que no son carrito
+router.get("/:idcliente/ordenes",
+     validate(
+        Joi.object({
+            idcliente: Joi.number().integer().required(),
+        }),
+        "params"
+    ),
+    async (req, res) => {
+
+        const orden = await prisma.orden.findMany({
+            where: {
+                idcliente: req.params.idcliente,
+                esCarrito: false
+            },
+
+        });
+
+        res.json(orden)
+
+    }
+)
+
+
 //platillos de una orden/carrito dado el id
 router.get("/:idorden/platillos",
     validate(
@@ -91,10 +139,10 @@ router.post('/:idorden/:idplatillo',
             idorden: Joi.number().integer().required(),
             idplatillo: Joi.number().integer().required(),
         }),
-        "body"
+        "params"
     ),
     async (req,res) => {
-        const { idorden, idplatillo} = req.body;
+        const { idorden, idplatillo} = req.params;
         const platillo = await prisma.contenidoorden.create({
             idorden : idorden,
             idplatillo : idplatillo,
@@ -112,10 +160,10 @@ router.delete('/:idorden/:idplatillo',
             idorden: Joi.number().integer().required(),
             idplatillo: Joi.number().integer().required(),
         }),
-        "body"
+        "params"
     ),
     async (req, res) => {
-        const {idorden, idplatillo} = req.body;
+        const {idorden, idplatillo} = req.params;
         const paltillo = await prisma.contenidoorden.delete({
             where: {
                 idorden : idorden,
