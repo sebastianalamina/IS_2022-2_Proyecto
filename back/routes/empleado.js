@@ -82,11 +82,8 @@ router.post("/",
 
 
 
-/**
- * @swagger	
- * empeleado/ 
- * Returns a list of each type of empleados in the database.
- */
+/* Este GET no requiere nada y devuelve a
+todos los empleados en formato JSON. */
 router.get(
 	'/',
 	esAdministrador,
@@ -140,6 +137,7 @@ router.delete("/mesero",
 		});
 		console.log("datos del usuario eliminado :",JSON.stringify(usuarioeliminado));
 		res.status(202).send("Empleado borrado");
+
 	}
 );
 

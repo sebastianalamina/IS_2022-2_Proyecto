@@ -13,7 +13,7 @@ export default {
         email : null,
         rol : "MESERO",
       },
-      listaKey : 0
+      listaKey : 0,
     }
   },
   methods:{
@@ -65,6 +65,26 @@ export default {
           console.log(err.response.data.error)
         });
     },
+    filtrarID(e) {
+      // Para que no recargue la página.
+      e.preventDefault();
+
+      // Reiniciando la lista.
+      this.empleados_a_enseñar = JSON.parse(JSON.stringify(this.empleados))
+
+      // Si no se introduce ID, no se hace nada.
+      if (this.id == null || this.id == "")
+        return
+
+      // Filtrando...
+      let llave;
+      for (llave in this.empleados) {
+        this.empleados_a_enseñar[llave] = this.empleados[llave].filter((x) => {
+          return x['idrestaurante'] == parseInt(this.id);
+        });
+      }
+
+    }
   }
 }
 
@@ -138,16 +158,23 @@ export default {
   </va-list>
 
 
+
   </div>
 
 </template>
 
 <style>
 
-.columna {
+.total {
   padding-top: 20px;
-  width: 60%;
+  width: 95%;
   margin: auto;
+}
+
+.columna {
+  padding-right: 20px;
+  float: left;
+  width: 33%;
 }
 
 .empleado {
@@ -160,6 +187,18 @@ export default {
 .derecha{
   padding-top: 0px !important;
   float: right;
+}
+
+h1{
+  display: inline;
+}
+
+form{
+  display: inline;
+}
+
+input{
+  width: 70px;
 }
 
 img{

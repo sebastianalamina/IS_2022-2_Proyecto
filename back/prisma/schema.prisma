@@ -30,6 +30,7 @@ model cliente {
   idusuario Int      @unique
   usuario   usuario? @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   resena    resena[]
+  orden     orden[]
 }
 
 //eliminé cocinero y sus apariciones en otras tablas
@@ -37,14 +38,18 @@ model cliente {
 //crear tabla orden
 model orden {
   idorden       Int                @id @default(autoincrement())
-  mesa          String
-  domicilio     String
+  idmesa        Int
+  idrestaurante Int?
+  idcliente     Int?
+  domicilio     String?
   estado        estadoorden
   esCarrito     Boolean
   pagado        Boolean
   costo         Int
   idrestaurante Int
-  restaurante   restaurante        @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, onUpdate: Cascade, map: "fk_orden1")
+  cliente       cliente?            @relation(fields: [idcliente], references: [idcliente], onDelete: Cascade, onUpdate: Cascade, map: "fk,orden3")
+  mesa          mesa?              @relation(fields: [idmesa], references: [idmesa], onDelete: Cascade, map: "fk_orden1")
+  restaurante   restaurante?       @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_orden2")
   contenido     contenidoorden[]
   entrega       entregadomicilio[]
 }
@@ -124,12 +129,12 @@ model repartidor {
 
 model restaurante {
   idrestaurante Int             @id @default(autoincrement())
-  nombre        String         @db.VarChar(100)
-  estado        String         @db.VarChar(100)
-  calle         String         @db.VarChar(100)
-  numero        Int
-  cp            Int
-  municipio     String        @db.VarChar(100)
+  nombre        String?         @db.VarChar(100)
+  estado        String?         @db.VarChar(100)
+  calle         String?         @db.VarChar(100)
+  numero        Int?
+  cp            Int?
+  municipio     String?         @db.VarChar(100)
   administrador administrador[]
   menu          menu[]
   mesero        mesero[]
@@ -178,4 +183,5 @@ model mesa {
   idrestaurante Int
   ocupada       Boolean
   restaurante   restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, onUpdate: Cascade, map: "fk_mesa")
+  orden         orden[]
 }
