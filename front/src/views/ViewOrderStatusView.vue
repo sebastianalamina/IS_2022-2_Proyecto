@@ -6,12 +6,13 @@ export default {
     return{
       queried: false, // ¿Ya se introdujo un ID?
       id: null, // Lo introducirá el usuario.
-      es_domicilio: null, // Lo introducirá el usuario.
       estado: null, // Valores null, 0, 1, 2 y 3.
+      orden: null, // Resultado de GET.
+      estados_posibles: ["RECIBIDA","EN_PROCESO","EN_CAMINO","ENTREGADA"],
     }
   },
   methods:{
-    buscarID(e) {
+    async buscarID(e) {
       // Para que no recargue la página.
       e.preventDefault();
 
@@ -19,20 +20,17 @@ export default {
       if (this.id == null)
         return
 
-      // v-model no asigna "false" si un input de
-      // tipo "checkbox" queda vacío...
-      if (this.es_domicilio == null)
-        this.es_domicilio = false;
-
       // Consultamos con el Back.
       const axios = useAxios();
-      axios
+      await axios
         .get('/estado-platillo',
-          {params: { id_entrega:this.id, es_domicilio:this.es_domicilio }})
+          {params: { id_orden:this.id }})
         .then((res) => {
           this.orden = res;
         })
-        .catch(console.log)
+        .catch((error) => {
+          console.log(error.response.data)
+        })
 
       // Ya se consultó (independientemente de
       // si la orden está disponible o no).
@@ -40,15 +38,20 @@ export default {
 
       // Se actualiza el "estado" de la orden.
       // Si no, se queda en "null".
-      if (this.orden != null)
-        this.estado = this.orden.estado;
+      if (this.orden != null) {
+        this.estado = this.orden.data.estado;
+        for (var i = 0; i < this.estados_posibles.length; i++)
+          if (this.estado == this.estados_posibles[i])
+            this.estado = i
+      }
     },
     reiniciar(e) {
       // Reseteamos "queried" para volver a preguntarle
       // al usuario por un ID, y "estado" para limpiar.
-      // "id" y "es_domicilio" se quedan igual para que
+      // "id" se queda igual para que
       // el usuario pueda volver a ver lo que introdujo.
       this.queried = false;
+      this.orden = null;
       this.estado = null;
     },
   },
@@ -82,7 +85,7 @@ export default {
     </div>
 
     <div class="texto" v-if="this.estado == null">
-      La orden #{{this.id}} no ha sido recibida.
+      La orden #{{this.id}} no ha sido recibida en el sistema.
     </div>
     <div class="texto" v-else-if="this.estado == 0">
       La orden ya fue recibida, y pronto empezará a ser preparada.
@@ -107,8 +110,6 @@ export default {
     <form @submit="buscarID">
       <label class="form-label">Introduce el ID de la orden a consultar:</label><br>
       <input type="number" v-model="id"><br>
-      ¿Se pidió a domicilio?
-      <input class="form-check-input" type="checkbox" v-model="es_domicilio"><br>
       <input type="submit" value="Buscar">
     </form>
   </div>

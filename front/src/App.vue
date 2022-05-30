@@ -6,10 +6,10 @@ import { useStore as useAuth } from "./stores/auth";
 //hardocodeo para cambiar de usuario
 //TODO: borrar
 const auth = useAuth();
-auth.login("token", { rol: "REPARTIDOR" });
+//auth.login("token", { rol: "REPARTIDOR" });
 </script>
 
 <template>
-  <NavBar />
-  <RouterView />
+<NavBar/>
+<RouterView />
 </template>

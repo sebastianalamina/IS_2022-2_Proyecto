@@ -55,7 +55,8 @@ export default {
         contrasegna: this.password
       }).then((res)=>{
         const token = res.data.token
-        authStore.login(token)
+        const rol = res.data.rol
+        authStore.login(token,rol)
         this.$router.push("/")
       })
       .catch(console.log)
@@ -84,12 +85,6 @@ export default {
         <li v-for="error in errors">{{error}}</li>
       </ul>
     </p>
-
-    <section id="social-buttons">
-      <button class="btn btn-outline-primary">Facebook</button>
-      <button class="btn btn-outline-danger">Google</button>
-      <button class="btn btn-outline-dark">Apple</button>
-    </section>
 
     <section id="forgotten-pass">
       <a href="#">
@@ -120,11 +115,6 @@ export default {
 
 #pass-zone {
   padding-bottom: 30px;
-}
-
-#social-buttons {
-  padding-top: 30px;
-  padding-bottom: 10px;
 }
 
 #forgotten-pass {

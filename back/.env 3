@@ -1,0 +1,5 @@
+DATABASE_URL="postgresql://root:toor@db:5432/mi_restaurante"
+
+DB_USER=root
+DB_NAME=mi_restaurante
+PGPASS=toor
