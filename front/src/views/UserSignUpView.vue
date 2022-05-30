@@ -16,6 +16,8 @@ export default {
             password1Error: null,
             rol: null,
             rolError: null,
+            nombre : null,
+            nombreError : null,
             resultado: null,
             resultadoError: null,
         };
@@ -23,6 +25,9 @@ export default {
     methods: {
         checkForm: function (e) {
             // Chequeo del correo electrónico.
+            this.nombreError = null;
+            if(!this.nombre)
+              this.nombreError = "Nombre requerido";
             this.correoError = null;
             if (!this.correo)
                 this.correoError = "Campo requerido.";
@@ -54,6 +59,8 @@ export default {
                 email: this.correo,
                 contrasegna: this.password0,
                 rol: this.rol,
+                nombre : this.nombre,
+                confirmado : false,
             }).then((res) => {
                 if (res.status == 200) {
                     this.resultado = "Usuario creado con éxito.";
@@ -72,14 +79,19 @@ export default {
 </script>
 
 <template>
-  <NavBar/>
 
   <div class="mitad izquierda">
     <form id="signup-box" @submit="register"> <!-- action="/something" method="post"> -->
 
       <section>
-        <label class="form-label">* Correo electrónico</label>
-        <p class="error" v-if="correoError">{{correoError}}</p>
+        <label class="form-label">* correo electrónico</label>
+        <p class="error" v-if="nombreError">{{nombreError}}</p>
+        <input type="text" class="form-control" v-model="nombre">
+      </section>
+
+      <section>
+        <label class="form-label">* correo electrónico</label>
+        <p class="error" v-if="correoError">{{correoerror}}</p>
         <input type="email" class="form-control" v-model="correo">
       </section>
 

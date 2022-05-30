@@ -17,9 +17,9 @@ enum estadoorden {
 //agregué @unique en idrestaurante
 model administrador {
   idadmin       Int         @id @default(autoincrement())
-  idrestaurante Int         @unique
-  idusuario     Int
-  restaurante   restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_admin")
+   idrestaurante Int?         @unique
+  idusuario     Int         @unique
+  restaurante   restaurante? @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_admin")
   usuario       usuario     @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   mesero        mesero[]
 }
@@ -27,7 +27,7 @@ model administrador {
 //eliminé atributos comunes
 model cliente {
   idcliente Int      @id @default(autoincrement())
-  idusuario Int
+  idusuario Int      @unique
   usuario   usuario? @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   resena    resena[]
   orden     orden[]
@@ -52,6 +52,7 @@ model orden {
   contenido     contenidoorden[]
   entrega       entregadomicilio[]
 }
+
 
 //quité orden normal y orden envio
 //agregué orden
@@ -86,7 +87,7 @@ model mesero {
   idmesero      Int           @id @default(autoincrement())
   idadmin       Int
   idrestaurante Int
-  idusuario     Int
+  idusuario     Int           @unique
   administrador administrador @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_mesero1")
   restaurante   restaurante   @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_mesero2")
   usuario       usuario       @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
@@ -97,17 +98,15 @@ model mesero {
 //quité modificar carrito
 
 //quité carrito
-
 //quité contenido carrito
 
 //quité confirmación carrito
-
 //agregué img
 model platillo {
   idplatillo     Int              @id @default(autoincrement())
   idmenu         Int
   idrestaurante  Int
-  img            String           @db.VarChar(1000)
+  img            String?           @db.VarChar(1000)
   nombre         String           @db.VarChar(100)
   costo          Int
   menu           menu             @relation(fields: [idmenu], references: [idmenu], onDelete: Cascade, map: "fk_paltillo1")
@@ -146,7 +145,7 @@ model restaurante {
 
 //agruegué atributos comunes
 model usuario {
-  email         String?         @db.VarChar(255)
+  email         String?         @db.VarChar(255) @unique
   contrasegna   String?         @db.VarChar(255)
   token         String?         @db.VarChar(255)
   rol           String?         @db.VarChar(255)
