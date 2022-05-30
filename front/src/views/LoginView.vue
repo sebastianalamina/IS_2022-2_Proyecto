@@ -55,7 +55,8 @@ export default {
         contrasegna: this.password
       }).then((res)=>{
         const token = res.data.token
-        authStore.login(token)
+        const rol = res.data.rol
+        authStore.login(token,rol)
         this.$router.push("/")
       })
       .catch(console.log)

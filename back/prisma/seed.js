@@ -2,209 +2,97 @@ const { PrismaClient } = require("@prisma/client");
 
 const { faker } = require("@faker-js/faker");
 
-const client = new PrismaClient();
+const prisma = new PrismaClient();
 
 const roles = ["CLIENTE", "MESERO", "COCINERO", "ADMINISTRADOR", "REPARTIDOR"];
 
 async function seed() {
   //Creamos las entradas referentes a los restaurantes
-  let restaurantes = [];
-  for (let i = 0; i < 3; i++) {
-    // Creamos 4 restaurantes
-    const id_restaurante = await client.restaurante.create({
+  for (let i = 0; i< 30; i ++) {
+    // Creamos un restaurate
+    const idUsuarioAdmin = await prisma.usuario.create({
       data: {
         nombre: faker.name.firstName(),
+        amaterno : faker.name.lastName(),
+        apatermo : faker.name.lastName(),
+        email: faker.internet.email(),
+        rol: "ADMINISTRADOR",
+        confirmado : false 
+      },
+      select : {
+        idusuario : true
+      }
+    });
+    const restaurante = await prisma.restaurante.create({
+      data:{
+        nombre: faker.company.companyName(),
         estado: faker.address.state(),
         calle: faker.address.streetName(),
-        numero: 12,
+        numero: faker.datatype.number(),
         cp: parseInt(faker.address.zipCode()),
-        municipio: faker.address.county(),
-      },
-      select: {
-        idrestaurante: true,
-      },
-    });
-
-    restaurantes.push(id_restaurante);
-
-    const id_usuario_administrador = await client.usuario.create({
-      data: {
-        email: faker.internet.email(),
-        contrasegna: faker.internet.password(),
-        token: faker.random.alphaNumeric(20),
-        rol: roles[3],
-      },
-      select: {
-        idusuario: true,
-      },
-    });
-
-    //Creamos el administrador del restaurante
-    const id_administrador = await client.administrador.create({
-      data: {
-        idusuario: id_usuario_administrador.idusuario,
-        idrestaurante: id_restaurante.idrestaurante,
-        nombre: faker.name.firstName(),
-        apatermo: faker.name.lastName(),
-        amaterno: faker.name.middleName(),
-      },
-      select: {
-        idadmin: true,
-      },
-    });
-
-    //Creamos dos cocineros para el restaurante
-    for (let n = 0; n < 2; n++) {
-      const id_usuario_cocinero = await client.usuario.create({
-        data: {
-          email: faker.internet.email(),
-          contrasegna: faker.internet.password(),
-          token: faker.random.alphaNumeric(20),
-          rol: roles[2],
-        },
-        select: {
-          idusuario: true,
-        },
-      });
-
-      await client.cocinero.create({
-        data: {
-          idadmin: id_administrador.idadmin,
-          idrestaurante: id_restaurante.idrestaurante,
-          nombre: faker.name.firstName(),
-          apaterno: faker.name.middleName(),
-          amaterno: faker.name.lastName(),
-          idusuario: id_usuario_cocinero.idusuario,
-        },
-      });
-    }
-
-    // Creamos tres meseros para el restaurante
-    for (let n = 0; n < 3; n++) {
-      const id_usuario_meseros = await client.usuario.create({
-        data: {
-          email: faker.internet.email(),
-          contrasegna: faker.internet.password(),
-          token: faker.random.alphaNumeric(20),
-          rol: roles[1],
-        },
-        select: {
-          idusuario: true,
-        },
-      });
-
-      await client.mesero.create({
-        data: {
-          idadmin: id_administrador.idadmin,
-          idrestaurante: id_restaurante.idrestaurante,
-          nombre: faker.name.firstName(),
-          apatermo: faker.name.middleName(),
-          amaterno: faker.name.lastName(),
-          idusuario: id_usuario_meseros.idusuario,
-        },
-      });
-    }
-
-    for (let j = 0; j < 2; j++) {
-      // Creamos dos menus y le asignamos a cada uno 4 platillos.
-      const id_menu = await client.menu.create({
-        data: {
-          idrestaurante: id_restaurante.idrestaurante,
-        },
-        select: {
-          idmenu: true,
-        },
-      });
-
-      for (let k = 0; k < 25; k++) {
-        // Creamos los cuatro platillos de cada uno de los menus
-        await client.platillo.create({
-          data: {
-            idmenu: id_menu.idmenu,
-            idrestaurante: id_restaurante.idrestaurante,
-            nombre: faker.commerce.productName(),
-            costo: parseInt(faker.commerce.price(0, 1000, 0)),
-          },
-        });
-      }
-    }
-  }
-
-  // Creamos 10 repartidores
-
-  for (let i = 0; i < 10; i++) {
-    const id_usuario_repartidor = await client.usuario.create({
-      data: {
-        email: faker.internet.email(),
-        contrasegna: faker.internet.password(),
-        token: faker.random.alphaNumeric(20),
-        rol: "REPARTIDOR",
-      },
-      select: {
-        idusuario: true,
-      },
-    });
-
-    await client.repartidor.create({
-      data: {
-        nombre: faker.name.firstName(),
-        apatermo: faker.name.middleName(),
-        amaterno: faker.name.findName(),
-        idusuario: id_usuario_repartidor.idusuario,
-      },
-    });
-  }
-
-  //Creamos 20 clientes
-  let clientes = [];
-  for (let i = 0; i < 20; i++) {
-    const id_cliente = await client.usuario.create({
-      data: { 
-        email: faker.internet.email(),
-        contrasegna: faker.internet.password(),
-        token : faker.datatype.uuid(),
-        rol: "CLIENTE",
+        municipio: faker.address.city(),
+        administrador:{
+          create:{ idusuario : idUsuarioAdmin.idusuario }
+        } 
+        
       },
       select:{
-        idusuario:true
+        idrestaurante: true,
+        administrador :{
+          select:{
+            idusuario: true,
+            idadmin : true,
+          }
+        }
       }
-      });
-
-    const cliente = await client.cliente.create({
+    });
+    // Creamos los meseros que trabajan en el restaurante:
+   for (let j = 0; j < 5; j++) {
+    const mesero = await prisma.mesero.create({
       data:{
+        usuario:{
+          create:{
             nombre: faker.name.firstName(),
-            apatermo : faker.name.middleName(),
             amaterno : faker.name.lastName(),
-            estado : faker.address.state(),
-            calle : faker.address.streetName(),
-            numero : faker.datatype.number(),
-            cp : parseInt(faker.address.zipCode()),
-            municipio : faker.address.county(),
-            idusuario : id_cliente.idusuario
-        },
-        select:{
-         idcliente: true 
-        }
-    })
-    clientes.push(cliente);
-  }
+            apatermo : faker.name.lastName(),
+            email: faker.internet.email(),
+            rol : "MESERO",
+            confirmado : false
+            },
+          },
+          restaurante : {
+            connect :{
+              idrestaurante : restaurante.idrestaurante
+            }
+          },
+          administrador : {
+            connect : {
+              idadmin : restaurante.administrador.idadmin,
+              idrestaurante : restaurante.idrestaurante,
+              idusuario : restaurante.administrador.idusuario,
+            }
+          }
+        } 
+    });
+   }
 
-  for(let i = 0; i < restaurantes.length; i++){
-    for(let j = 0; j <clientes.length; j++){
-      console.log(restaurantes[i].idrestaurante);
-      await client.resena.create({
-        data: {
-          classificacion: faker.random.number({min:1, max:5}),
-          texto : faker.lorem.sentence(),
-          date : faker.date.recent(),
-          idrestaurante : restaurantes[i].idrestaurante,
-          idcliente : clientes[j].idcliente
+  for(let k = 0; k < 2; k++){
+    const platillos = Array(15).fill({
+      nombre : faker.commerce.productName(),
+      costo : parseInt(faker.commerce.price()),
+      idrestaurante : restaurante.idrestaurante,
+    })
+    const menu = await prisma.menu.create({
+      data:{
+        idrestaurante : restaurante.idrestaurante,
+        platillo : {
+          createMany:{ data: platillos }
+          } 
         }
-      })
+      });
     }
   }
-
-  console.log("Database sembrada");
+  
 }
 
 seed();

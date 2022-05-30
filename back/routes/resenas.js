@@ -5,7 +5,7 @@ const Joi = require("joi");
 const router = express.Router();
 const prisma = new PrismaClient();
 const validate = require("../utils/middleware/validate");
-const { estaAutenticado } = require("../utils/middleware/auth");
+const { esCliente, bearerAuth } = require("../utils/middleware/auth");
 
 /**
  * @swagger
@@ -61,11 +61,15 @@ router.get("/:idrestaurante",
             take,
             include :{
                cliente : {
-                   select :{
-                       nombre:true,
-                       amaterno : true,
-                       apatermo : true,
-                   },
+                  select:{
+                      usuario:{
+                          select:{
+                                nombre : true,
+                                apatermo : true,
+                                amaterno : true,
+                          }
+                      }
+                  } 
                }, 
                restaurante:{
                    select:{
@@ -85,24 +89,29 @@ router.get("/:idrestaurante",
  */
 router.post("/",
     //estaAutenticado,
+    esCliente,
+    bearerAuth,
     validate(
         Joi.object({
             idrestaurante: Joi.number().integer().required(),
-            idusuario: Joi.number().integer().required(),
             texto: Joi.string().required(),
             classificacion: Joi.number().integer().required(),
             date : Joi.date().iso()
         }),
         "body"),
     async (req, res) => {
-        const { idrestaurante, idusuario, texto, classificacion, date } = req.body;
+        const { idrestaurante, texto, classificacion, date } = req.body;
         const resena = await prisma.resena.create({
             data: { 
                 texto : texto,
                 classificacion : classificacion,
                 date : date ,
-                idcliente : idusuario,
-                idrestaurante : idrestaurante , 
+                cliente : {
+                    connect:{ idusuario : req.user.idusuario}
+                },
+                restaurante : {
+                    connect : { idrestaurante : idrestaurante }
+                }
             },
             include :{
                cliente : {

@@ -9,7 +9,8 @@ const Joi = require("joi");
 const router = express.Router();
 const prisma = new PrismaClient();
 const validate = require("../utils/middleware/validate");
-const { hasRole } = require("../utils/middleware/auth")
+const { esAdministrador ,bearerAuth } = require("../utils/middleware/auth");
+
 
 /**
  * @swagger
@@ -20,7 +21,8 @@ const { hasRole } = require("../utils/middleware/auth")
  */
 router.post(
   "/",
-  hasRole(["ADMIN"]),
+  esAdministrador,
+  bearerAuth,
   validate(
       Joi.object({ 
 	  nombre: Joi.string().required(),
@@ -29,16 +31,33 @@ router.post(
 	  numero: Joi.number().required(),  
 	  cp:     Joi.number().required(),
 	  municipio:  Joi.string().required(),
-      })
+      }),
+	  "body"
   ),
-  async (req, res) => {
-      const restaurante = await prisma.restaurante.create(
-	  {
-	    data: {
-		...req.body, // info checada en Joi
-	    },
-	  });
+  async (req, res) => {	
 
+		// Creamos el nuevo restaurante.
+		const restaurante = await prisma.restaurante.create({
+			data : {
+				administrador : {
+					connectOrCreate:{
+						where : {
+							idusuario : req.user.idusuario,
+						},
+						create : {
+							idusuario : req.user.idusuario,
+						}
+					}
+				},
+				...req.body
+			}	
+		}) 
+		// Inicializamos un menu vacio para el nuevo restaurante 
+		const menu = await prisma.menu.create({
+			data:{
+				idrestaurante : restaurante.idrestaurante
+			}
+		})
       res.json(restaurante);
   }
 );
@@ -78,18 +97,17 @@ router.get(
 	"/",
 	validate(
 		Joi.object({
-			skip : Joi.number().integer().min(0).default(0),
-			take : Joi.number().integer().min(1).default(10),
+			skip : Joi.number().integer().min(0).default(0).required(),
+			take : Joi.number().integer().min(1).default(10).required(),
 		}), "query"),
 	async (req,res)=>{
 		const {skip,take} = req.query;
 		const restaurante = await prisma.restaurante.findMany({
 			skip,
-			take,
+			take,	
 		});
-
 		res.json(restaurante)			
 	}
-)
+);
 
 module.exports = router;
