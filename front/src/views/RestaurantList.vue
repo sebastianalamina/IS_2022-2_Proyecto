@@ -1,14 +1,11 @@
 <script>
 import { useAxios } from "../axios_common";
 
-import NavBar from "../components/NavBar.vue";
-import Footer from "../components/Footer.vue";
+
 import ResenaList from "../components/ResenaList.vue";
 
 export default {
-    components: {
-    NavBar,
-    Footer,
+    components: { 
     ResenaList,
 },
     data() {
