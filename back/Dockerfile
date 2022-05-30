@@ -1,5 +1,9 @@
 FROM ubuntu:14.04.3
 
+######## carga de variables de entorno ######
+ARG DATABASE_URL
+ENV DATABASE_URL $DATABASE_URL
+
 RUN rm /bin/sh && ln -s /bin/bash /bin/sh
 
 ####### actualizaciones #######
@@ -28,6 +32,7 @@ COPY package.json ./
 RUN npm install
 COPY . .
 RUN npx prisma generate
+
 EXPOSE 3001
 
 CMD node server.js
