@@ -123,6 +123,12 @@ const router = createRouter({
       props: true,
       component: () => import("../views/Restaurante.vue"),
     },
+    {
+      path: "/user/verifica/:id",
+      name: "vista de restaurante",
+      props: true,
+      component: () => import("../views/confirmaMail.vue"),
+    },
     // {
     //   path: "/resenas/:idrestaurante",
     //   name: "vista de resenas de restaurante",
