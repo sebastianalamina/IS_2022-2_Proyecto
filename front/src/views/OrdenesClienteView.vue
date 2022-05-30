@@ -1,0 +1,127 @@
+<script>
+import NavBar from '../components/NavBar.vue'
+import Footer from '../components/Footer.vue'
+
+ export default {
+      data() {
+          return {
+                ordenes: [
+                {id: '123', costo: '150', items: [{nombre: 'Hamburguesa', src: 'src/assets/Hamburguesa.jpeg', costo: 100, cantidad: 1}, 
+                {nombre: 'Papas', src: 'src/assets/papas.png', costo: 50, cantidad: 1}]},
+                {id: '223', costo: '50', items: [{nombre: 'Papas', src: 'src/assets/papas.png', costo:50, cantidad: 1}]},
+                {id: '323', costo: '100', items: [{nombre: 'Hamburguesa', src: 'src/assets/Hamburguesa.jpeg', costo: 100, cantidad: 1}]}
+            ]
+          }
+      }
+  }
+
+</script>
+
+<template>
+    <div class="contenedor-ordenes">
+
+        <div class="header">
+            <h3 class="titulo">Tus órdenes</h3>
+        </div>
+        <div class="orden" v-for="orden in ordenes" v-bind:key="orden">
+            <div class="informacion">
+                <div class="id-contenedor">
+                    <h1 class="id">ID de orden: {{orden.id}}</h1>
+                </div>
+                <div class="costo-contenedor">
+                    <h3 class="costo">Total: ${{orden.costo}}</h3>
+                </div>
+            </div>
+            <div class="contenido">
+                <div class="item" v-for="item in orden.items" v-bind:key="item">
+                    {{item.nombre}}
+                </div>
+                <div class="miniaturas" v-for="item in orden.items" v-bind:key="item">
+                    <img class="imagen-item" v-bind:src="item.src">
+                </div>
+            </div>
+            <div class="ver">
+                <button class="b-ver">Ver estado</button> 
+            </div>
+        </div>
+    </div>
+</template>
+
+<style scoped>
+.contenedor-ordenes{
+    margin: 0 auto;
+    margin-top: 10px;
+    height: 80%;
+    width: 80%;
+    border-radius: 20px;
+    border: 3px solid black;
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+
+}
+
+.header{
+    margin: 3px;
+    margin-left: 10px;
+    display: flex;
+    justify-content: center;
+}
+
+.titulo{
+    margin: 5px;
+    font-size: 30px;
+    font-weight: 700;
+}
+
+.orden{
+    margin: auto;
+    margin-bottom: 3px;
+    border: 2px solid gray;
+    width: 90%;
+    height: 40%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.informacion{
+    width: 20%;
+}
+
+.imagen-item{
+    height: 30px;
+}
+
+.id-contenedor{
+    margin: 5px;
+}
+
+.costo-contenedor{
+    margin: 5px
+}
+
+.id{
+    font-size: 30px;
+}
+
+.costo{
+    font-size: 20px;
+}
+
+.contenido{
+    width: 50%;
+    display: table-column;
+    justify-content: left;
+}
+
+.miniaturas{
+    display: inline-block;
+    margin: 1px;
+    position: relative;
+}
+
+.ver{
+    margin-right: 20px;
+}
+</style>

@@ -1,76 +1,79 @@
 <script>
+import {useAxios} from "../axios_common";
+import {useStore as useAuthStore} from "../stores/auth"
+import NavBar from "../components/NavBar.vue"
+import Footer from "../components/Footer.vue";
 
-// Longitud del nombre de usuario.
-const MIN_ID_CLIENTE_LENGTH = 6
-const MAX_ID_CLIENTE_LENGTH = 15
-
-export default {
-  data(){
-    return{
-      errors:[], // Arreglo de posibles errores del form.
-      idCliente:null,
-      idClienteError:null,
-      nombre:null,
-      nombreError:null,
-      aPaterno:null,
-      aPaternoError:null,
-      aMaterno:null,
-      aMaternoError:null,
-      correo:null,
-      correoError:null,
-      password0:null,
-      password0Error:null,
-      password1:null,
-      password1Error:null,
-      estado:null,
-      estadoError:null,
-      calle:null,
-      calleError:null,
-      numero:null,
-      numeroError:null,
-      cp:null,
-      cpError:null,
-      municipio:null,
-      municipioError:null,
-    }
-  },
-  methods:{
-    checkForm:function(e) {
-
-      // Chequeo del nombre de usuario (el ID del cliente).
-      this.idClienteError = ""
-      if (!this.idCliente)
-        this.idClienteError = "Campo requerido."
-      else if (this.idCliente.length < MIN_ID_CLIENTE_LENGTH || this.idCliente.length > MAX_ID_CLIENTE_LENGTH)
-        this.idClienteError = `El nombre de usuario debe tener entre ${MIN_ID_CLIENTE_LENGTH} y ${MAX_ID_CLIENTE_LENGTH} caracteres.`
-
-      // Chequeo del nombre del usuario.
-      this.nombreError = ""
-      if (!this.nombre)
-        this.nombreError = "Campo requerido."
-
-      // Chequeo del correo electrónico.
-      this.correoError = ""
-      if (!this.correo)
-        this.correoError = "Campo requerido."
-
-      // Chequeo de la contraseña.
-      this.password0Error = ""
-      this.password1Error = ""
-      if (!this.password0)
-        this.password0Error = "Campo requerido."
-      if (!this.password1)
-        this.password1Error = "Campo requerido."
-      else if (this.password0 != this.password1)
-        this.password1Error = "Las contraseñas no coinciden."
-
-      // TODO / TO-DO / TO DO
-      // El resto se determinará cuando la Base de Datos esté más actualizada.
-
-      // ?
-      e.preventDefault();
+export default { 
+    data() {
+        return {
+            errors: [],
+            correo: null,
+            correoError: null,
+            password0: null,
+            password0Error: null,
+            password1: null,
+            password1Error: null,
+            rol: null,
+            rolError: null,
+            nombre : null,
+            nombreError : null,
+            resultado: null,
+            resultadoError: null,
+        };
     },
-  }
+    methods: {
+        checkForm: function (e) {
+            // Chequeo del correo electrónico.
+            this.nombreError = null;
+            if(!this.nombre)
+              this.nombreError = "Nombre requerido";
+            this.correoError = null;
+            if (!this.correo)
+                this.correoError = "Campo requerido.";
+            // Chequeo de la contraseña.
+            this.password0Error = null;
+            this.password1Error = null;
+            if (!this.password0)
+                this.password0Error = "Campo requerido.";
+            if (!this.password1)
+                this.password1Error = "Campo requerido.";
+            else if (this.password0 != this.password1)
+                this.password1Error = "Las contraseñas no coinciden.";
+            // Chequeo del rol.
+            this.rolError = null;
+            if (!this.rol)
+                this.rolError = "Campo requerido.";
+            return !this.correoError && !this.password0Error && !this.password1Error && !this.rolError;
+        },
+        register: function (e) {
+            // Evita que se recargue la página.
+            e.preventDefault();
+            //const authStore = useAuthStore();
+            const axios = useAxios();
+            if (!this.checkForm())
+                return;
+            this.resultado = null;
+            this.resultadoError = null;
+            axios.post("/auth/register", {
+                email: this.correo,
+                contrasegna: this.password0,
+                rol: this.rol,
+                nombre : this.nombre,
+                confirmado : false,
+            }).then((res) => {
+                if (res.status == 200) {
+                    this.resultado = "Usuario creado con éxito.";
+                    this.$router.push("/login");
+                }
+            })
+                .catch((error) => {
+                console.log(error);
+                this.resultadoError = error.response.data.error;
+            });
+        },
+    },
+    components: { NavBar, Footer }
 }
 
 </script>
@@ -78,36 +81,18 @@ export default {
 <template>
 
   <div class="mitad izquierda">
-    <form id="signup-box" @submit="checkForm"> <!-- action="/something" method="post"> -->
+    <form id="signup-box" @submit="register"> <!-- action="/something" method="post"> -->
 
       <section>
-        <label class="form-label">* Usuario</label>
-        <p class="error" v-if="idClienteError">{{idClienteError}}</p>
-        <input type="text" class="form-control" v-model="idCliente">
-      </section>
-
-      <section>
-        <label class="form-label">* Nombre</label>
+        <label class="form-label">* correo electrónico</label>
         <p class="error" v-if="nombreError">{{nombreError}}</p>
         <input type="text" class="form-control" v-model="nombre">
       </section>
 
       <section>
-        <label class="form-label">Apellido Paterno</label>
-        <p class="error" v-if="aPaternoError">{{aPaternoError}}</p>
-        <input type="text" class="form-control" v-model="aPaterno">
-      </section>
-
-      <section>
-        <label class="form-label">Apellido Materno</label>
-        <p class="error" v-if="aMaternoError">{{aMaternoError}}</p>
-        <input type="text" class="form-control" v-model="aMaterno">
-      </section>
-
-      <section>
-        <label class="form-label">* Correo electrónico</label>
-        <p class="error" v-if="correoError">{{correoError}}</p>
-        <input type="text" class="form-control" v-model="correo">
+        <label class="form-label">* correo electrónico</label>
+        <p class="error" v-if="correoError">{{correoerror}}</p>
+        <input type="email" class="form-control" v-model="correo">
       </section>
 
       <section>
@@ -123,35 +108,20 @@ export default {
       </section>
 
       <section>
-        <label class="form-label">Estado</label>
-        <p class="error" v-if="estadoError">{{estadoError}}</p>
-        <input type="text" class="form-control" v-model="estado">
+        <label class="form-label">* Rol</label>
+        <p class="error" v-if="rolError">{{rolError}}</p>
+        <select class="form-control" v-model="rol">
+          <option>Administrador</option>
+          <option>Cliente</option>
+          <option>Cocinero</option>
+          <option>Mesero</option>
+          <option>Repartidor</option>
+        </select>
       </section>
 
-      <section>
-        <label class="form-label">Calle</label>
-        <p class="error" v-if="calleError">{{calleError}}</p>
-        <input type="text" class="form-control" v-model="calle">
-      </section>
+      <p class="resultado" v-if="resultado">{{resultado}}</p>
+      <p class="error" v-if="resultadoError">{{resultadoError}}</p>
 
-      <section>
-        <label class="form-label">Número (creo que de calle)</label>
-        <p class="error" v-if="numeroError">{{numeroError}}</p>
-        <input type="text" class="form-control" v-model="numero">
-      </section>
-
-      <section>
-        <label class="form-label">Código postal</label>
-        <p class="error" v-if="cpError">{{cpError}}</p>
-        <input type="text" class="form-control" v-model="cp">
-      </section>
-
-      <section>
-        <label class="form-label">Municipio</label>
-        <p class="error" v-if="municipioError">{{municipioError}}</p>
-        <input type="text" class="form-control" v-model="municipio">
-      </section>
-      
       <input class="btn btn-secondary" type="submit" value="Registrarse">
 
     </form>
@@ -163,6 +133,7 @@ export default {
       <p>¡Ahora puedes pedir mesa antes de llegar al restaurante!</p>
     </section>
   </div>
+
 
 </template>
 
@@ -183,7 +154,10 @@ p.error {
   font-size: 12px;
 }
 
-
+p.resultado {
+  color:  green;
+  font-size: 12px;
+}
 
 .mitad {
   height: 100%;

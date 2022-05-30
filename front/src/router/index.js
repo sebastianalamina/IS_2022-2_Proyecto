@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
-import HomeView from "../views/HomeView.vue";
 import { useStore as useAuthStore } from "../stores/auth";
+
+import HomeView from "../views/HomeView.vue";
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -16,18 +17,15 @@ const router = createRouter({
     {
       path: "/about",
       name: "about",
-      // route level code-splitting
-      // this generates a separate chunk (About.[hash].js) for this route
-      // which is lazy-loaded when the route is visited.
       component: () => import("../views/AboutView.vue").catch,
       meta: {
         requiresAuth: false,
       },
     },
     {
-      path: '/inventario/:id',
-      name: 'inventario restaurante',
-      component: () => import('../views/Inventario.vue')
+      path: "/inventario/:id",
+      name: "inventario restaurante",
+      component: () => import("../views/Inventario.vue"),
     },
     {
       path: "/login",
@@ -46,42 +44,91 @@ const router = createRouter({
       },
     },
     {
-      path: '/user-signup',
-      name: 'user-signup',
-      component: () => import('../views/UserSignUpView.vue'),
+      path: "/user-signup",
+      name: "user-signup",
+      component: () => import("../views/UserSignUpView.vue"),
       meta: {
         requiresAuth: false,
       },
     },
     {
-      path: '/view-employees',
-      name: 'ver-empleados',
-      component: () => import('../views/ViewEmployeesView.vue'),
+      path: "/view-employees",
+      name: "ver-empleados",
+      component: () => import("../views/ViewEmployeesView.vue"),
       meta: {
         requiresAuth: false,
       },
     },
     {
-      path: '/view-order-status',
-      name: 'ver-estado-platillo',
-      component: () => import('../views/ViewOrderStatusView.vue'),
+      path: "/view-order-status",
+      name: "ver-estado-platillo",
+      component: () => import("../views/ViewOrderStatusView.vue"),
       meta: {
         requiresAuth: false,
       },
     },
     {
-      path: '/modify-order-status',
-      name: 'modificar-estado-platillo',
-      component: () => import('../views/ModifyOrderStatusView.vue'),
+      path: "/modify-order-status",
+      name: "modificar-estado-platillo",
+      component: () => import("../views/ModifyOrderStatusView.vue"),
       meta: {
         requiresAuth: false,
       },
     },
     {
-      path: '/menu',
-      name: 'menu',
-      component: () => import('../views/MenuView.vue')
-    }
+      path: "/mesa",
+      name: "administrar mesa", // Consultar antes de cambiar este "name".
+      props: true,
+      component: () => import("../views/ManageTable.vue"),
+    },
+    {
+      path: "/menu/:idrestaurante",
+      name: "menu",
+      props: true,
+      component: () => import("../views/MenuView.vue"),
+    },
+    {
+      path: "/inicio",
+      name: "inicio",
+      component: () => import("../views/ClientsView.vue"),
+    },
+    {
+      path: "/inicioW",
+      name: "inicioW",
+      component: () => import("../views/WaiterView.vue"),
+    },
+    // {
+    //   path: "/inicioW/ordenes",
+    //   name: "inicioW_ordenes",
+    //   component: () => import("../views/OrdenesView.vue"),
+    // },
+    {
+      path: "/ordenes",
+      name: "ordenes_cliente",
+      component: () => import("../views/OrdenesClienteView.vue"),
+    },
+    {
+      path: "/carrito",
+      name: "carrito",
+      component: () => import("../views/CarritoView.vue"),
+    },
+    {
+      path: "/lista-restaurantes",
+      name: "restaurantes",
+      component: () => import("../views/RestaurantList.vue"),
+    },
+    {
+      path: "/restaurante/:idrestaurante",
+      name: "vista de restaurante",
+      props: true,
+      component: () => import("../views/Restaurante.vue"),
+    },
+    // {
+    //   path: "/resenas/:idrestaurante",
+    //   name: "vista de resenas de restaurante",
+    //   props: true,
+    //   component: () => import("../views/ReviewListView.vue"),
+    // },
   ],
 });
 
