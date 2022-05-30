@@ -106,8 +106,21 @@ export default {
 <div class="container pt-3 pb-3">
 
 <div class="container">
-  <button class="btn btn-primary" @click="this.showForm"> Anadir resena</button>
-  <form v-if="this.enableForm" @submit.prevent="publishReview"> 
+  <va-button
+  class="btn btn-primary"
+  @click="this.showForm">
+    Anadir resena
+  </va-button>
+
+  
+ <div>
+  <va-button
+  @click="this.enableForm = !this.enableForm"
+  v-if="this.enableForm"
+  >
+  Cancelar resena
+  </va-button>
+<form v-if="this.enableForm" @submit.prevent="publishReview"> 
   <div class="form-group">
     <label for="exampleFormControlSelect1">Seleccione la cantidad de estrellas</label>
     <select class="form-control" id="resenaSelect" v-model="this.resenaNueva.calificacion">
@@ -126,18 +139,29 @@ export default {
 
   <input class="btn btn-secondary" type="submit" value="publicar resena">
 </form>
+ </div> 
 </div>
 
 <div>
-  
-<div  v-for="resena in resenas" :key="resena.idresena">
-    <div >
-        Nombre del usuario: {{ resena.cliente.nombre + resena.cliente.amaterno + resena.cliente.apatermo}} 
-         Fecha de publicacion : {{resena.date}}
-        Calificacion : {{resena.classificacion}}
-       {{resena.texto}} 
-    </div>
-</div>
+
+
+<va-list>
+  <va-list-item v-for="resena in resenas" :key="resena.idresena">
+  <va-list-item-section>
+    <va-list-item-label>
+      {{resena.texto}}
+    </va-list-item-label>
+    <va-rating
+    v-model="resena.classificacion"
+    />
+    <va-list-item-label
+    caption  
+    >
+    {{resena.cliente.usuario.nombre + resena.cliente.usuario.apatermo + resena.cliente.usuario.amaterno }}
+    </va-list-item-label>
+  </va-list-item-section>
+  </va-list-item>
+</va-list>
 </div>
 </div>
 

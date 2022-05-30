@@ -76,7 +76,13 @@ const router = createRouter({
       },
     },
     {
-      path: "/menu/:idrestaurante/:idmenu",
+      path: "/mesa",
+      name: "administrar mesa", // Consultar antes de cambiar este "name".
+      props: true,
+      component: () => import("../views/ManageTable.vue"),
+    },
+    {
+      path: "/menu/:idrestaurante",
       name: "menu",
       props: true,
       component: () => import("../views/MenuView.vue"),

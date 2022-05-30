@@ -17,7 +17,8 @@ export default {
             restauranteSeleccionadoId : 1,
             restauranteSelecionadoMax: 10,
             mostrarResenas: 0,
-            skip : 0
+            skip : 0,
+            listaKey : 0
         };
     },
     methods:{
@@ -32,9 +33,10 @@ export default {
             .then((res)=>{
                 this.cards = res.data;
                 console.log("cards de restaurantes cargadas");
+                console.log("lo que cargue de restaurantes : ", JSON.stringify(res.data._count));
             })
             .catch((err)=>{
-                console.log(err);
+                console.log(err.response.data.error);
             })
             
         },
@@ -68,26 +70,51 @@ export default {
 
 
 <template>
-<NavBar/>
 <button @click="this.previousPage">Pagina anterior</button>
 <button @click="this.nextPage">Siguiente pagina</button>
 <div>
-<div v-for="card of cards" :key="card.idrestaurante">
-<p> {{card.nombre}}</p>
-<button @click.prevent="this.selectRestaurante(card.idrestaurante)">Ver resena</button>
-<a :href=" '/menu/' + card.idrestaurante + '/1' " >Ver menu</a>
-</div> 
+<va-list :key="listaKey">
+<va-list-label>
+    Restaurantes
+</va-list-label>
+
+<va-list-item v-for="restaurante in cards" :key="restaurante.restauranteid">
+<va-list-item-section>
+<va-list-item-label>
+    {{restaurante.nombre}}
+</va-list-item-label>
+<va-list-item-label
+caption>
+    {{restaurante.calle + restaurante.estado}}
+</va-list-item-label>
+</va-list-item-section>
+
+<va-list-item-section
+icon >
+ <va-button @click="selectRestaurante(restaurante.idrestaurante)">
+        Ver resenas
+    </va-button>   
+    <va-button>
+        ver Menu
+    </va-button>
+</va-list-item-section>
+</va-list-item>
+
+</va-list> 
 </div>
 
 <div>
 
     <h3>Resenas</h3>
+
+   <ResenaList
+   :idrestaurante="restauranteSeleccionadoId"
+   :maxPagination="restauranteSelecionadoMax"
+   />
+
+
 </div>
-<ResenaList
-:idrestaurante="this.restauranteSeleccionadoId"
-:key="this.mostrarResenas"
-/>
-<Footer/>
+
 </template>
 
 
