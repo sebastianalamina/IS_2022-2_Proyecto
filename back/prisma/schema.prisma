@@ -17,7 +17,7 @@ enum estadoorden {
 //agregué @unique en idrestaurante
 model administrador {
   idadmin       Int         @id @default(autoincrement())
-  idrestaurante Int?         @unique
+   idrestaurante Int?         @unique
   idusuario     Int         @unique
   restaurante   restaurante? @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_admin")
   usuario       usuario     @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
@@ -46,13 +46,13 @@ model orden {
   esCarrito     Boolean
   pagado        Boolean
   costo         Int
-  idrestaurante Int
   cliente       cliente?            @relation(fields: [idcliente], references: [idcliente], onDelete: Cascade, onUpdate: Cascade, map: "fk,orden3")
   mesa          mesa?              @relation(fields: [idmesa], references: [idmesa], onDelete: Cascade, map: "fk_orden1")
   restaurante   restaurante?       @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_orden2")
   contenido     contenidoorden[]
   entrega       entregadomicilio[]
 }
+
 
 //quité orden normal y orden envio
 //agregué orden
@@ -98,11 +98,9 @@ model mesero {
 //quité modificar carrito
 
 //quité carrito
-
 //quité contenido carrito
 
 //quité confirmación carrito
-
 //agregué img
 model platillo {
   idplatillo     Int              @id @default(autoincrement())
