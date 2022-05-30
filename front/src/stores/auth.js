@@ -41,9 +41,9 @@ export const useStore = defineStore("auth", {
     },
   },
   actions: {
-    login(token, user) {
+    login(token, rol) {
       this.token = token;
-      this.rol = user.rol;
+      this.rol = rol;
     },
     logout() {
       this.token = null;

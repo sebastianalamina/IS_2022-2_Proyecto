@@ -39,6 +39,8 @@ app.use("/ordenes-mesa", require("./routes/ordenes-mesa.js"));
 app.use("/empleado", require("./routes/empleado.js"));
 app.use("/restaurante", require("./routes/restaurante.js"));
 app.use("/resenas", require("./routes/resenas.js"));
+app.use("/carrito", require("./routes/carrito.js"));
+app.use("/orden",require("./routes/orden.js"));
 
 app.get("/", (req, res) => {
   res.send("Hello World!");
