@@ -124,6 +124,12 @@ const router = createRouter({
       component: () => import("../views/Restaurante.vue"),
     },
     {
+      path: "/repartidor/orden/encontrar",
+      name: "encuentra ordenes para repartidor",
+      props: true,
+      component: () => import("../views/repartidor/Ordenes.vue"),
+    },
+    {
       path: "/user/verifica/:id",
       name: "vista de restaurante",
       props: true,
@@ -135,6 +141,12 @@ const router = createRouter({
     //   props: true,
     //   component: () => import("../views/ReviewListView.vue"),
     // },
+    {
+      path: "/repartidor/orden",
+      name: "Muestra información de una orden",
+      props: true,
+      component: () => import("../views/repartidor/OrdenInfo.vue"),
+    },
   ],
 });
 
