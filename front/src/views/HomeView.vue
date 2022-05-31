@@ -1,27 +1,29 @@
 <script setup>
 import NavBar from "../components/NavBar.vue";
-import Footer from "../components/Footer.vue";
-import { useAxios } from "../axios_common";
-
-const axios = useAxios();
-
-function sendAxiosAuth() {
-  axios.get("/").then(console.log);
-}
+import { ref } from "vue";
 </script>
 
 <template>
-  <main>
-    <button @click="sendAxiosAuth"></button>
-  </main>
-
-  <RouterLink
-    v-for="route in this.$router.options.routes"
-    :key="route.path"
-    :to="route.path"
+  <va-parallax
+    target="body"
+    src="/chicken-wings-barbecue-sweetly-sour-sauce-picnic-summer-menu-tasty-food-top-view-flat-lay_2829-6471.webp"
+    :height="400"
+    :speed="1"
   >
-    <div>{{ route.name }}</div>
-  </RouterLink>
-
-  <Footer />
+    <div class="title-box">
+      <h1 class="display-1 title">FindYourRestaurant</h1>
+      <h4 class="display-4 title">Porque esperar para ordenar tu comida.</h4>
+    </div>
+  </va-parallax>
 </template>
+
+<style scoped>
+.title {
+  color: white;
+  padding: 10px;
+}
+.title-box {
+  padding-left: 50px;
+  padding-top: 220px;
+}
+</style>
