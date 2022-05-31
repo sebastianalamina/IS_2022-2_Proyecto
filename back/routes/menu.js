@@ -23,9 +23,9 @@ router.get(
   ),
   validate(
     Joi.object({
-      skip: Joi.number().integer().min(0).default(0),
-      take: Joi.number().integer().min(1).default(10),
-    }), 
+      skip: Joi.number().integer().min(0).optional().default(0),
+      take: Joi.number().integer().min(1).optional().default(20),
+    }),
     "query"
   ),
   async (req, res) => {
@@ -76,7 +76,7 @@ router.post(
       imgPlatillo : Joi.string(), 
     }),
     "body"
-   ),
+  ),
   async (req, res) => {
     const {idrestaurante, nombrePlatillo, costoPlatillo, imgPlatillo} = req.body
     const idmenu = await prisma.menu.findFirst({

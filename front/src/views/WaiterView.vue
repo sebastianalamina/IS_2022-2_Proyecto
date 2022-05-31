@@ -1,10 +1,12 @@
 <script>
-import NavBar from '../components/NavBar.vue'
-import Footer from '../components/Footer.vue'
+
+export default {
+
+}
+
 </script>
 
 <template>
-  <NavBar/> 
   <div class="topnav">
       <a class="active" href="#inicio">Inicio</a>
       <a href="/inicioW/ordenes">Ordenes</a>
@@ -34,7 +36,6 @@ import Footer from '../components/Footer.vue'
     </div>
   </div>
   
-  <Footer/>
 </template>
 
 

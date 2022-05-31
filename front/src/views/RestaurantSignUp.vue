@@ -1,8 +1,4 @@
 <script>
-import NavBar from '../components/NavBar.vue'
-import Footer from '../components/Footer.vue'
-import RestaurantForm from '../components/RestaurantForm.vue'
-
 
 import { useAxios } from '../axios_common'
 import { useStore as useAdminStore } from '../stores/admin'
@@ -103,7 +99,6 @@ export default {
             });
         },
     },
-    components: { NavBar, Footer, }
 }
 
 </script>
