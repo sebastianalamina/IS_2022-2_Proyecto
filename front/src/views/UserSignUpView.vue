@@ -1,8 +1,7 @@
 <script>
 import {useAxios} from "../axios_common";
 import {useStore as useAuthStore} from "../stores/auth"
-import NavBar from "../components/NavBar.vue"
-import Footer from "../components/Footer.vue";
+
 
 export default { 
     data() {
@@ -73,7 +72,6 @@ export default {
             });
         },
     },
-    components: { NavBar, Footer }
 }
 
 </script>

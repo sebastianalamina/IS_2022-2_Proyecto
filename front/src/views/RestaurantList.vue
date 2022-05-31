@@ -3,7 +3,7 @@ import { useAxios } from "../axios_common";
 import ResenaList from "../components/ResenaList.vue";
 
 export default {
-  components: {
+    components: { 
     ResenaList,
     },
     data() {
