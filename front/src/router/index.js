@@ -76,7 +76,13 @@ const router = createRouter({
       },
     },
     {
-      path: "/menu/:idrestaurante/:idmenu",
+      path: "/mesa",
+      name: "administrar mesa", // Consultar antes de cambiar este "name".
+      props: true,
+      component: () => import("../views/ManageTable.vue"),
+    },
+    {
+      path: "/menu/:idrestaurante",
       name: "menu",
       props: true,
       component: () => import("../views/MenuView.vue"),
@@ -117,12 +123,36 @@ const router = createRouter({
       props: true,
       component: () => import("../views/Restaurante.vue"),
     },
+    {
+      path: "/ordenes",
+      name: "ordenes pendientes",
+      props: true,
+      component: () => import("../views/OrdenesPendientes.vue"),
+    },
+    {
+      path: "/repartidor/orden/encontrar",
+      name: "encuentra ordenes para repartidor",
+      props: true,
+      component: () => import("../views/repartidor/Ordenes.vue"),
+    },
+    {
+      path: "/user/verifica/:id",
+      name: "vista de restaurante",
+      props: true,
+      component: () => import("../views/confirmaMail.vue"),
+    },
     // {
     //   path: "/resenas/:idrestaurante",
     //   name: "vista de resenas de restaurante",
     //   props: true,
     //   component: () => import("../views/ReviewListView.vue"),
     // },
+    {
+      path: "/repartidor/orden",
+      name: "Muestra información de una orden",
+      props: true,
+      component: () => import("../views/repartidor/OrdenInfo.vue"),
+    },
   ],
 });
 

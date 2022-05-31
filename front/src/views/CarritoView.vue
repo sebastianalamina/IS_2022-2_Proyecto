@@ -1,13 +1,9 @@
 <script>
-import NavBar from "../components/NavBar.vue";
-import Footer from "../components/Footer.vue";
 import { useCarrito } from "../stores/carrito";
 import { mapStores } from "pinia";
 
 export default {
   components: {
-    NavBar,
-    Footer,
   },
   data() {
     return {};
@@ -39,7 +35,6 @@ export default {
 </script>
 
 <template>
-  <NavBar />
   <div class="contenedor-carrito">
     <div class="cabecera">
       <h3 class="titulo">Tu carrito</h3>
@@ -75,7 +70,6 @@ export default {
       <button class="b-confirmar">Confirmar</button>
     </div>
   </div>
-  <Footer />
 </template>
 
 <style scoped>

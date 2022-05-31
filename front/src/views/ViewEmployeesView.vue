@@ -7,7 +7,13 @@ export default {
   },
   data(){
     return{
-      empleados: null,
+      empleados: {},
+      createEmpleado : false,
+      datosEmpleado: {
+        email : null,
+        rol : "MESERO",
+      },
+      listaKey : 0,
     }
   },
   methods:{
@@ -16,10 +22,69 @@ export default {
 
       axios.get('/empleado')
         .then((res) => {
-          this.empleados = res.data;
+          console.log(JSON.stringify(res.data))
+          this.empleados = res.data.meseros;
         })
-        .catch(console.log)
+        .catch((err)=>{
+          console.log(err)
+        });
     },
+    turnOnForm(){
+      this.createEmpleado = true;
+      console.log("funciona")
+    },
+    handleSubmit (e){
+      console.log("Haciendo solicitud post ");
+      const instance = useAxios();
+      instance.post('/empleado', {
+        ...this.datosEmpleado,
+      })
+        .then((res) => {
+          console.log(JSON.stringify(res.data))
+          this.getEmployees();
+          this.createEmpleado = false;
+        })
+        .catch((err)=>{
+          console.log(err.response.data.error)
+        });
+    },
+    eliminarEmpleado(id){
+      console.log("Eliminar empleado " + id);
+      const instance = useAxios();
+      instance.delete("/empleado/mesero", {
+        params: {
+          idusuario: id
+        }
+      })
+        .then((res) => {
+          this.getEmployees();
+          this.listaKey += 1;
+          console.log("la lista key es esto",this.listaKey);
+        })
+        .catch((err)=>{
+          console.log(err.response.data.error)
+        });
+    },
+    filtrarID(e) {
+      // Para que no recargue la página.
+      e.preventDefault();
+
+      // Reiniciando la lista.
+      this.empleados_a_enseñar = JSON.parse(JSON.stringify(this.empleados))
+
+      // Si no se introduce ID, no se hace nada.
+      if (this.id == null || this.id == "")
+        return
+
+      // Filtrando...
+      let llave;
+      for (llave in this.empleados) {
+        this.empleados_a_enseñar[llave] = this.empleados[llave].filter((x) => {
+          return x['idrestaurante'] == parseInt(this.id);
+        });
+      }
+
+    }
   }
 }
 
@@ -27,32 +92,89 @@ export default {
 
 <template>
 
+
   <div class="columna">
-  <div v-for="(lista_empleados, puesto) in empleados">
-    <h1>Empleados tipo {{puesto}}</h1>
-    <div v-if="lista_empleados.length == 0">No hay empleados tipo {{puesto}} registrados en la Base de Datos.</div>
-    <div class="empleado" v-for="empleado in lista_empleados">
-      <!-- <img :src="'src/assets/'+empleado.img"> -->
-      {{empleado.nombre}} {{empleado.apatermo}} {{empleado.amaterno}}
-      <div class="derecha">
-        ID usuario: {{empleado.idusuario}}
-      </div>
-      <br>
-      <div v-if="puesto !== 'repartidor'">
-        ID restaurante: {{empleado.idrestaurante}}
-      </div>
-    </div>
-  </div>
+  
+    <va-button icon-right="create" class="mr-4" @click="createEmpleado = !createEmpleado" > Habilitar empleado</va-button> 
+    <div v-if="createEmpleado">
+    <h1 > Inserte el correo electronico del usuario</h1>
+        <va-form 
+        tag="form"
+        style="width : 300px"
+        @submit.prevent="handleSubmit"
+        > 
+
+        <va-input
+        class="mb-4"
+        label="Email" 
+        v-model="datosEmpleado.email"
+        :rules = "[value => (value && value.length > 0) || 'Correo electronico es necesario']"
+        />
+
+        <va-select
+        v-model="datosEmpleado.rol"
+        :options="['MESERO']"
+        :rules = "[value => (value && value.length > 0) || 'Rol es necesario']"
+        label="Rol"
+        /> 
+        
+        <va-button 
+        type="submit" 
+        class="mt-2"
+        >
+          Crear perfil empleado
+        </va-button>
+      </va-form>
+    </div> 
+
+  <h1> Lista de empleados:</h1>
+  
+
+  <va-list
+  :key="listaKey" 
+  >
+    <va-list-label>
+      Meseros
+    </va-list-label>
+    <va-list-item v-for="empleado in empleados" :key="empleado.usuario.idusuario">
+      <va-list-item-section>
+        <va-list-item-label>
+        {{empleado.usuario.nombre + " " + empleado.usuario.apatermo + " " + empleado.usuario.amaterno }}
+        </va-list-item-label>
+        <va-list-item-label>
+          Email : {{empleado.usuario.email}}
+        </va-list-item-label>
+        <va-list-item-label>
+          Confirmado : {{empleado.usuario.confirmado}}
+        </va-list-item-label>
+      </va-list-item-section >
+
+      <va-button
+      @click="eliminarEmpleado(empleado.usuario.idusuario)"
+      >
+        Eliminar empleado
+      </va-button>
+    </va-list-item>
+  </va-list>
+
+
+
   </div>
 
 </template>
 
 <style>
 
-.columna {
+.total {
   padding-top: 20px;
-  width: 60%;
+  width: 95%;
   margin: auto;
+}
+
+.columna {
+  padding-right: 20px;
+  float: left;
+  width: 33%;
 }
 
 .empleado {
@@ -65,6 +187,18 @@ export default {
 .derecha{
   padding-top: 0px !important;
   float: right;
+}
+
+h1{
+  display: inline;
+}
+
+form{
+  display: inline;
+}
+
+input{
+  width: 70px;
 }
 
 img{

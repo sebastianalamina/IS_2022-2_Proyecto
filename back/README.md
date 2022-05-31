@@ -1,31 +1,42 @@
-# Backend de mi restaurante
-Para ejecutar el backend es necesario ejecutar:
+# Backend
+
+## Pre-requisitos
+
+Es necesario contar con:
+
+- PostgreSQL.
+
+- *Node.js* y su manejador de paquetes *npm* (que, por defecto, viene incluido en la instalación de *Node.js*).
+
+## Pre-ejecución
+
+Instalar los módulos necesarios y sus dependencias mediante el siguiente comando:
 ```
 npm install
 ```
-Una vez que esten instaladas las dependencias basta con ejecutar 
+
+Para conectar con la Base de Datos, es necesario contar con una Base de Datos llamada `mi_restaurante`, abrir el puerto 5432 (por defecto) y tener, en este mismo directorio, un archivo llamado `.env` que contenga lo siguiente:
+```
+DATABASE_URL="postgresql://${DB_USER}:${PGPASS}@localhost:5432/${DB_NAME}"
+DB_NAME="mi_restaurante"
+PGPASS="[contraseña]"
+DB_USER="[usuario]"
+```
+en donde `[usuario]` y `[contraseña]` deben ser reemplazados por las credenciales necesarias para conectar con la Base de Datos.
+
+Para crear una versión de la Base de Datos basada en el *schema* de *Prisma*, ejecutar el siguiente comando:
+```
+npx prisma generate
+```
+
+## Ejecución
+
+Levantar el servidor en el puerto 3001 del *localhost* con el siguiente comando: 
 ```
 node server.js
 ```
-La aplicacion se ejecutara en el puerto 3001 del local host 
 
-
-## Base de datos
-Para hacer la conexion a la base de datos es necesario tener lo siguiente:
-* Usuario llamado root
-* Contrasena igual a toor
-* Abrir el puerto 5432 (esto es por default)
-* Nombrar la base de datos como "mi_restaurante"
-
-Para crear uan version de la base de datos basada en el schema de prisma  se utiliza el siguiente comando:
-```
-npx prisma reset
-```
-
-
-
-
-## Testeo 
+## Pruebas 
 
 Ejecutar lo siguiente:
 ```
@@ -33,4 +44,3 @@ npm run pretest
 npm run test
 npm posttest
 ```
-

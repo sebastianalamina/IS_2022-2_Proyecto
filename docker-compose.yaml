@@ -1,0 +1,39 @@
+version: "3.9"
+name: find_my_restaurant
+services:
+  db:
+    container_name: db
+    image: postgres:13.4-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: toor
+      POSTGRES_USER: root
+      POSTGRES_DB: mi_restaurante
+      # Para persistencia descomenta/comenta esta linea
+    volumes:
+      - ./docker/db_volume:/var/lib/postgresql/data
+  back:
+    container_name: express
+    build:
+      context: back/
+      args:
+        DATABASE_URL: postgresql://root:toor@db:5432/mi_restaurante
+    ports:
+      - "3001:3001"
+    links:
+      - db
+    environment:
+      DATABASE_URL: postgresql://root:toor@db:5432/mi_restaurante
+  front:
+    container_name: vuejs
+    build:
+      context: front/
+      args:
+        VITE_API_ENDPOINT: "http://back:3001/"
+    ports:
+      - "3000:3000"
+    links:
+      - back
+    environment:
+      VITE_API_ENDPOINT: "http://back:3001/"
