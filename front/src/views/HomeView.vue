@@ -6,7 +6,7 @@ import { ref } from "vue";
 <template>
   <va-parallax
     target="body"
-    src="/chicken-wings-barbecue-sweetly-sour-sauce-picnic-summer-menu-tasty-food-top-view-flat-lay_2829-6471.webp"
+    src="src/assets/food.webp"
     :height="400"
     :speed="1"
   >
