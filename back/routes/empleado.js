@@ -51,9 +51,7 @@ router.post("/",
 						connect : { email : email }
 					},
 					restaurante : {
-						connect : {
-							idrestaurante : idAdministrador.idrestaurante
-						}
+						connect : { idrestaurante : idAdministrador.idrestaurante }
 					}
 				}
 			});

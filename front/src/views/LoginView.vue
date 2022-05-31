@@ -57,9 +57,14 @@ export default {
         const token = res.data.token
         const rol = res.data.rol
         authStore.login(token,rol)
+        if( rol == "ADMINISTRADOR"){
+          this.$router.push("/admin")
+        }
         this.$router.push("/")
       })
-      .catch(console.log)
+      .catch((err)=>{
+        console.log(err)
+      })
     }
   }
 }

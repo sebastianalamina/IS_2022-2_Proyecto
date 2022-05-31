@@ -41,6 +41,7 @@ app.use("/restaurante", require("./routes/restaurante.js"));
 app.use("/resenas", require("./routes/resenas.js"));
 app.use("/carrito", require("./routes/carrito.js"));
 app.use("/orden",require("./routes/orden.js"));
+app.use("/admin", require("./routes/admin.js"));
 
 
 app.get("/", (req, res) => {

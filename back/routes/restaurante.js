@@ -10,6 +10,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 const validate = require("../utils/middleware/validate");
 const { esAdministrador ,bearerAuth } = require("../utils/middleware/auth");
+const { valid } = require("joi");
 
 
 /**
@@ -36,7 +37,7 @@ router.post(
   ),
   async (req, res) => {	
 
-		// Creamos el nuevo restaurante.
+		// Creamos el nuevo restaurante. al mismo tiempo creamos el nuevo 
 		const restaurante = await prisma.restaurante.create({
 			data : {
 				administrador : {
@@ -50,6 +51,10 @@ router.post(
 					}
 				},
 				...req.body
+			},
+			select:{
+				idrestaurante: true,
+				nombre : true
 			}	
 		}) 
 		// Inicializamos un menu vacio para el nuevo restaurante 
@@ -107,6 +112,20 @@ router.get(
 			take,	
 		});
 		res.json(restaurante)			
+	}
+);
+
+router.delete("/",
+	validate(
+		Joi.object({ idrestaurante : Joi.number().required()}),
+		"query"
+	),
+	async (req,res)=>{
+		const {idrestaurante} = req.query
+		const restauranteEliminado = await prisma.restaurante.delete({
+			where:{ idrestaurante },
+		})
+		res.json(restauranteEliminado);
 	}
 );
 

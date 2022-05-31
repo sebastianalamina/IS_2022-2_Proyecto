@@ -147,6 +147,11 @@ const router = createRouter({
       props: true,
       component: () => import("../views/repartidor/OrdenInfo.vue"),
     },
+    {
+      path: "/admin",
+      name: "vista principal del administrador",
+      component: () => import("../views/AdminView.vue"),
+    }
   ],
 });
 
