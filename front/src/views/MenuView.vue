@@ -41,6 +41,7 @@ export default {
       .then((res)=>{
         console.log("Se logro")
         console.log(JSON.stringify(res.data));
+        this.getCards();
         this.addPlatilloForm = !this.addPlatilloForm;
       })
       .catch((err)=>{
@@ -54,26 +55,25 @@ export default {
       return auth.hasPermisionsOf(roles.ADMINISTRADOR);
     },
     async getCards(){
-    const instance = useAxios();
-    console.log(this.idrestaurante);
-    const ruta = "/menu/" + this.idrestaurante;
-    instance
-      .get(ruta, {
-        params: {
-          skip: 0,
-          take: 10,
-        },
-      })
-      .then((res) => {
-        console.log("Funciono")
-        this.cards = res.data;
-      })
-      .catch((err) => {
-        console.log("aaaa")
-        console.log(err.response.data.error);
-      });
-    }
-
+      const instance = useAxios();
+      console.log(this.idrestaurante);
+      const ruta = "/menu/" + this.idrestaurante;
+      instance
+        .get(ruta, {
+          params: {
+            skip: 0,
+            take: 10,
+          },
+        })
+        .then((res) => {
+          console.log("Funciono")
+          this.cards = res.data;
+        })
+        .catch((err) => {
+          console.log("aaaa")
+          console.log(err.response.data.error);
+        });
+    },
   },
   mounted() {
     this.getCards();
