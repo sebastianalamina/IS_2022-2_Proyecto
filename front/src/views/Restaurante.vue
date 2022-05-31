@@ -1,16 +1,7 @@
 <script>
 import { useAxios } from '../axios_common'
-import NavBar from '../components/NavBar.vue';
-import Footer from '../components/Footer.vue';
 
-
-export default {
-    components:{
-    NavBar,
-    Footer,
-    NavBar,
-    Footer
-},
+export default { 
     data(){
         return {
             restaurante : {},
@@ -37,7 +28,6 @@ export default {
 
 </script>
 <template>
-<NavBar/>
 
 <h1>{{restaurante.nombre}}</h1>
 <p>{{restaurante.calle}} {{restaurante.numero}} {{restaurante.estado}}, {{restaurante.municipio}}</p>
@@ -47,7 +37,6 @@ export default {
 
 <router-link :to="{ path : '/resenas/' + restaurante.idrestaurante , query:{max : this.maxPages } }"> Resenas </router-link>
 
-<Footer/>
 </template>
 
 

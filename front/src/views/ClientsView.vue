@@ -1,10 +1,7 @@
 <script>
-  import NavBar from '../components/NavBar.vue'
-  import Footer from '../components/Footer.vue'
 </script>
 
 <template>
-  <NavBar/>
 
   <center><h1>Bienvenido</h1></center>
 
@@ -45,7 +42,6 @@
     </div>
   </div>
 
-  <Footer/>
 </template>
 
 

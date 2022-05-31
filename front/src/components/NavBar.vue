@@ -81,4 +81,7 @@ a {
   color: inherit; /* blue colors for links too */
   text-decoration: inherit; /* no underline */
 }
+.va-tabs {
+  padding-bottom: 30px;
+}
 </style>

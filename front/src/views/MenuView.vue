@@ -1,6 +1,4 @@
 <script>
-import NavBar from "../components/NavBar.vue";
-import Footer from "../components/Footer.vue";
 import { useAxios } from "../axios_common";
 import { useCarrito } from "../stores/carrito";
 import { useStore as useAuthStore} from "../stores/auth";
@@ -29,7 +27,7 @@ export default {
     },
     addPlatillo(platillo) {
       let carrito = useCarrito();
-      console.log("este es el id del platillo",platillo.idplatillo)
+      console.log("este es el id del platillo", platillo.idplatillo);
       carrito.increase(platillo);
     },
     postPlatillo(){
@@ -125,7 +123,7 @@ export default {
           v-bind:key="card.idplatillo"
         >
           <h2>{{ card.nombre }}</h2>
-          <p> {{ card.idplatillo}} </p>
+          <p>{{ card.idplatillo }}</p>
           <img class="img_menu" :src="card.src" alt="imagen nos disponible" />
           <input
             type="button"
@@ -139,8 +137,6 @@ export default {
       </div>
     </div>
   </form>
-
-  <Footer />
 </template>
 
 <style scoped>

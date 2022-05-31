@@ -1,12 +1,21 @@
 <script setup>
 import { RouterLink, RouterView } from "vue-router";
+import { useRouter } from "vue-router";
 import NavBar from "./components/NavBar.vue";
 import { useStore as useAuth } from "./stores/auth";
+import {
+  INVITADO,
+  CLIENTE,
+  MESERO,
+  COCINERO,
+  ADMINISTRADOR,
+  REPARTIDOR,
+} from "./constants/roles";
 
-//hardocodeo para cambiar de usuario
-//TODO: borrar
 const auth = useAuth();
-//auth.login("token", { rol: "REPARTIDOR" });
+//const router = useRouter();
+//util para pruebas
+//auth.login("token", { rol: CLIENTE });
 </script>
 
 <template>
