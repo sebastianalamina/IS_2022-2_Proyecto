@@ -1,13 +1,11 @@
 <script>
 import { useAxios } from "../axios_common";
-
-
 import ResenaList from "../components/ResenaList.vue";
 
 export default {
     components: { 
     ResenaList,
-},
+    },
     data() {
         return {
             cards: [],
@@ -57,14 +55,13 @@ export default {
             console.log(JSON.stringify("pase al de atras",this.cards[0]))
             this.mostrarResenas += 1;
         },
-    },
-    mounted(){
-        this.getRestaurantList(this.skip);
-        console.log("lool");
-    }
-}
+  },
+  mounted() {
+    this.getRestaurantList(this.skip);
+    console.log("lool");
+  },
+};
 </script>
-
 
 <template>
 <button @click="this.previousPage">Pagina anterior</button>
@@ -102,6 +99,7 @@ icon >
 
 <div>
 
+  <div>
     <h3>Resenas</h3>
 
    <ResenaList
@@ -114,8 +112,4 @@ icon >
 
 </template>
 
-
-
-<style>
-
-</style>
+<style></style>

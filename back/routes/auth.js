@@ -4,9 +4,11 @@ const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 const Joi = require("joi");
 const validate = require("../utils/middleware/validate");
+const Mailer = require("../utils/email");
 
 const router = express.Router();
 const prisma = new PrismaClient();
+const mailer = new Mailer();
 
 /**
  * Crea o regresa el token actualizado de un usuario
@@ -118,13 +120,52 @@ router.post(
     const user = await prisma.usuario.create({
       data: {
         ...req.body,
+        confirmado: false,
         contrasegna: await hashPassword(req.body.contrasegna),
       },
       select: {
         email: true,
+        idusuario: true,
       },
     });
+
+    mailer.send({
+      to: req.body.email,
+      subject: "Confirmación correo",
+      html: "utils/email/templates/confirmaCorreo.mustache",
+      context: {
+        username: req.body.email, //cambiar nombre
+        id: user.idusuario,
+      },
+    });
+    delete user.idusuario;
     return res.status(200).json(user);
+  }
+);
+
+router.get(
+  "/verifica/:id",
+  validate(
+    Joi.object({
+      id: Joi.number().integer().required(),
+    }),
+    "params"
+  ),
+  async (req, res) => {
+    try {
+      await prisma.usuario.update({
+        where: {
+          idusuario: req.params.id,
+        },
+        data: {
+          confirmado: true,
+        },
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+    res.send("ok");
   }
 );
 

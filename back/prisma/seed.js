@@ -35,6 +35,7 @@ async function seed() {
           create:{ idusuario : idUsuarioAdmin.idusuario }
         } 
         
+
       },
       select:{
         idrestaurante: true,
@@ -88,6 +89,7 @@ async function seed() {
         platillo : {
           createMany:{ data: platillos }
           } 
+
         }
       });
     }
