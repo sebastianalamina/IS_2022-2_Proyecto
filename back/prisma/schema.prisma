@@ -14,7 +14,6 @@ enum estadoorden {
   ENTREGADA
 }
 
-//agregué @unique en idrestaurante
 model administrador {
   idadmin       Int         @id @default(autoincrement())
    idrestaurante Int?         @unique
@@ -64,7 +63,6 @@ model contenidoorden {
   platillo         platillo? @relation(fields: [idplatillo], references: [idplatillo], onDelete: Cascade, map: "fk_contenido3")
 }
 
-//quité estado, agregué orden
 model entregadomicilio {
   identregadomicilio Int        @id @default(autoincrement())
   idrepartidor       Int
@@ -72,8 +70,6 @@ model entregadomicilio {
   orden              orden      @relation(fields: [idorden], references: [idorden], onDelete: Cascade, onUpdate: Cascade, map: "fk_or2")
   repartidor         repartidor @relation(fields: [idrepartidor], references: [idrepartidor], onDelete: Cascade, map: "fk_or1")
 }
-
-//quité entregaMesa
 
 model menu {
   idmenu        Int         @id @default(autoincrement())
@@ -93,15 +89,6 @@ model mesero {
   usuario       usuario       @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
 }
 
-//quité orden envio
-
-//quité modificar carrito
-
-//quité carrito
-//quité contenido carrito
-
-//quité confirmación carrito
-//agregué img
 model platillo {
   idplatillo     Int              @id @default(autoincrement())
   idmenu         Int
@@ -113,11 +100,6 @@ model platillo {
   contenidoorden contenidoorden[]
 }
 
-//quité preparaorden
-
-//quité registro restaurante
-
-//eliminé atributos comunes
 model repartidor {
   idrepartidor     Int                @id @default(autoincrement())
   idusuario        Int?
@@ -125,6 +107,7 @@ model repartidor {
   entregadomicilio entregadomicilio[]
 }
 
+//Quitar "cocinero" de aquí
 model restaurante {
   idrestaurante Int             @id @default(autoincrement())
   nombre        String?         @db.VarChar(100)
@@ -141,9 +124,6 @@ model restaurante {
   orden         orden[]
 }
 
-//quité inventario
-
-//agruegué atributos comunes
 model usuario {
   email         String?         @db.VarChar(255) @unique
   contrasegna   String?         @db.VarChar(255)
@@ -165,16 +145,19 @@ model usuario {
   repartidor    repartidor[]
 }
 
+//classificacion
+//idcliente tiene que ser unique
 model resena {
   idresena       Int         @id @default(autoincrement())
   idrestaurante  Int
-  idcliente      Int
+  idcliente      Int         @unique
   classificacion Int
   date           DateTime    @db.Date
   texto          String      @db.VarChar(255)
   restaurante    restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena2")
   cliente        cliente     @relation(fields: [idcliente], references: [idcliente], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena3")
 }
+
 
 model mesa {
   idmesa        Int         @id @default(autoincrement())
