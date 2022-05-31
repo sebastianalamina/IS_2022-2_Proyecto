@@ -1,6 +1,7 @@
 <script>
 
 import { useAxios } from '../axios_common'
+import { useStore as useAdminStore } from '../stores/admin'
 
 export default { 
     data() {
@@ -53,6 +54,7 @@ export default {
             // Evita que se recargue la página.
             e.preventDefault();
             //const authStore = useAuthStore();
+            const adminStore = useAdminStore();
             const axios = useAxios();
             if (!this.checkForm())
                 return;
@@ -74,9 +76,21 @@ export default {
                 municipio : this.municipio,
                 cp : this.cp,
             }).then((res) => {
+
                 if (res.status == 200) {
                     this.resultado = "Restaurante creado con éxito.";
                     //this.$router.push("/login");
+                    console.log("estos son los datos : ", JSON.stringify(res.data));
+                    adminStore.setRestaurante({ 
+                        nombre : this.nombre,
+                        estado : this.estado,
+                        calle : this.calle,
+                        numero : this.numero,
+                        municipio : this.municipio,
+                        cp : this.cp,
+                        idrestaurante : res.data.idrestaurante
+                    });
+                    this.$router.push("/admin");
                 }
             })
                 .catch((error) => {
