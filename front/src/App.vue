@@ -13,12 +13,12 @@ import {
 } from "./constants/roles";
 
 const auth = useAuth();
-const router = useRouter();
-
-auth.login("token", { rol: CLIENTE });
+//const router = useRouter();
+//util para pruebas
+//auth.login("token", { rol: CLIENTE });
 </script>
 
 <template>
-  <NavBar />
-  <RouterView />
+<NavBar/>
+<RouterView />
 </template>

@@ -14,78 +14,66 @@ enum estadoorden {
   ENTREGADA
 }
 
+//agregué @unique en idrestaurante
 model administrador {
-  idadmin             Int                   @id @default(autoincrement())
-  idrestaurante       Int
-  nombre              String                @db.Char(100)
-  apatermo            String?               @db.Char(100)
-  amaterno            String?               @db.Char(100)
-  idusuario           Int
-  restaurante         restaurante           @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_admin")
-  usuario             usuario               @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
-  cocinero            cocinero[]
-  mesero              mesero[]
-  registrorestaurante registrorestaurante[]
+  idadmin       Int         @id @default(autoincrement())
+   idrestaurante Int?         @unique
+  idusuario     Int         @unique
+  restaurante   restaurante? @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_admin")
+  usuario       usuario     @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
+  mesero        mesero[]
 }
 
+//eliminé atributos comunes
 model cliente {
-  idcliente        Int                @id @default(autoincrement())
-  nombre           String             @db.Char(100)
-  apatermo         String?            @db.Char(100)
-  amaterno         String?            @db.Char(100)
-  estado           String?            @db.VarChar(100)
-  calle            String?            @db.VarChar(100)
-  numero           Int?
-  cp               Int?
-  municipio        String?            @db.VarChar(100)
-  idusuario        Int
-  usuario          usuario?           @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
-  modificarCarrito modificarCarrito[]
-  carrito          carrito[]
-  resena           resena[]
+  idcliente Int      @id @default(autoincrement())
+  idusuario Int      @unique
+  usuario   usuario? @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
+  resena    resena[]
+  orden     orden[]
 }
 
-model cocinero {
-  idcocinero    Int             @id @default(autoincrement())
-  idadmin       Int
-  idrestaurante Int
-  nombre        String          @db.Char(100)
-  apaterno      String?         @db.Char(100)
-  amaterno      String?         @db.Char(100)
-  idusuario     Int
-  administrador administrador   @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_cocinero1")
-  restaurante   restaurante     @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_cocinero2")
-  usuario       usuario         @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
-  prepararorden prepararorden[]
+//eliminé cocinero y sus apariciones en otras tablas
+
+//crear tabla orden
+model orden {
+  idorden       Int                @id @default(autoincrement())
+  idmesa        Int
+  idrestaurante Int?
+  idcliente     Int?
+  domicilio     String?
+  estado        estadoorden
+  esCarrito     Boolean
+  pagado        Boolean
+  costo         Int
+  cliente       cliente?            @relation(fields: [idcliente], references: [idcliente], onDelete: Cascade, onUpdate: Cascade, map: "fk,orden3")
+  mesa          mesa?              @relation(fields: [idmesa], references: [idmesa], onDelete: Cascade, map: "fk_orden1")
+  restaurante   restaurante?       @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_orden2")
+  contenido     contenidoorden[]
+  entrega       entregadomicilio[]
 }
 
+
+//quité orden normal y orden envio
+//agregué orden
 model contenidoorden {
-  idcontenidoorden Int          @id @default(autoincrement())
-  idordennormal    Int?
-  idordenenvio     Int?
+  idcontenidoorden Int       @id @default(autoincrement())
+  idorden          Int
   idplatillo       Int?
-  ordenenvio       ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_contenido2")
-  ordennormal      ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_contenido1")
-  platillo         platillo?    @relation(fields: [idplatillo], references: [idplatillo], onDelete: Cascade, map: "fk_contenido3")
+  orden            orden?    @relation(fields: [idorden], references: [idorden], onDelete: Cascade, onUpdate: Cascade, map: "fk_contenido1")
+  platillo         platillo? @relation(fields: [idplatillo], references: [idplatillo], onDelete: Cascade, map: "fk_contenido3")
 }
 
+//quité estado, agregué orden
 model entregadomicilio {
   identregadomicilio Int        @id @default(autoincrement())
   idrepartidor       Int
-  idordenenvio       Int
-  estado             String     @db.Char(18)
-  ordenenvio         ordenenvio @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_or2")
+  idorden            Int
+  orden              orden      @relation(fields: [idorden], references: [idorden], onDelete: Cascade, onUpdate: Cascade, map: "fk_or2")
   repartidor         repartidor @relation(fields: [idrepartidor], references: [idrepartidor], onDelete: Cascade, map: "fk_or1")
 }
 
-model entregamesa {
-  identregamesa Int         @id @default(autoincrement())
-  idmesero      Int
-  idordennormal Int
-  estado        String      @db.Char(18)
-  mesero        mesero      @relation(fields: [idmesero], references: [idmesero], onDelete: Cascade, map: "fk_em1")
-  ordennormal   ordennormal @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_em2")
-}
+//quité entregaMesa
 
 model menu {
   idmenu        Int         @id @default(autoincrement())
@@ -94,151 +82,85 @@ model menu {
   platillo      platillo[]
 }
 
+//quité atributos comunes
 model mesero {
   idmesero      Int           @id @default(autoincrement())
   idadmin       Int
   idrestaurante Int
-  nombre        String        @db.Char(100)
-  apatermo      String?       @db.Char(100)
-  amaterno      String?       @db.Char(100)
-  idusuario     Int
+  idusuario     Int           @unique
   administrador administrador @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_mesero1")
   restaurante   restaurante   @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_mesero2")
   usuario       usuario       @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
-  entregamesa   entregamesa[]
 }
 
-model ordenenvio {
-  idordenenvio     Int                   @id @default(autoincrement())
-  costo            Int
-  contenidoorden   contenidoorden[]
-  entregadomicilio entregadomicilio[]
-  prepararorden    prepararorden[]
-  confcarrito      confirmacionCarrito[]
-}
+//quité orden envio
 
-//relacion cliente carrito
-model modificarCarrito {
-  idcliente Int     @unique
-  idcarrito BigInt  @unique
-  cliente   cliente @relation(fields: [idcliente], references: [idcliente])
-  carrito   carrito @relation(fields: [idcarrito], references: [idcarrito])
-}
+//quité modificar carrito
 
-//carritos
-model carrito {
-  idcarrito        BigInt                @id @default(autoincrement())
-  costo            Int
-  cliente          cliente[]
-  modificarCarrito modificarCarrito[]
-  contenido        contenidoCarrito[]
-  confcarrito      confirmacionCarrito[]
-}
+//quité carrito
+//quité contenido carrito
 
-//contenido del carrito del usuario
-model contenidoCarrito {
-  idcarrito          BigInt
-  idplatillo         Int
-  idcontenidocarrito BigInt   @id @default(autoincrement())
-  carrito            carrito  @relation(fields: [idcarrito], references: [idcarrito])
-  platillo           platillo @relation(fields: [idplatillo], references: [idplatillo])
-}
-
-//relaciona carrito con las ordenes
-model confirmacionCarrito {
-  idcarrito     BigInt       @unique
-  idordenenvio  Int
-  idordennormal Int
-  metodopago    String       @db.Char(18)
-  carrito       carrito      @relation(fields: [idcarrito], references: [idcarrito])
-  ordenenvio    ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_cc")
-  ordennormal   ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_cc2")
-}
-
-model ordennormal {
-  idordennormal  Int                   @id @default(autoincrement())
-  costo          Int
-  estado         estadoorden
-  contenidoorden contenidoorden[]
-  entregamesa    entregamesa[]
-  prepararorden  prepararorden[]
-  confcarrito    confirmacionCarrito[]
-}
-
+//quité confirmación carrito
+//agregué img
 model platillo {
-  idplatillo       Int                @id @default(autoincrement())
-  idmenu           Int
-  idrestaurante    Int
-  nombre           String             @db.VarChar(100)
-  costo            Int
-  menu             menu               @relation(fields: [idmenu], references: [idmenu], onDelete: Cascade, map: "fk_paltillo1")
-  contenidoorden   contenidoorden[]
-  contenidocarrito contenidoCarrito[]
+  idplatillo     Int              @id @default(autoincrement())
+  idmenu         Int
+  idrestaurante  Int
+  img            String?           @db.VarChar(1000)
+  nombre         String           @db.VarChar(100)
+  costo          Int
+  menu           menu             @relation(fields: [idmenu], references: [idmenu], onDelete: Cascade, map: "fk_paltillo1")
+  contenidoorden contenidoorden[]
 }
 
-model prepararorden {
-  idpreparaorden Int          @id @default(autoincrement())
-  idcocinero     Int
-  idordenenvio   Int
-  idordennormal  Int
-  cocinero       cocinero     @relation(fields: [idcocinero], references: [idcocinero], onDelete: Cascade, map: "fk_po1")
-  ordenenvio     ordenenvio?  @relation(fields: [idordenenvio], references: [idordenenvio], onDelete: Cascade, map: "fk_po2")
-  ordennormal    ordennormal? @relation(fields: [idordennormal], references: [idordennormal], onDelete: Cascade, map: "fk_po3")
-}
+//quité preparaorden
 
-model registrorestaurante {
-  idregistrorestaurante Int           @id @default(autoincrement())
-  idadmin               Int
-  idrestaurante         Int
-  fecha                 DateTime      @db.Date
-  administrador         administrador @relation(fields: [idadmin], references: [idadmin], onDelete: Cascade, map: "fk_reg1")
-  restaurante           restaurante   @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_reg2")
-}
+//quité registro restaurante
 
+//eliminé atributos comunes
 model repartidor {
   idrepartidor     Int                @id @default(autoincrement())
-  nombre           String             @db.Char(100)
-  apatermo         String?            @db.Char(100)
-  amaterno         String?            @db.Char(100)
   idusuario        Int?
   usuario          usuario?           @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   entregadomicilio entregadomicilio[]
 }
 
 model restaurante {
-  idrestaurante       Int                   @id @default(autoincrement())
-  nombre              String?               @db.VarChar(100)
-  estado              String?               @db.VarChar(100)
-  calle               String?               @db.VarChar(100)
-  numero              Int?
-  cp                  Int?
-  municipio           String?               @db.VarChar(100)
-  administrador       administrador[]
-  cocinero            cocinero[]
-  inventario          inventario[]
-  menu                menu[]
-  mesero              mesero[]
-  registrorestaurante registrorestaurante[]
-  resena              resena[]
+  idrestaurante Int             @id @default(autoincrement())
+  nombre        String?         @db.VarChar(100)
+  estado        String?         @db.VarChar(100)
+  calle         String?         @db.VarChar(100)
+  numero        Int?
+  cp            Int?
+  municipio     String?         @db.VarChar(100)
+  administrador administrador[]
+  menu          menu[]
+  mesero        mesero[]
+  resena        resena[]
+  mesa          mesa[]
+  orden         orden[]
 }
 
-model inventario {
-  idinventario  Int         @id @default(autoincrement())
-  nombre        String      @db.Char(100)
-  cantidad      Int
-  idrestaurante Int
-  restaurante   restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_inventario")
-}
+//quité inventario
 
+//agruegué atributos comunes
 model usuario {
-  email         String?         @db.VarChar(255)
+  email         String?         @db.VarChar(255) @unique
   contrasegna   String?         @db.VarChar(255)
   token         String?         @db.VarChar(255)
   rol           String?         @db.VarChar(255)
   idusuario     Int             @id @default(autoincrement())
+  confirmado    Boolean
+  nombre        String          @db.Char(100)
+  apatermo      String?         @db.Char(100)
+  amaterno      String?         @db.Char(100)
+  estado        String?         @db.VarChar(100)
+  calle         String?         @db.VarChar(100)
+  numero        Int?
+  cp            Int?
+  municipio     String?         @db.VarChar(100)
   administrador administrador[]
   cliente       cliente[]
-  cocinero      cocinero[]
   mesero        mesero[]
   repartidor    repartidor[]
 }
@@ -252,4 +174,12 @@ model resena {
   texto          String      @db.VarChar(255)
   restaurante    restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena2")
   cliente        cliente     @relation(fields: [idcliente], references: [idcliente], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena3")
+}
+
+model mesa {
+  idmesa        Int         @id @default(autoincrement())
+  idrestaurante Int
+  ocupada       Boolean
+  restaurante   restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, onUpdate: Cascade, map: "fk_mesa")
+  orden         orden[]
 }
