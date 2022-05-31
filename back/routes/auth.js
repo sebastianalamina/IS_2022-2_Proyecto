@@ -65,8 +65,7 @@ router.post(
       const match = await bcrypt.compare(contrasegna, user.contrasegna);
       if (match) {
         const token = await obtainAuthToken(user);
-        return res.json({ token,
-           rol : user.rol });
+        return res.json({ token, rol: user.rol });
       }
     }
 
@@ -85,10 +84,15 @@ router.post(
   validate(
     Joi.object({
       email: Joi.string().email().required(),
-      nombre : Joi.string().required(),
+      nombre: Joi.string().required(),
       contrasegna: Joi.string().required(),
-      rol: Joi.string().uppercase().required(),
-      confirmado : Joi.bool()
+      rol: Joi.string().required(),
+      nombre: Joi.string().required(),
+      estado: Joi.string().required(),
+      calle: Joi.string().required(),
+      numero: Joi.number().integer().required(),
+      cp: Joi.number().integer().required(),
+      municipio: Joi.string().required(),
     })
   ),
   async (req, res) => {
@@ -101,21 +105,19 @@ router.post(
         error: "An account with that email already exists.",
       });
     }
-    if (req.rol === "ADMINISTRADOR"){
+    if (req.rol === "ADMINISTRADOR") {
       const user = await prisma.usuario.create({
-        data:{
-          administrador:{
-            create:{
-
-            },
+        data: {
+          administrador: {
+            create: {},
           },
           ...req.body,
         },
-        select : {
-          email : true
-        }
+        select: {
+          email: true,
+        },
       });
-        return res.status(200).json(user);
+      return res.status(200).json(user);
     }
     const user = await prisma.usuario.create({
       data: {

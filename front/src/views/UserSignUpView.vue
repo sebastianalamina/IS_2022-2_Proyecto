@@ -1,181 +1,142 @@
 <script>
-import {useAxios} from "../axios_common";
-import {useStore as useAuthStore} from "../stores/auth"
+import { useAxios } from "../axios_common";
+import { useStore as useAuthStore } from "../stores/auth";
+import roles from "../constants/roles";
 
+const rolesLower = Object.values(roles).map((x) => x.toLowerCase());
 
-export default { 
-    data() {
-        return {
-            errors: [],
-            correo: null,
-            correoError: null,
-            password0: null,
-            password0Error: null,
-            password1: null,
-            password1Error: null,
-            rol: null,
-            rolError: null,
-            nombre : null,
-            nombreError : null,
-            resultado: null,
-            resultadoError: null,
-        };
+export default {
+  data() {
+    return {
+      errors: [],
+      correo: null,
+      password: null,
+      passwordConf: null,
+      rol: "cliente",
+      nombre: null,
+      estado: null,
+      calle: null,
+      numero: null,
+      cp: null,
+      municipio: null,
+      options: rolesLower,
+      res_error: false,
+    };
+  },
+  methods: {
+    register: function (e) {
+      // Evita que se recargue la página.
+      e.preventDefault();
+      //const authStore = useAuthStore();
+      const axios = useAxios();
+      if (!this.$refs.form.validate()) return;
+      axios
+        .post("/auth/register", {
+          email: this.correo,
+          contrasegna: this.password,
+          rol: this.rol,
+          nombre: this.nombre,
+          estado: this.estado,
+          calle: this.calle,
+          numero: this.numero,
+          cp: this.cp,
+          municipio: this.municipio,
+        })
+        .then((res) => this.$router.push("/login"))
+        .catch((error) => (this.res_error = true));
     },
-    methods: {
-        checkForm: function (e) {
-            // Chequeo del correo electrónico.
-            this.nombreError = null;
-            if(!this.nombre)
-              this.nombreError = "Nombre requerido";
-            this.correoError = null;
-            if (!this.correo)
-                this.correoError = "Campo requerido.";
-            // Chequeo de la contraseña.
-            this.password0Error = null;
-            this.password1Error = null;
-            if (!this.password0)
-                this.password0Error = "Campo requerido.";
-            if (!this.password1)
-                this.password1Error = "Campo requerido.";
-            else if (this.password0 != this.password1)
-                this.password1Error = "Las contraseñas no coinciden.";
-            // Chequeo del rol.
-            this.rolError = null;
-            if (!this.rol)
-                this.rolError = "Campo requerido.";
-            return !this.correoError && !this.password0Error && !this.password1Error && !this.rolError;
-        },
-        register: function (e) {
-            // Evita que se recargue la página.
-            e.preventDefault();
-            //const authStore = useAuthStore();
-            const axios = useAxios();
-            if (!this.checkForm())
-                return;
-            this.resultado = null;
-            this.resultadoError = null;
-            axios.post("/auth/register", {
-                email: this.correo,
-                contrasegna: this.password0,
-                rol: this.rol,
-                nombre : this.nombre,
-                confirmado : false,
-            }).then((res) => {
-                if (res.status == 200) {
-                    this.resultado = "Usuario creado con éxito.";
-                    this.$router.push("/login");
-                }
-            })
-                .catch((error) => {
-                console.log(error);
-                this.resultadoError = error.response.data.error;
-            });
-        },
-    },
-}
-
+  },
+};
 </script>
 
 <template>
-
   <div class="mitad izquierda">
-    <form id="signup-box" @submit="register"> <!-- action="/something" method="post"> -->
+    <va-form
+      ref="form"
+      style="width: 300px"
+      tag="form"
+      @submit.prevent="register"
+      id="signup-box"
+    >
+      <div style="color: red" v-if="res_error">Algo salio mal</div>
+      <va-input
+        v-model="correo"
+        :rules="[
+          (v) =>
+            v.indexOf('@ciencias.unam.mx') >= 0 ||
+            `El correo tiene que ser de la facutlad de ciencias`,
+        ]"
+        label="Correo de ciencias"
+        input-class="va-input-style"
+        @validation="validation = $event"
+      />
+      <va-input
+        v-model="password"
+        label="contraseña"
+        type="password"
+        input-class="va-input-style"
+        :rules="[(v) => v.length > 0 || 'Por favor llena este campo']"
+      />
+      <va-input
+        v-model="passwordConf"
+        label="Confirma tu contraseña"
+        type="password"
+        input-class="va-input-style"
+        :rules="[
+          (v) => v === password || `La contraseñas tienen que coincidir`,
+        ]"
+        @validation="validation = $event"
+      />
+      <va-input
+        v-model="nombre"
+        label="Nombre"
+        input-class="va-input-style"
+        :rules="[(v) => !!v || 'Por favor llena este campo']"
+      />
+      <va-input
+        v-model="estado"
+        label="estado"
+        input-class="va-input-style"
+        :rules="[(v) => !!v || 'Por favor llena este campo']"
+      />
+      <va-input
+        v-model="calle"
+        label="calle"
+        input-class="va-input-style"
+        :rules="[(v) => !!v || 'Por favor llena este campo']"
+      />
+      <va-input
+        v-model="numero"
+        label="número"
+        input-class="va-input-style"
+        :rules="[(v) => !!v || 'Por favor llena este campo']"
+      />
+      <va-input
+        v-model="cp"
+        label="cp"
+        input-class="va-input-style"
+        :rules="[(v) => !!v || 'Por favor llena este campo']"
+      />
+      <va-input
+        v-model="municipio"
+        label="municipio"
+        input-class="va-input-style"
+        :rules="[(v) => !!v || 'Por favor llena este campo']"
+      />
 
-      <section>
-        <label class="form-label">* correo electrónico</label>
-        <p class="error" v-if="nombreError">{{nombreError}}</p>
-        <input type="text" class="form-control" v-model="nombre">
-      </section>
-
-      <section>
-        <label class="form-label">* correo electrónico</label>
-        <p class="error" v-if="correoError">{{correoerror}}</p>
-        <input type="email" class="form-control" v-model="correo">
-      </section>
-
-      <section>
-        <label class="form-label">* Contraseña</label>
-        <p class="error" v-if="password0Error">{{password0Error}}</p>
-        <input type="password" class="form-control" v-model="password0">
-      </section>
-
-      <section>
-        <label class="form-label">* Confirmar constraseña</label>
-        <p class="error" v-if="password1Error">{{password1Error}}</p>
-        <input type="password" class="form-control" v-model="password1">
-      </section>
-
-      <section>
-        <label class="form-label">* Rol</label>
-        <p class="error" v-if="rolError">{{rolError}}</p>
-        <select class="form-control" v-model="rol">
-          <option>Administrador</option>
-          <option>Cliente</option>
-          <option>Cocinero</option>
-          <option>Mesero</option>
-          <option>Repartidor</option>
-        </select>
-      </section>
-
-      <p class="resultado" v-if="resultado">{{resultado}}</p>
-      <p class="error" v-if="resultadoError">{{resultadoError}}</p>
-
-      <input class="btn btn-secondary" type="submit" value="Registrarse">
-
-    </form>
+      <va-select v-model="rol" :options="options" />
+      <va-button type="submit" class="mt-2"> Register </va-button>
+    </va-form>
   </div>
-
-  <div class="mitad derecha">
-    <section>
-      <h1>Producto</h1>
-      <p>¡Ahora puedes pedir mesa antes de llegar al restaurante!</p>
-    </section>
-  </div>
-
-
 </template>
 
 <style>
-
 #signup-box {
   margin: auto;
   padding-top: 10%;
   width: 35%;
 }
-
-section {
-  padding-bottom: 25px;
+.va-input {
+  margin: 5px;
 }
-
-p.error {
-  color: red;
-  font-size: 12px;
-}
-
-p.resultado {
-  color:  green;
-  font-size: 12px;
-}
-
-.mitad {
-  height: 100%;
-  width: 50%;
-  position: fixed;
-  z-index: 1;
-  top: 0;
-  overflow-x: hidden;
-  padding-top: 20px;
-}
-
-/* Mitad izquierda. */
-.izquierda {
-  left: 0;
-}
-
-/* Mitad derecha. */
-.derecha {
-  padding-top: 10%;
-  right: 0;
-}
-
 </style>
