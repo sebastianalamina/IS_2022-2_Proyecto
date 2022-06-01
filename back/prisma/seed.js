@@ -138,7 +138,7 @@ async function seed() {
     }
   }
   console.log("BASE DE DATOS SEMBRADA");
-  
+ 
 }
 
 seed();
