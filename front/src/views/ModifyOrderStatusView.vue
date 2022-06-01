@@ -9,8 +9,8 @@ export default {
       orden_error: null,
       queried: false,
       id: null,
-      es_domicilio: null,
       estado: 0,
+      estados_posibles: ["RECIBIDA","EN_PROCESO","EN_CAMINO","ENTREGADA"],
     }
   },
   methods:{
@@ -30,25 +30,26 @@ export default {
       const axios = useAxios();
       axios
         .post('/estado-platillo', {
-          id_entrega: this.id,
-          es_domicilio: this.es_domicilio,
-          nuevo_estado: this.nuevo_estado
+          id_orden: this.id,
+          nuevo_estado: this.nuevo_estado,
         })
         .then((res) => {
-          console.log(res.data); // DEBUG TEMPORAL.
+          console.log("uwu")//res.data); // DEBUG TEMPORAL.
+          console.log(res)
         })
         .catch((error) => {
-          this.nuevo_estado_error = error
+          console.log(error.response.data);
         })
 
       // Se vuelve a llamar la función buscarID
       // para cargar el nuevo estado.
       this.buscarID(e)
     },
-    buscarID(e) {
+    async buscarID(e) {
       // Para que no recargue la página.
       e.preventDefault();
 
+      this.orden = null
       this.orden_error = null
 
       // No continuar si no se introdujo nada
@@ -57,27 +58,24 @@ export default {
         return
       }
 
-      // v-model no asigna "false" si un input de
-      // tipo "checkbox" queda vacío...
-      if (this.es_domicilio == null)
-        this.es_domicilio = false;
-
       // Consultamos con el Back.
       const axios = useAxios();
-      axios
+      await axios
         .get('/estado-platillo', {
-          params: { id_entrega:this.id, es_domicilio:this.es_domicilio }
+          params: { id_orden:this.id }
         })
         .then((res) => {
           this.orden = res;
         })
-        .catch(
-          this.orden_error = "Orden no encontrada."
-        )
+        .catch((error) => {
+          console.log(error.response.data);
+        })
 
       // Si hubo un error, no se continúa.
-      if (this.orden_error != null)
+      if (this.orden == null) {
+        this.orden_error = "Orden no encontrada."
         return
+      }
 
       // Ya se consultó (independientemente de
       // si la orden está disponible o no).
@@ -85,8 +83,12 @@ export default {
 
       // Se actualiza el "estado" de la orden.
       // Si no, se queda en "null".
-      if (this.orden != null)
-        this.estado = this.orden.estado;
+      if (this.orden != null) {
+        this.estado = this.orden.data.estado;
+        for (var i = 0; i < this.estados_posibles.length; i++)
+          if (this.estado == this.estados_posibles[i])
+            this.estado = i
+      }
     },
   },
 }
@@ -97,10 +99,8 @@ export default {
 
   <div v-if="!this.queried" class="texto">
     <form @submit="buscarID">
-      <label class="form-label">Buscar orden por ID:</label>
-      <input type="number" v-model="id"><br>
-      ¿Se pidió a domicilio?
-      <input class="form-check-input" type="checkbox" v-model="es_domicilio"><br>
+      <label class="form-label">Buscar orden por ID:</label><br>
+      <input type="number" v-model="this.id"><br>
       <input type="submit" value="Buscar">
       <p class="error" v-if="this.orden_error">{{this.orden_error}}</p>
     </form>

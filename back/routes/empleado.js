@@ -12,28 +12,33 @@ const Joi = require("joi");
 // Middleware.
 const validate = require('../utils/middleware/validate');
 
-/**
- * @swagger	
- * empeleado/ 
- * Returns a list of each type of empleados in the database.
- */
+/* Este GET no requiere nada y devuelve a
+todos los empleados en formato JSON. */
 router.get(
 	'/',
 	async (req, res) => {
 
-		// let tablas_a_buscar = ['administrador', 'cocinero', 'mesero', 'repartidor']
-		// let ids_a_buscar = ['idadmin', 'idcocinero', 'idmesero', 'idrepartidor']
 		let json_a_devolver = {}
-		// Recopilamosa los empleados de la BD...
-		req.user.rol 
 
+		// Recopilamos a los empleados de la BD...
 		json_a_devolver['administrador'] = await prisma.administrador.findMany();
-		json_a_devolver['cocinero'] = await prisma.cocinero.findMany();
 		json_a_devolver['mesero'] = await prisma.mesero.findMany();
 		json_a_devolver['repartidor'] = await prisma.repartidor.findMany();
 
-		// Debug temporal:
-		console.log(json_a_devolver);
+		// Obtenemos las instancias correspondientes de la tabla 'Usuario'.
+		// Para mandar más información sobre cada empleado.
+		for (llave in json_a_devolver) {
+			let lista_empleados = json_a_devolver[llave]
+			for (let i = 0; i < lista_empleados.length; i++) {
+				let empleado = lista_empleados[i]
+				let instancia_usuario = await prisma.usuario.findFirst({
+					where: { idusuario : empleado.idusuario }
+				});
+				for (columna_usuario in instancia_usuario)
+					empleado[columna_usuario] = instancia_usuario[columna_usuario]
+			}
+		}
+
 		return res.status(201).json(json_a_devolver);
 	}
 );
