@@ -6,7 +6,7 @@ const router = express.Router();
 const prisma = new PrismaClient();
 const validate = require("../utils/middleware/validate");
 
-const { hasRole } = require("../utils/middleware/auth");
+const { hasRole, bearerAuth } = require("../utils/middleware/auth");
 const { estaAutenticado } = require("../utils/middleware/auth");
 
 
@@ -65,7 +65,8 @@ router.get("/:idorden",
 )
 
 //Regresa el carrito de un cliente
-router.get("/:idcliente/carrito",
+router.get("/carrito/cliente",
+     bearerAuth,
      validate(
         Joi.object({
             idcliente: Joi.number().integer().required(),
@@ -74,10 +75,17 @@ router.get("/:idcliente/carrito",
     ),
     async (req, res) => {
 
-        const orden = await prisma.orden.findFirst({
+        const cliente = await prisma.cliente.findFirst({
             where: {
-                idcliente: req.params.idcliente,
-                esCarrito: true
+                idcliente : req.user.idcliente,
+            }
+        })
+
+        const orden = await prisma.orden.findFirst({
+            
+            where: {
+                idcliente: cliente.idcliente,
+                esCarrito: true,
             },
 
         });
@@ -112,7 +120,7 @@ router.get("/:idcliente/ordenes",
 
 
 //platillos de una orden/carrito dado el id
-router.get("/:idorden/platillos",
+router.get("/platillos/:idorden",
     validate(
         Joi.object({
             idorden: Joi.number().integer().required(),
@@ -131,7 +139,7 @@ router.get("/:idorden/platillos",
 )
 
 //agregar platillos
-router.post('/:idorden/:idplatillo',
+router.post('/adddish/:idorden/:idplatillo',
     estaAutenticado,
     hasRole("cliente"),
     validate(

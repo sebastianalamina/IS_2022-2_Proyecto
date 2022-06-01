@@ -22,7 +22,16 @@ export default {
     },
     addPlatillo(platillo) {
       let carrito = useCarrito();
+      const instance = useAxios();
       console.log("este es el id del platillo",platillo.idplatillo)
+      //agregar platillo 
+      const cart = instance.get("/carrito/cliente")
+      instance.post("/adddish", {
+        params: {
+          idorden : cart.idorden,
+          idplatillo : platillo.idplatillo
+        }
+      })
       carrito.increase(platillo);
     },
 

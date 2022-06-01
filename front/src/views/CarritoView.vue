@@ -3,20 +3,37 @@ import NavBar from "../components/NavBar.vue";
 import Footer from "../components/Footer.vue";
 import { useCarrito } from "../stores/carrito";
 import { mapStores } from "pinia";
+import { useAxios } from '../axios_common';
 
 export default {
+  props: ["idorden"],
   components: {
     NavBar,
     Footer,
   },
   data() {
-    return {};
+    return {
+      cards: [],
+    };
   },
+  //propiedad que se usa repetidas veces
   computed: {
     ...mapStores(useCarrito),
   },
+  //carga antes de la vista
   mounted() {
-    this.cards = this.carritoStore.platillosArray;
+    const instance = useAxios();
+    console.log(this.idorden);
+    instance.get("/platillos", {
+      params: {
+        idorden : this.idorden,
+      },
+    }).then((res) => {
+        this.cards = res.data;
+    }).catch((err) => {
+      console.log("error en mounted")
+      console.log(err)
+    })
   },
   methods: {
     aumenta(platillo) {
