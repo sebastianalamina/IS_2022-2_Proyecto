@@ -1,123 +1,88 @@
 <script>
-import {useAxios} from "../axios_common";
-import {useStore as useAuthStore} from "../stores/auth"
-
-// La longitud mínima que debe
-// cumplir cada nombre de usuario.
-const MIN_USERNAME_LENGTH = 5
+import { useAxios } from "../axios_common";
+import { useStore as useAuthStore } from "../stores/auth";
 
 export default {
-  data(){
-    return{
-      errors:[], // Arreglo de posibles errores del form.
-      username:null, // Nombre de usuario del form.
-      password:null // Contraseña del form.
-    }
+  data() {
+    return {
+      username: null, // Nombre de usuario del form.
+      password: null, // Contraseña del form.
+      error_user: false,
+      res_error: false,
+    };
   },
-  methods:{
-    checkForm:function(e) {
-
-
-      // Arreglo con los posibles
-      // errores del form.
-      this.errors = [];
-      
-      // Si no se introdujo nombre de usuario, se agrega
-      // un error. De lo contrario, se comprueba que este
-      // usuario sea válido.
-      if (!this.username) {
-        this.errors.push("Es necesario proveer un usuario.");
-      } else
-        this.validUsername();
-
-      // Si no se introdujo una contraseña, se agrega un error.
-      if (!this.password)
-        this.errors.push("Es necesario proveer una contraseña.");
-
-      // Si no hay errores, el form fue llenado correctamente.
-      if(!this.errors.length)
-        return true;
-      return false;
-    },
-    validUsername:function() {
-      // Si el usuario no cumple la longitud mínima, se agrega un error.
-      if (this.username.length < MIN_USERNAME_LENGTH)
-        this.errors.push("El usuario debe tener longitud al menos "+MIN_USERNAME_LENGTH+".");
-    },
-    login(e){
+  methods: {
+    login(e) {
       e.preventDefault();
+      if (!this.checkCienciasEmail(this.username)) return;
       const authStore = useAuthStore();
       const axios = useAxios();
-
-      if(!this.checkForm()) return
-      axios.post("/auth/login", {
-        email:this.username, 
-        contrasegna: this.password
-      }).then((res)=>{
-        const token = res.data.token
-        authStore.login(token)
-        this.$router.push("/")
-      })
-      .catch(console.log)
-    }
-  }
-}
+      axios
+        .post("/auth/login", {
+          email: this.username,
+          contrasegna: this.password,
+        })
+        .then((res) => {
+          const token = res.data.token;
+          const rol = res.data.rol;
+          authStore.login(token, rol); //TODO: comprobar
+          this.$router.push("/");
+        })
+        .catch((e) => {
+          if (e.response.data.message === "Invalid credentials")
+            this.res_error = true;
+        });
+    },
+    checkCienciasEmail(v) {
+      this.error_user = !(v.indexOf("@ciencias.unam.mx") >= 0);
+      return v.indexOf("@ciencias.unam.mx") >= 0;
+    },
+  },
+};
 
 </script>
 
 <template>
-
-  <form id="login-box" @submit="login"> <!-- action="/something" method="post"> -->
-
-    <section id="user-zone">
-      <label class="form-label">Usuario</label>
-      <input type="text" class="form-control" v-model="username">
-    </section>
-
-    <section id="pass-zone">
-      <label class="form-label">Contraseña</label>
-      <input type="password" class="form-control" v-model="password">
-    </section>
-
-    <p id="errors-zone" v-if="errors.length">
-      <ul>
-        <li v-for="error in errors">{{error}}</li>
-      </ul>
-    </p>
-
-    <section id="forgotten-pass">
-      <a href="#">
-        Olvidé mi contraseña
-      </a>
-    </section>
-    
-    <section>
-      <input class="btn btn-secondary" type="submit" value="Iniciar sesión">
-    </section>
-
-  </form>
-
+  <va-card>
+    <div class="row justify--center" style="margin: auto">
+      <div>
+        <va-form style="width: 300px" tag="form" @submit.prevent="login">
+          <div style="color: red" v-if="res_error">
+            Credenciales incorrectas
+          </div>
+          <va-input
+            v-model="username"
+            label="Usuario"
+            :rules="[
+              (v) =>
+                checkCienciasEmail(v) ||
+                `El correo tiene que ser de la facutlad de ciencias`,
+            ]"
+            :error="error_user"
+          />
+          <va-input
+            class="mt-2"
+            v-model="password"
+            type="password"
+            label="Contraseña"
+          />
+          <va-button
+            type="submit"
+            class="mt-2"
+            :disabled="[error_user].reduce((a, b) => a || b, false)"
+          >
+            Login
+          </va-button>
+        </va-form>
+        <va-button
+          flat
+          href="user-signup"
+          style="margin-top: 15px; margin-bottom: 15px"
+          color="info"
+          class="mr-4"
+          >Crea una cuenta</va-button
+        >
+      </div>
+    </div>
+  </va-card>
 </template>
-
-<style>
-
-#login-box {
-  margin: auto;
-  width: 30%;
-  border: 3px solid black;
-  padding: 50px;
-}
-
-#user-zone {
-  padding-bottom: 30px;
-}
-
-#pass-zone {
-  padding-bottom: 30px;
-}
-
-#forgotten-pass {
-  padding-bottom: 20px;
-}
-
-</style>

@@ -45,6 +45,10 @@ if (
 const tabIx = computed(() => {
   return links.findIndex((x) => x.name == useRoute().name) + 1;
 });
+
+function logout() {
+  auth.logout();
+}
 </script>
 
 <template>
@@ -55,7 +59,7 @@ const tabIx = computed(() => {
     <template #right>
       <va-navbar-item v-if="auth.isLogged">
         <va-popover message="salir">
-          <va-button> <va-icon name="logout" /></va-button>
+          <va-button @click="logout"> <va-icon name="logout" /></va-button>
         </va-popover>
       </va-navbar-item>
       <va-navbar-item v-if="!auth.isLogged">
@@ -80,5 +84,8 @@ const tabIx = computed(() => {
 a {
   color: inherit; /* blue colors for links too */
   text-decoration: inherit; /* no underline */
+}
+.va-tabs {
+  padding-bottom: 30px;
 }
 </style>

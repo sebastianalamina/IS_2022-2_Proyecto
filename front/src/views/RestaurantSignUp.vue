@@ -1,109 +1,203 @@
 <script>
-import NavBar from '../components/NavBar.vue'
-import Footer from '../components/Footer.vue'
-import RestaurantForm from '../components/RestaurantForm.vue'
-
 
 import { useAxios } from '../axios_common'
+import { useStore as useAdminStore } from '../stores/admin'
 
-
-
-export default {
-    components:{
-        NavBar,
-        Footer,
-        RestaurantForm
+export default { 
+    data() {
+        return {
+            nombre : null,
+            nombreError : null,
+            estado : null,
+            estadoError : null,
+            calle : null,
+            calleError : null,
+            numero : null,
+            numeroError : null,
+            cp : null,
+            cpError : null,
+            municipio : null,
+            municipioError : null, 
+            resultado: null,
+            resultadoError: null,
+        };
     },
-    data(){
-      return{ 
-        formulario:{
-          nombre : '',
-          estado :'', 
-          calle :'',
-          cp : null,
-          numero: null,
-          municipio :'',
+    methods: {
+        checkForm: function (e) {
+            // Checamos el nombre del restaurante 
+            this.nombreError = null;
+            if(!this.nombre)
+              this.nombreError = "Nombre requerido.";
+            //Checamos el estado
+            this.estadoError = null;
+            if(!this.estado)
+              this.estadoError = "Estado requerido.";
+            // Checamos la calle.
+            this.calleError =null;
+            if(!this.calle)
+              this.calleError = "Calle requerida";
+            // Checamos el numero
+            this.numeroError =null;
+            if(!this.numero)
+              this.numeroError = "Numero requerido";
+            // Checamos el cp
+            this.cpError =null;
+            if(!this.cp)
+              this.cpError = "codigo postal requerido";
+            // Checamos el municipio 
+            this.municipioError =null;
+            if(!this.municipio)
+              this.municipioError = "Calle requerida"; 
+            return !this.nombreError && !this.calleError && !this.estadoError && !this.numeroError && !this.municipioError && !this.cpError;
         },
-        errores : [],
-      }
-    },
-    methods:{
-      
-      submitForm: function(e){
-        //create a 
-        const instance = useAxios();
-        console.log('revisando formulario')
-        if(this.checarFormulario) 
-        {
-          console.log('formulario correcto')
-          console.log(JSON.stringify(this.formulario))
-          instance.post('/restaurantes',{
-            ...this.formulario
-          })
-        }
-        else
-        {
-          console.log('formulario incorrecto')
-        }
-      },
-      checarFormulario: function (){
-        this.errores=[]
-      
-       if (!this.formulario.nombre) {
-          this.errores.push('Nombre vacio')  
-       }
-      if (!this.formulario.nombre) {
-          this.errores.push('Nombre vacio')  
-       }
-       if (!this.formulario.estado) {
-          this.errores.push('Estado vacio.') 
-       }
-      if (!this.formulario.calle) {
-          this.errores.push('Calle vacia.') 
-       }
-      if (!this.formulario.cp) {
-          this.errores.push('CP vacio') 
-       }  
-      if (!this.formulario.municipio) {
-          this.errores.push('Municipio vacio') 
-       }
-      if (!this.errores.length){
-        return true
-      }
-      console.log('errores en los datos')
-      }
-    }
+        register: function (e) {
+            // Evita que se recargue la página.
+            e.preventDefault();
+            //const authStore = useAuthStore();
+            const adminStore = useAdminStore();
+            const axios = useAxios();
+            if (!this.checkForm())
+                return;
+            this.resultado = null;
+            this.resultadoError = null;
+            console.log(JSON.stringify({
+                nombre : this.nombre,
+                estado : this.estado,
+                calle : this.calle,
+                numero : this.numero,
+                municipio : this.municipio,
+                cp : this.cp,
+            }))
+            axios.post("/restaurante", {
+                nombre : this.nombre,
+                estado : this.estado,
+                calle : this.calle,
+                numero : this.numero,
+                municipio : this.municipio,
+                cp : this.cp,
+            }).then((res) => {
 
+                if (res.status == 200) {
+                    this.resultado = "Restaurante creado con éxito.";
+                    //this.$router.push("/login");
+                    console.log("estos son los datos : ", JSON.stringify(res.data));
+                    adminStore.setRestaurante({ 
+                        nombre : this.nombre,
+                        estado : this.estado,
+                        calle : this.calle,
+                        numero : this.numero,
+                        municipio : this.municipio,
+                        cp : this.cp,
+                        idrestaurante : res.data.idrestaurante
+                    });
+                    this.$router.push("/admin");
+                }
+            })
+                .catch((error) => {
+                console.log(error);
+                this.resultadoError = error.response.data.error;
+            });
+        },
+    },
 }
+
 </script>
 
 <template>
-<NavBar/>
-<h1>Registro para restaurantes para restaurante</h1>
 
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-lg-6">
-    <restaurant-form
-    :nombre="formulario.nombre"
-    :calle="formulario.calle"
-    :cp="formulario.cp"
-    :estado="formulario.estado"
-    :errores="errores"
-    :submitMethod="submitForm"
-    :numero="formulario.numero"
-    :municipio="formulario.municipio" 
-    />
-    
-        </div>
-        <div class="col-lg-6">
-           Aqui segun yo va una imagen 
-        </div>
-    </div>
+
+<div>
+  <h1> Registro de restaurante. </h1>
+<form id="signup-box" @submit="register"> <!-- action="/something" method="post"> -->
+
+      <section>
+        <label class="form-label">* Nombre de restaurante</label>
+        <p class="error" v-if="nombreError">{{nombreError}}</p>
+        <input type="text" class="form-control" v-model="nombre">
+      </section>
+
+      <section>
+        <label class="form-label">* Estado</label>
+        <p class="error" v-if="estadoError">{{estadoError}}</p>
+        <input type="text" class="form-control" v-model="estado">
+      </section>
+
+      <section>
+        <label class="form-label">* Calle</label>
+        <p class="error" v-if="calleError">{{calleError}}</p>
+        <input type="text" class="form-control" v-model="calle">
+      </section>
+
+      <section>
+        <label class="form-label">* Numero</label>
+        <p class="error" v-if="numeroError">{{numeroError}}</p>
+        <input type="text" class="form-control" v-model="numero">
+      </section>
+
+      <section>
+        <label class="form-label">* Codigo postal</label>
+        <p class="error" v-if="cpError">{{cpError}}</p>
+        <input type="text" class="form-control" v-model="cp">
+      </section>
+
+      <section>
+        <label class="form-label">* Municipio</label>
+        <p class="error" v-if="municipioError">{{municipioError}}</p>
+        <input type="text" class="form-control" v-model="municipio">
+      </section>
+
+      
+
+      <p class="resultado" v-if="resultado">{{resultado}}</p>
+      <p class="error" v-if="resultadoError">{{resultadoError}}</p>
+
+      <input class="btn btn-secondary" type="submit" value="Registrar restaurante">
+
+    </form>
+
 </div>
-
-
-<Footer/>
-
-
 </template>
+<style>
+
+#signup-box {
+  margin: auto;
+  padding-top: 10%;
+  width: 35%;
+}
+
+section {
+  padding-bottom: 25px;
+}
+
+p.error {
+  color: red;
+  font-size: 12px;
+}
+
+p.resultado {
+  color:  green;
+  font-size: 12px;
+}
+
+.mitad {
+  height: 100%;
+  width: 50%;
+  position: fixed;
+  z-index: 1;
+  top: 0;
+  overflow-x: hidden;
+  padding-top: 20px;
+}
+
+/* Mitad izquierda. */
+.izquierda {
+  left: 0;
+}
+
+/* Mitad derecha. */
+.derecha {
+  padding-top: 10%;
+  right: 0;
+}
+
+</style>

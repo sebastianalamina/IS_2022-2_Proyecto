@@ -1,6 +1,4 @@
 <script>
-import NavBar from '../components/NavBar.vue'
-import Footer from '../components/Footer.vue'
 import ModalInventario from '../components/ModalInvetario.vue'
 import axios from 'axios'
 import {useAxios} from '../axios_common'
@@ -9,9 +7,7 @@ import {useAxios} from '../axios_common'
 // TODO Hacer que el modal inventario sea una modal component de a deveras xd
 
 export default {
-    components:{
-        NavBar,
-        Footer,
+    components:{ 
         ModalInventario
     },
     data(){
@@ -63,7 +59,6 @@ export default {
 </script>
 
 <template>
-<NavBar/>
 <div>
     <h1>Inventario del restaurante: {{id_restaurante}}</h1>
     <div class="center">
@@ -80,6 +75,5 @@ export default {
 <ModalInventario :idRestaurante="String(id_restaurante)" :items_array="productos" v-show="isModalVisible" @close="closeModal" />
 </div>
 
-<Footer/>
 
 </template>

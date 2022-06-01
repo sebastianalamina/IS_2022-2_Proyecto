@@ -1,18 +1,23 @@
 <script>
-import NavBar from "../components/NavBar.vue";
-import Footer from "../components/Footer.vue";
 import { useAxios } from "../axios_common";
 import { useCarrito } from "../stores/carrito";
+import { useStore as useAuthStore} from "../stores/auth";
+import roles from "../constants/roles";
 
-
+const auth = useAuthStore();
 export default {
-  props: ["idrestaurante", "idmenu"],
+  props: ["idrestaurante"],
   components: {
     NavBar,
     Footer,
   },
   data() {
     return {
+      addPlatilloForm : false,
+      platilloNuevo : {
+        nombre : "",
+        costo : 0,
+      },
       cards: [],
     };
   },
@@ -34,32 +39,89 @@ export default {
       })
       carrito.increase(platillo);
     },
+    postPlatillo(){
+      const instance = useAxios();
+      instance.post("menu/", 
+      {
+        idrestaurante : this.idrestaurante,
+        nombrePlatillo : this.platilloNuevo.nombre,
+        costoPlatillo : this.platilloNuevo.costo, 
+      })
+      .then((res)=>{
+        console.log("Se logro")
+        console.log(JSON.stringify(res.data));
+        this.getCards();
+        this.addPlatilloForm = !this.addPlatilloForm;
+      })
+      .catch((err)=>{
+        console.log(err.response.data.error)
+      });
 
+    },
+    checkAdmin(){
+      // TODO Verificar que sea el restaurante que esta logueado
+      ``
+      return auth.hasPermisionsOf(roles.ADMINISTRADOR);
+    },
+    async getCards(){
+      const instance = useAxios();
+      console.log(this.idrestaurante);
+      const ruta = "/menu/" + this.idrestaurante;
+      instance
+        .get(ruta, {
+          params: {
+            skip: 0,
+            take: 10,
+          },
+        })
+        .then((res) => {
+          console.log("Funciono")
+          this.cards = res.data;
+        })
+        .catch((err) => {
+          console.log("aaaa")
+          console.log(err.response.data.error);
+        });
+    },
   },
   mounted() {
-    const instance = useAxios();
-    console.log(this.idrestaurante);
-    instance
-      .get("/menu", {
-        params: {
-          id_menu: this.idmenu,
-          id_restaurante: this.idrestaurante,
-        },
-      })
-      .then((res) => {
-        this.cards = res.data;
-      })
-      .catch((err) => {
-        console.log("aaaa")
-        console.log(err);
-      });
+    this.getCards();
   },
 };
 </script>
 
 <template>
-  <NavBar />
   <h1>Menu del Restaurante:</h1>
+
+  <va-button 
+  v-if="checkAdmin"
+  @click="addPlatilloForm = !addPlatilloForm" 
+  >
+  Agregar platillo.
+  </va-button>
+
+  <va-form
+  v-if="addPlatilloForm" 
+  tag="form"
+  @submit.prevent="postPlatillo"
+  >
+    <va-input
+    v-model="platilloNuevo.nombre"
+    label="Nombre de platillo"
+    />
+
+    <va-input
+    v-model="platilloNuevo.costo" 
+    label="Precio de platillo"
+    />
+
+    <va-button
+    type="submit" 
+    class="mt-2"
+    >
+    Agregar platillo al menu
+    </va-button>
+  </va-form>
   <form id="login-box" @submit="checkForm">
     <!-- action="/something" method="post"> -->
     <div class="container-fluid">
@@ -70,7 +132,7 @@ export default {
           v-bind:key="card.idplatillo"
         >
           <h2>{{ card.nombre }}</h2>
-          <p> {{ card.idplatillo}} </p>
+          <p>{{ card.idplatillo }}</p>
           <img class="img_menu" :src="card.src" alt="imagen nos disponible" />
           <input
             type="button"
@@ -84,8 +146,6 @@ export default {
       </div>
     </div>
   </form>
-
-  <Footer />
 </template>
 
 <style scoped>

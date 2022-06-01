@@ -11,35 +11,131 @@ const Joi = require("joi");
 
 // Middleware.
 const validate = require('../utils/middleware/validate');
+const { bearerAuth, esAdministrador } = require("../utils/middleware/auth");
+
+router.post("/",
+	esAdministrador,
+	bearerAuth,
+	validate(
+		Joi.object({
+			email : Joi.string().email().required(),
+			rol : Joi.string().required(),
+		}),
+		"body"
+	),
+	async (req, res) => {
+		const { idrestaurante } = req.params;
+		const { email ,rol} = req.body;
+
+		// Obtenemos el id del administrador
+		console.log("id usuario del que esta haciendo la solicitud es : ",req.user.idusuario)
+		const idAdministrador = await prisma.administrador.findFirst({
+			where:{
+				idusuario : req.user.idusuario
+			},	
+		});
+
+
+		if (rol === "MESERO"){
+
+			// Creamos un nuevo perfil de mesero 
+			const mesero = await prisma.mesero.create({
+				data:{
+					idrestaurante : idrestaurante,
+					administrador : {
+						connect : {
+							idadmin : idAdministrador.idadmin
+						}
+					},
+					usuario:{
+						connect : { email : email }
+					},
+					restaurante : {
+						connect : { idrestaurante : idAdministrador.idrestaurante }
+					}
+				}
+			});
+
+			res.json(mesero)
+		} else if(rol == "REPARTIDOR"){
+			const repartidor = await prisma.repartidor.create({
+				data:{
+					usuario : {
+						connectOrCreate:{
+							where:{
+								email,
+							},
+							create : {
+								...req.body
+							}
+						}
+					}
+				}	
+			});
+			res.json(repartidor)
+		}
+});
+
+
+
+
 
 /* Este GET no requiere nada y devuelve a
 todos los empleados en formato JSON. */
 router.get(
 	'/',
-	async (req, res) => {
+	esAdministrador,
+	bearerAuth,
+	async (req, res) => {	
 
-		let json_a_devolver = {}
-
-		// Recopilamos a los empleados de la BD...
-		json_a_devolver['administrador'] = await prisma.administrador.findMany();
-		json_a_devolver['mesero'] = await prisma.mesero.findMany();
-		json_a_devolver['repartidor'] = await prisma.repartidor.findMany();
-
-		// Obtenemos las instancias correspondientes de la tabla 'Usuario'.
-		// Para mandar más información sobre cada empleado.
-		for (llave in json_a_devolver) {
-			let lista_empleados = json_a_devolver[llave]
-			for (let i = 0; i < lista_empleados.length; i++) {
-				let empleado = lista_empleados[i]
-				let instancia_usuario = await prisma.usuario.findFirst({
-					where: { idusuario : empleado.idusuario }
-				});
-				for (columna_usuario in instancia_usuario)
-					empleado[columna_usuario] = instancia_usuario[columna_usuario]
+		const idAdministrador = await prisma.administrador.findFirst({
+			where : {
+				idusuario : req.user.idusuario
 			}
-		}
+		})
+		let empleados = {};
 
-		return res.status(201).json(json_a_devolver);
+		empleados["meseros"] = await prisma.mesero.findMany({
+			where:{
+				idadmin : idAdministrador.idadmin,
+			},
+			select : {
+				usuario : {
+					select :{
+						email : true,
+						nombre : true,
+						apatermo : true,
+						amaterno : true,
+						confirmado : true,
+						idusuario : true
+					}
+				}
+			}
+		});
+	
+		res.json(empleados)
+	}
+);
+
+router.delete("/mesero",
+	esAdministrador,
+	validate(
+		Joi.object({
+			idusuario : Joi.number().integer(),
+		}),
+		"query"
+	),
+	async (req,res)=>{
+		const {idusuario} = req.query;
+		console.log("id usuario", idusuario)
+		const usuarioeliminado = await prisma.mesero.delete({
+			where:{
+				idusuario : idusuario
+			}
+		});
+		console.log("datos del usuario eliminado :",JSON.stringify(usuarioeliminado));
+		res.status(202).send("Empleado borrado");
+
 	}
 );
 
