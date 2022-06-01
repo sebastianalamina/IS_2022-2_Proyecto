@@ -16,7 +16,7 @@ enum estadoorden {
 
 model administrador {
   idadmin       Int         @id @default(autoincrement())
-   idrestaurante Int?         @unique
+  idrestaurante Int?         @unique
   idusuario     Int         @unique
   restaurante   restaurante? @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_admin")
   usuario       usuario     @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
