@@ -27,7 +27,7 @@ async function seed() {
     confirmado : false
   }));
 
-  const idrepartidores = [];
+  var idrepartidores = [];
 
   for( let h =0; h < usuariosRepartidores.length; h++){
     const idusuarioRepartidor = await prisma.usuario.create({
@@ -41,9 +41,11 @@ async function seed() {
         idusuario : idusuarioRepartidor.id,
       }
     });
-    idrepartidores.push(repartidor.id);
+    idrepartidores.push(repartidor.idrepartidor);
 
   }
+
+  console.log("id repartidores: ", idrepartidores)
 
   // Se crean los clientes con sus datos
   const usuariosClientes = [...Array(NUMERO_CLIENTES)].map( _ => ({
@@ -85,7 +87,7 @@ async function seed() {
     });
     id_restaurantes.push(restaurante.idrestaurante);
 
-    const platillos = [...Array(NUMERO_PLATILLOS)].map( _ =>(
+    const platillos_data = [...Array(NUMERO_PLATILLOS)].map( _ =>(
       {
         nombre : faker.commerce.productName(),
         costo : parseInt(faker.commerce.price()),
@@ -93,12 +95,23 @@ async function seed() {
       }
     ));
 
-    await prisma.menu.create({
+    const menu = await prisma.menu.create({
       data:{
-        idrestaurante : restaurante.idrestaurante,
-        platillo:{ createMany : { data: platillos } }
+        idrestaurante: restaurante.idrestaurante,
       }
     });
+
+    let id_platillos = []
+    for( let j = 0; j < platillos_data.length; j++){
+      const platillo = await prisma.platillo.create({
+        data : {
+          ...platillos_data[j],
+          idmenu : menu.idmenu,
+          idrestaurante : restaurante.idrestaurante
+        }
+      });
+      id_platillos.push(platillo.idplatillo);
+    }
 
     const usuariosRestaurante = [...Array(NUMERO_MESEROS + 1)].map( _ =>({
       nombre : faker.name.firstName(),
@@ -136,6 +149,40 @@ async function seed() {
         }
       });
     }
+
+    // Cada uno de los clientes hace una orden 
+    for(let n =0; n< Math.min(id_clientes.length, idrepartidores.length);n++){
+      await prisma.orden.create({
+        data:{
+          estado: "EN_PROCESO",
+          esCarrito : false,
+          pagado  : true,
+          costo : 100,
+          mesa:{
+            create:{
+              idrestaurante : restaurante.idrestaurante,
+              ocupada : true,
+            }
+          },
+          restaurante:{
+            connect:{
+              idrestaurante : restaurante.idrestaurante
+            }
+          },
+          contenido:{
+            create:{
+              idplatillo : id_platillos[0]
+            }
+          },
+          entrega: {
+            create:{
+              idrepartidor : idrepartidores[n] 
+            }
+          }
+        }
+      })
+    }
+
   }
   console.log("BASE DE DATOS SEMBRADA");
  
