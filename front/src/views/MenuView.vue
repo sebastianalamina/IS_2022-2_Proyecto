@@ -12,7 +12,7 @@ export default {
     Footer,
   },
   data() {
-    return {
+      return {
       addPlatilloForm : false,
       platilloNuevo : {
         nombre : "",

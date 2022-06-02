@@ -12,7 +12,7 @@ import { ref } from "vue";
   >
     <div class="title-box">
       <h1 class="display-1 title">FindYourRestaurant</h1>
-      <h4 class="display-4 title">Porque esperar para ordenar tu comida.</h4>
+      <h4 class="display-4 title">¿Por qué esperar para ordenar tu comida?</h4>
     </div>
   </va-parallax>
 </template>
