@@ -131,15 +131,17 @@ router.post(
       },
     });
 
-    mailer.send({
-      to: req.body.email,
-      subject: "Confirmación correo",
-      html: "utils/email/templates/confirmaCorreo.mustache",
-      context: {
-        username: req.body.email, //cambiar nombre
-        id: user.idusuario,
-      },
-    });
+    mailer
+      .send({
+        to: req.body.email,
+        subject: "Confirmación correo",
+        html: "utils/email/templates/confirmaCorreo.mustache",
+        context: {
+          username: req.body.email, //cambiar nombre
+          id: user.idusuario,
+        },
+      })
+      .catch(() => {});
     delete user.idusuario;
     return res.status(200).json(user);
   }
