@@ -160,6 +160,7 @@ async function seed() {
           esCarrito: false,
           pagado: true,
           costo: 100,
+          idcliente : id_clientes[n],
           mesa: {
             create: {
               idrestaurante: restaurante.idrestaurante,

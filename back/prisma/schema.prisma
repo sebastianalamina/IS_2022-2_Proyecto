@@ -39,7 +39,7 @@ model orden {
   idorden       Int                @id @default(autoincrement())
   idmesa        Int
   idrestaurante Int?
-  idcliente     Int?
+  idcliente     Int
   domicilio     String?
   estado        estadoorden
   esCarrito     Boolean
