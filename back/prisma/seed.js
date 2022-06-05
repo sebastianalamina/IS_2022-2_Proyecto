@@ -37,7 +37,7 @@ async function seed() {
 
     const repartidor = await prisma.repartidor.create({
       data: {
-        idusuario: idusuarioRepartidor.id,
+        idusuario: idusuarioRepartidor.idrepartidor,
       },
     });
     idrepartidores.push(repartidor.idrepartidor);

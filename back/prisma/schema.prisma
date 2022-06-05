@@ -49,7 +49,7 @@ model orden {
   mesa          mesa?              @relation(fields: [idmesa], references: [idmesa], onDelete: Cascade, map: "fk_orden1")
   restaurante   restaurante?       @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: Cascade, map: "fk_orden2")
   contenido     contenidoorden[]
-  entrega       entregadomicilio[]
+  entrega       entregadomicilio?
 }
 
 
@@ -102,7 +102,7 @@ model platillo {
 
 model repartidor {
   idrepartidor     Int                @id @default(autoincrement())
-  idusuario        Int?
+  idusuario        Int
   usuario          usuario?           @relation(fields: [idusuario], references: [idusuario], onDelete: Cascade, map: "fk_usuario")
   entregadomicilio entregadomicilio[]
 }

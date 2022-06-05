@@ -3,7 +3,8 @@ name: find_my_restaurant
 services:
   db:
     container_name: db
-    image: postgres:13.4-alpine
+    build:
+      context: DB/
     ports:
       - "5432:5432"
     environment:
@@ -11,8 +12,8 @@ services:
       POSTGRES_USER: root
       POSTGRES_DB: mi_restaurante
       # Para persistencia descomenta/comenta esta linea
-    volumes:
-      - ./docker/db_volume:/var/lib/postgresql/data
+    # volumes:
+    #   - ./docker/db_volume:/var/lib/postgresql/data
   back:
     container_name: express
     build:
