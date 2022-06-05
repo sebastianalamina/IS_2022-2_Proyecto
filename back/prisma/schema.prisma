@@ -150,12 +150,14 @@ model usuario {
 model resena {
   idresena       Int         @id @default(autoincrement())
   idrestaurante  Int
-  idcliente      Int         @unique
+  idcliente      Int         
   classificacion Int
   date           DateTime    @db.Date
   texto          String      @db.VarChar(255)
   restaurante    restaurante @relation(fields: [idrestaurante], references: [idrestaurante], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena2")
   cliente        cliente     @relation(fields: [idcliente], references: [idcliente], onDelete: NoAction, onUpdate: NoAction, map: "fk_resena3")
+
+  @@unique([idrestaurante, idcliente])
 }
 
 

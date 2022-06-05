@@ -37,13 +37,11 @@ async function seed() {
 
     const repartidor = await prisma.repartidor.create({
       data: {
-        idusuario: idusuarioRepartidor.idrepartidor,
+        idusuario: idusuarioRepartidor.idusuario,
       },
     });
     idrepartidores.push(repartidor.idrepartidor);
   }
-
-  console.log("id repartidores: ", idrepartidores);
 
   // Se crean los clientes con sus datos
   const usuariosClientes = [...Array(NUMERO_CLIENTES)].map((_) => ({
@@ -68,7 +66,6 @@ async function seed() {
     });
     id_clientes.push(cliente.idcliente);
   }
-  console.log("Clientes creados", id_clientes);
 
   //Creamos las entradas referentes a los restaurantes
   let id_restaurantes = [];
@@ -160,6 +157,11 @@ async function seed() {
           esCarrito: false,
           pagado: true,
           costo: 100,
+          cliente: {
+            connect: {
+              idcliente: id_clientes[n],
+            },
+          },
           mesa: {
             create: {
               idrestaurante: restaurante.idrestaurante,
