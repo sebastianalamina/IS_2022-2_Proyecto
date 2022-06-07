@@ -39,7 +39,6 @@ export default {
     },
   },
 };
-
 </script>
 
 <template>
@@ -76,12 +75,12 @@ export default {
         </va-form>
         <va-button
           flat
-          href="user-signup"
           style="margin-top: 15px; margin-bottom: 15px"
           color="info"
           class="mr-4"
-          >Crea una cuenta</va-button
         >
+          <router-link to="/user-signup">Crear cuenta</router-link>
+        </va-button>
       </div>
     </div>
   </va-card>
