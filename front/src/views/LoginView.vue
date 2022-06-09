@@ -26,7 +26,12 @@ export default {
           const token = res.data.token;
           const rol = res.data.rol;
           authStore.login(token, rol); //TODO: comprobar
+          if(rol === "ADMINISTRADOR"){
+            console.log("Administrador");
+            this.$router.push("/admin");
+          }else{
           this.$router.push("/");
+          }
         })
         .catch((e) => {
           if (e.response.data.message === "Invalid credentials")

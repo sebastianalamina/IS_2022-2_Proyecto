@@ -86,7 +86,7 @@ router.post(
       email: Joi.string().email().required(),
       nombre: Joi.string().required(),
       contrasegna: Joi.string().required(),
-      rol: Joi.string().required(),
+      rol: Joi.string().uppercase().required(),
       nombre: Joi.string().required(),
       estado: Joi.string().required(),
       calle: Joi.string().required(),

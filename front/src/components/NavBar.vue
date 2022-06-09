@@ -1,11 +1,15 @@
 <script setup>
 import { reactive, ref, computed } from "@vue/reactivity";
-import { useRoute } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { useStore as useAuthStore } from "../stores/auth";
+import { useStore as useAdminStore } from "../stores/admin";
 import roles from "../constants/roles";
 
 //incluimos desde un inicio las rutas de invitado
 const auth = useAuthStore();
+const admin = useAdminStore();
+const router = useRouter();
+const route = useRoute();
 
 // if (auth.hasPermisionsOf(roles.CLIENTE)) {
 //   links.push({
@@ -20,6 +24,8 @@ const auth = useAuthStore();
 
 function logout() {
   auth.logout();
+  admin.reset();
+  router.push("/")
 }
 </script>
 

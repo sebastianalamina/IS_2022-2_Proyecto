@@ -4,6 +4,14 @@ import { useStore as useAdminStore } from '../stores/admin';
 import NavBar from '../components/NavBar.vue';
 import { useAxios } from '../axios_common';
 
+/**
+ * TODO
+ * * Checar que el usuario tenga los privilegios apropiados
+ * * Checar que el usuario si tenga un restaurnate 
+ * * en caso de que si lo tenga hacemos que se cargue el dashboard de administrador
+ * 
+ */
+
 export default {
     data() {
         return {
@@ -18,20 +26,22 @@ export default {
         const adminStore = useAdminStore();
         this.idRestaurante = adminStore.idRestaurante;
         this.nombreRestaurante = adminStore.nombreRestaurante;
-        if(this.idRestaurante){
-          console.log("vista logeada")
-          this.getSummary();
-        }
-        console.log("vista NO logeada");
+        this.getSummary();
     },
     methods:{
         getSummary(){
             const instance = useAxios();
+            const admin = useAdminStore();
             const ruta = "admin/restaurante";
             instance.get(ruta)
             .then((res)=>{
                 console.log("listo");
                 console.log(JSON.stringify(res.data));
+                console.log("Seteando los valores de la store");
+                admin.idRestaurante = res.data.idrestaurante;
+                this.idRestaurante = res.data.idrestaurante
+                this.nombreRestaurante = res.data.nombre;
+                console.log("valores de la store ",admin.idRestaurante  )
                 this.totalMeseros = res.data._count.mesero;
                 this.totalPlatillos = res.data.menu[0]._count.platillo;
                 this.direccionRestaurante = res.data.calle + res.data.numero + "," + res.data.municipio
@@ -105,7 +115,7 @@ v-if="idRestaurante"
 <div
 v-if="!idRestaurante"
 >
-Usted no ha agregado un restaurnate 
+Usted no ha agregado un restaurante 
 <va-button
 @click="this.$router.push({path : '/restaurant-signup' })"
 >
