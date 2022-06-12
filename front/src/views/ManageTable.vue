@@ -102,16 +102,22 @@ export default {
 			// Consultamos con el Back.
 			const axios = useAxios();
 			await axios
-				.get('/restaurante')
+				.get('restaurante/' + this.idRestaurante)
 				.then((res) => {
 
-					let restaurante;
-					for (restaurante in res.data) {
-						if (res.data[restaurante].idrestaurante == parseInt(this.idRestaurante)) {
-							return;
-						}
+					if (res.data == null) {
+						console.log(res)
+						this.errForm = "Restaurante no encontrado."
 					}
-					this.errForm = "Restaurante no encontrado en la BD."
+
+					// Si se consultan TODOS los restaurantes, en lugar de uno...
+					// let restaurante;
+					// for (restaurante in res.data) {
+					// 	if (res.data[restaurante].idrestaurante == parseInt(this.idRestaurante)) {
+					// 		return;
+					// 	}
+					// }
+					// this.errForm = "Restaurante no encontrado en la BD."
 
 				}).catch((error) => {
 					console.log(error)
