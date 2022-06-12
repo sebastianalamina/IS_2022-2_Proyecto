@@ -45,6 +45,7 @@ export default {
 
 			// Consultamos con el Back.
 			const axios = useAxios();
+			try {  // <- Issue #45 del repo.
 			await axios
 				.get('/restaurante', {
 					params: {
@@ -64,6 +65,10 @@ export default {
 					console.log(error)
 					this.errForm = "Ocurrió un error:\n"+error.response.data;
 				});
+			} catch (e) {
+				if (e.meta.cause === "Record to update not found.")
+					return res.status(404).send({ error: "registro no encontrado" });
+			}
 
 			/*
 			Si hubo errores, no continuamos.
@@ -75,6 +80,7 @@ export default {
 			Si no hubo errores, ya se consultó el restaurante.
 			Por lo que buscamos todas las mesas del mismo.
 			*/
+			try {  // <- Issue #45 del repo.
 			await axios
 				.get('/mesa', {
 					params: {
@@ -86,6 +92,10 @@ export default {
 					//console.log(error);
 					this.errForm = "Ocurrió un error:\n"+error.response.data;
 				});
+			} catch (e) {
+				if (e.meta.cause === "Record to update not found.")
+					return res.status(404).send({ error: "registro no encontrado" });
+			}
 
 			/*
 			Si hubo errores, no continuamos.
@@ -162,7 +172,7 @@ export default {
 		</div>
 		<select v-if="this.mesas.length > 0" v-model="this.selected" multiple>
 			<option
-			  v-for="mesa in mesas" v-bind:value="{idmesa: mesa.idmesa}" :class="[mesa.ocupada ? 'rojo' : 'verde']">
+				v-for="mesa in mesas" v-bind:value="{idmesa: mesa.idmesa}" :class="[mesa.ocupada ? 'rojo' : 'verde']">
 				Mesa #{{mesa.idmesa}}. ¿Ocupada? {{mesa.ocupada}}
 			</option>
 		</select>
@@ -179,11 +189,11 @@ export default {
 <style>
 
 .verde {
-  background-color: #53b853;
+	background-color: #53b853;
 }
 
 .rojo {
-  background-color: #b85353;
+	background-color: #b85353;
 }
 
 </style>

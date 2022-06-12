@@ -101,6 +101,8 @@ export default {
 
 			// Consultamos con el Back.
 			const axios = useAxios();
+
+			try {  // <- Issue #45 del repo.
 			await axios
 				.get('/restaurante')
 				.then((res) => {
@@ -117,6 +119,10 @@ export default {
 					console.log(error)
 					this.errForm = "Ocurrió un error:\n"+error.response.data;
 				});
+			} catch (e) {
+				if (e.meta.cause === "Record to update not found.")
+					return res.status(404).send({ error: "registro no encontrado" });
+			}
 
 			/*
 			Si hubo errores, no continuamos.
@@ -161,6 +167,7 @@ export default {
 
 			// Consultamos con el Back.
 			const axios = useAxios();
+			try {  // <- Issue #45 del repo.
 			await axios
 				.get('/mesa', {
 					params: {
@@ -180,6 +187,10 @@ export default {
 				}).catch((error) => {
 					console.log(error)
 				});
+			} catch (e) {
+				if (e.meta.cause === "Record to update not found.")
+					return res.status(404).send({ error: "registro no encontrado" });
+			}
 
 			/*
 			Si hubo errores, no continuamos.
@@ -197,6 +208,7 @@ export default {
 
 			// Consultamos con el Back.
 			const axios = useAxios();
+			try {  // <- Issue #45 del repo.
 			await axios
 				.get('/ordenes-mesa', {
 					params: {
@@ -208,6 +220,10 @@ export default {
 				}).catch((error) => {
 					console.log(error);
 				});
+			} catch (e) {
+				if (e.meta.cause === "Record to update not found.")
+					return res.status(404).send({ error: "registro no encontrado" });
+			}
 
 			if (this.orden != null) {
 
@@ -226,6 +242,7 @@ export default {
 
 			// La creamos en el Back.
 			const axios = useAxios();
+			try {  // <- Issue #45 del repo.
 			await axios
 				.post('/ordenes-mesa', {
 					idmesa: this.idMesa,
@@ -235,6 +252,10 @@ export default {
 				}).catch((error) => {
 					console.log(error);
 				});
+			} catch (e) {
+				if (e.meta.cause === "Record to update not found.")
+					return res.status(404).send({ error: "registro no encontrado" });
+			}
 
 		}, // <- Fin de "iniciarOrden".
 
@@ -245,6 +266,7 @@ export default {
 
 			// Cambiamos el estado en el Back.
 			const axios = useAxios();
+			try {  // <- Issue #45 del repo.
 			await axios
 				.post('/mesa', {
 					idmesa: this.idMesa,
@@ -254,6 +276,10 @@ export default {
 				}).catch((error) => {
 					console.log(error);
 				});
+			} catch (e) {
+				if (e.meta.cause === "Record to update not found.")
+					return res.status(404).send({ error: "registro no encontrado" });
+			}
 
 		}, // <-- Fin de "cambiarOcupada".
 
@@ -270,6 +296,7 @@ export default {
 
 				// Buscamos los platillos disponibles en el restaurante.
 				const axios = useAxios();
+				try {  // <- Issue #45 del repo.
 				await axios
 					.get('/ordenes-mesa/platillos', {
 						params: {
@@ -280,9 +307,14 @@ export default {
 					}).catch((error) => {
 						console.log(error);
 					});
+				} catch (e) {
+					if (e.meta.cause === "Record to update not found.")
+						return res.status(404).send({ error: "registro no encontrado" });
+				}
 			} else {
 				// Agregamos el platillo a la orden dada.
 				const axios = useAxios();
+				try {  // <- Issue #45 del repo.
 				await axios
 					.post('/ordenes-mesa/agregar-platillo', {
 						idplatillo: this.platilloParaAgregar,
@@ -292,6 +324,10 @@ export default {
 					}).catch((error) => {
 						console.log(error);
 					});
+				} catch (e) {
+					if (e.meta.cause === "Record to update not found.")
+						return res.status(404).send({ error: "registro no encontrado" });
+				}
 				// Actualizamos menús.
 				this.buscarOrden();
 				// Borramos valores.
@@ -327,6 +363,7 @@ export default {
 			let obj;
 			for (obj in this.selected) {
 				const axios = useAxios();
+				try {  // <- Issue #45 del repo.
 				await axios
 					.post('/ordenes-mesa/eliminar-platillo', {
 						idcontenidoorden: this.selected[obj].idcontenidoorden,
@@ -335,6 +372,10 @@ export default {
 					}).catch((error) => {
 						console.log(error);
 					});
+				} catch (e) {
+					if (e.meta.cause === "Record to update not found.")
+						return res.status(404).send({ error: "registro no encontrado" });
+				}
 			}
 
 			// Actualizamos menús.

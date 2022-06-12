@@ -10,7 +10,14 @@ const verificado = ref(0);
 
 async function verifica() {
   verificado.value = 0.5;
-  await axios.get(`auth/verifica/${route.params.id}`);
+  
+  try {  // <- Issue #45 del repo.
+    await axios.get(`auth/verifica/${route.params.id}`);
+  } catch (e) {
+    if (e.meta.cause === "Record to update not found.")
+      return res.status(404).send({ error: "registro no encontrado" });
+  }
+  
   verificado.value = 1;
 }
 </script>
