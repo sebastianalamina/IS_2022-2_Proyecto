@@ -22,19 +22,24 @@ router.get(
     }), "query"),
     async (req, res) => {
 
-        const orden = await prisma.orden.findMany({
-            where: {
-                idmesa: req.query.idmesa,
-                idrestaurante: req.query.idrestaurante,
-            },
-            include: {
-                contenido: {
-                    include: {
-                        platillo:true,
+        try {
+            const orden = await prisma.orden.findMany({
+                where: {
+                    idmesa: req.query.idmesa,
+                    idrestaurante: req.query.idrestaurante,
+                },
+                include: {
+                    contenido: {
+                        include: {
+                            platillo:true,
+                        },
                     },
                 },
-            },
-        });
+            });
+        } catch (e) {
+            if (e.meta.cause === "Record to update not found.")
+                return res.status(404).send({ error: "registro no encontrado" });
+        }
 
         res.json(orden);
     }
@@ -52,16 +57,22 @@ router.post(
     }), ),
     async (req, res) => {
 
-        const orden = await prisma.orden.create({
-            data:{
-                idmesa: req.body.idmesa,
-                idrestaurante: req.body.idrestaurante,
-                estado: "RECIBIDA",
-                esCarrito: true,
-                pagado: false,
-                costo: 0,
-            }
-        });
+        try {
+            const orden = await prisma.orden.create({
+                data:{
+                    idmesa: req.body.idmesa,
+                    idrestaurante: req.body.idrestaurante,
+                    estado: "RECIBIDA",
+                    esCarrito: true,
+                    pagado: false,
+                    costo: 0,
+                }
+            });
+        } catch (e) {
+            if (e.meta.cause === "Record to update not found.")
+                return res.status(404).send({ error: "registro no encontrado" });
+        }
+
         res.json(orden);
     }
 )
@@ -76,11 +87,16 @@ router.get(
     }), "query"),
     async (req, res) => {
 
-        const platillos = await prisma.platillo.findMany({
-            where: {
-                idrestaurante: req.query.idrestaurante,
-            },
-        });
+        try {
+            const platillos = await prisma.platillo.findMany({
+                where: {
+                    idrestaurante: req.query.idrestaurante,
+                },
+            });
+        } catch (e) {
+            if (e.meta.cause === "Record to update not found.")
+                return res.status(404).send({ error: "registro no encontrado" });
+        }
 
         res.json(platillos);
     }
@@ -97,12 +113,18 @@ router.post(
     }), ),
     async (req, res) => {
 
-        const contenidoorden = await prisma.contenidoorden.create({
-            data:{
-                idorden: req.body.idorden,
-                idplatillo: req.body.idplatillo,
-            }
-        });
+        try {
+            const contenidoorden = await prisma.contenidoorden.create({
+                data:{
+                    idorden: req.body.idorden,
+                    idplatillo: req.body.idplatillo,
+                }
+            });
+        } catch (e) {
+            if (e.meta.cause === "Record to update not found.")
+                return res.status(404).send({ error: "registro no encontrado" });
+        }
+
         res.json(contenidoorden);
     }
 )
@@ -117,11 +139,17 @@ router.post(
     }), ),
     async (req, res) => {
 
-        const contenidoorden = await prisma.contenidoorden.delete({
-            where:{
-                idcontenidoorden: req.body.idcontenidoorden,
-            }
-        });
+        try {
+            const contenidoorden = await prisma.contenidoorden.delete({
+                where:{
+                    idcontenidoorden: req.body.idcontenidoorden,
+                }
+            });
+        } catch (e) {
+            if (e.meta.cause === "Record to update not found.")
+                return res.status(404).send({ error: "registro no encontrado" });
+        }
+        
         res.json(contenidoorden);
     }
 )

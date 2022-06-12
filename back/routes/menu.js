@@ -30,13 +30,20 @@ router.get(
   ),
   async (req, res) => {
     const { skip, take } = req.query;
-    const menu = await prisma.platillo.findMany({
-      where: {
-        idrestaurante : req.params.idrestaurante
-      },
-      skip,
-      take,
-    });
+
+    try {  // <- Issue #45 del repo.
+      const menu = await prisma.platillo.findMany({
+        where: {
+          idrestaurante : req.params.idrestaurante
+        },
+        skip,
+        take,
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+
     res.status(200).json(menu);
   }
 )
@@ -54,10 +61,17 @@ router.get(
   ),
   async (req, res) => {
     const { skip, take } = req.query;
-    const menu = await prisma.menu.findMany({
-      skip,
-      take,
-    });
+
+    try {  // <- Issue #45 del repo.
+      const menu = await prisma.menu.findMany({
+        skip,
+        take,
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+
     res.json(menu);
 
   });
@@ -79,20 +93,27 @@ router.post(
   ),
   async (req, res) => {
     const {idrestaurante, nombrePlatillo, costoPlatillo, imgPlatillo} = req.body
-    const idmenu = await prisma.menu.findFirst({
-      where:{
-        idrestaurante : idrestaurante
-      }
-    })
-    const platilloCreado = await prisma.platillo.create({
-      data:{
-        idrestaurante : idrestaurante,
-        idmenu : idmenu.idmenu,
-        nombre : nombrePlatillo,
-        costo : costoPlatillo,
-        img : imgPlatillo ,
-      }
-    });
+
+    try {  // <- Issue #45 del repo.
+      const idmenu = await prisma.menu.findFirst({
+        where:{
+          idrestaurante : idrestaurante
+        }
+      });
+      const platilloCreado = await prisma.platillo.create({
+        data:{
+          idrestaurante : idrestaurante,
+          idmenu : idmenu.idmenu,
+          nombre : nombrePlatillo,
+          costo : costoPlatillo,
+          img : imgPlatillo ,
+        }
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+
     res.status(201).json(platilloCreado);
   }
 );
@@ -104,23 +125,30 @@ router.get("/administrador",
   esAdministrador,
   bearerAuth,
   async (req,res)=>{
-    const administradorInfo = await prisma.administrador.findFirst({
-      where:{
-        idusuario : req.user.idusuario,
-      },
-      select : {
-        restaurante : {
-          select: {
-            idrestaurante : true,
-            menu : {
-              select :{
-                idmenu : true
+
+    try {  // <- Issue #45 del repo.
+      const administradorInfo = await prisma.administrador.findFirst({
+        where:{
+          idusuario : req.user.idusuario,
+        },
+        select : {
+          restaurante : {
+            select: {
+              idrestaurante : true,
+              menu : {
+                select :{
+                  idmenu : true
+                }
               }
             }
           }
-        }
-      } 
-    }); 
+        } 
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+
     res.json(administradorInfo);
   }
 );

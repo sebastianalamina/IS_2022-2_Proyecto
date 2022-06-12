@@ -19,39 +19,53 @@ router.get("/restaurante",
     bearerAuth,
     async (req, res) => {
         // Revisamos que el administrador tenga permisos de revisar la informacion de ese restaurante
-        const administrador = await prisma.administrador.findFirst({
-            where:{
-                idusuario : req.user.idusuario
-            },
-            select:{
-                idadmin : true,
-                idrestaurante : true
-            }
-        });
+
+        try { // <- Issue #45 del repo.
+            const administrador = await prisma.administrador.findFirst({
+                where:{
+                    idusuario : req.user.idusuario
+                },
+                select:{
+                    idadmin : true,
+                    idrestaurante : true
+                }
+            });
+        } catch (e) {
+            if (e.meta.cause === "Record to update not found.")
+                return res.status(404).send({ error: "registro no encontrado" });
+        }
+
         if( administrador.idrestaurante ){
             // Recabamos la informacion
-            const info = await prisma.restaurante.findFirst({
-                where:{
-                    idrestaurante : administrador.idrestaurante
-                },
-                include:{
-                    _count:{
-                        select:{
-                            mesero : true,
-                            
-                        }
+
+            try { // <- Issue #45 del repo.
+                const info = await prisma.restaurante.findFirst({
+                    where:{
+                        idrestaurante : administrador.idrestaurante
                     },
-                    menu:{
-                        select:{
-                            _count:{
-                                select:{
-                                    platillo: true
+                    include:{
+                        _count:{
+                            select:{
+                                mesero : true,
+                                
+                            }
+                        },
+                        menu:{
+                            select:{
+                                _count:{
+                                    select:{
+                                        platillo: true
+                                    }
                                 }
                             }
                         }
                     }
-                }
-            })
+                });
+            } catch (e) {
+                if (e.meta.cause === "Record to update not found.")
+                    return res.status(404).send({ error: "registro no encontrado" });
+            }
+
             res.json(info);
 
         }else{

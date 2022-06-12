@@ -18,9 +18,16 @@ router.post(
   ),
   async (req, res) => {
     // Checking if id_restaurante its valid
-    const userCount = await prisma.restaurante.count({
-      where: { idrestaurante: req.body.id_restaurante },
-    });
+
+    try { // <- Issue #45 del repo.
+      const userCount = await prisma.restaurante.count({
+        where: { idrestaurante: req.body.id_restaurante },
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+
     if (!userCount) {
       return res.status(400).json({
         error: "The restaurant ID is invalid.",
@@ -28,42 +35,70 @@ router.post(
     }
     console.log(req.body.id_restaurante);
     // If its valid insert the new item to the table Inventario
-    const itemCount = await prisma.inventario.count({
-      where: {
-        nombre: req.body.nombre,
-        idrestaurante: req.body.id_restaurante,
-      },
-    });
-    if (itemCount) {
-      console.log("Updating the entry for that element");
-      const repeatedItem = await prisma.inventario.findFirst({
+
+    try { // <- Issue #45 del repo.
+      const itemCount = await prisma.inventario.count({
         where: {
           nombre: req.body.nombre,
           idrestaurante: req.body.id_restaurante,
         },
       });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+
+    if (itemCount) {
+      console.log("Updating the entry for that element");
+
+      try { // <- Issue #45 del repo.
+        const repeatedItem = await prisma.inventario.findFirst({
+          where: {
+            nombre: req.body.nombre,
+            idrestaurante: req.body.id_restaurante,
+          },
+        });
+      } catch (e) {
+        if (e.meta.cause === "Record to update not found.")
+          return res.status(404).send({ error: "registro no encontrado" });
+      }
+
       console.log(repeatedItem.idinventario);
       console.log(repeatedItem.cantidad);
-      const item = await prisma.inventario.update({
-        where: {
-          idinventario: repeatedItem.idinventario,
-        },
-        data: {
-          cantidad: req.body.cantidad,
-        },
-      });
+
+      try { // <- Issue #45 del repo.
+        const item = await prisma.inventario.update({
+          where: {
+            idinventario: repeatedItem.idinventario,
+          },
+          data: {
+            cantidad: req.body.cantidad,
+          },
+        });
+      } catch (e) {
+        if (e.meta.cause === "Record to update not found.")
+          return res.status(404).send({ error: "registro no encontrado" });
+      }
+
       console.log(item.idinventario);
       console.log("updated element");
       console.log(item.cantidad);
       return res.status(201).json(item);
     }
-    const item = await prisma.inventario.create({
-      data: {
-        idrestaurante: req.body.id_restaurante,
-        cantidad: req.body.cantidad,
-        nombre: req.body.nombre,
-      },
-    });
+
+    try { // <- Issue #45 del repo.
+      const item = await prisma.inventario.create({
+        data: {
+          idrestaurante: req.body.id_restaurante,
+          cantidad: req.body.cantidad,
+          nombre: req.body.nombre,
+        },
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+
     return res.status(201).json(item);
   }
 );
@@ -79,20 +114,32 @@ router.get(
   ),
   async (req, res) => {
     // Checking
-    const userCount = await prisma.restaurante.count({
-      where: { idrestaurante: req.query.id_restaurante },
-    });
+    try { // <- Issue #45 del repo.
+      const userCount = await prisma.restaurante.count({
+        where: { idrestaurante: req.query.id_restaurante },
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
 
     if (!userCount) {
       return res.status(400).json({
         error: "The restaurant ID is invalid.",
       });
     }
-    const inventario = await prisma.inventario.findMany({
-      where: {
-        idrestaurante: req.query.id_restaurante,
-      },
-    });
+
+    try { // <- Issue #45 del repo.
+      const inventario = await prisma.inventario.findMany({
+        where: {
+          idrestaurante: req.query.id_restaurante,
+        },
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+    
     console.log("inventario valido");
     return res.json(inventario);
   }

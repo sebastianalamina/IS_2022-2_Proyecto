@@ -24,7 +24,14 @@ router.get(
     "query"
   ),
   async (req, res) => {
-    const resenas = await prisma.resena.findMany();
+
+    try {  // <- Issue #45 del repo.
+      const resenas = await prisma.resena.findMany();
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+
     res.json(resenas);
   }
 );
@@ -55,31 +62,38 @@ router.get(
   async (req, res) => {
     const { skip, take } = req.query;
     const { idrestaurante } = req.params;
-    const resenas = await prisma.resena.findMany({
-      where: {
-        idrestaurante,
-      },
-      skip,
-      take,
-      include: {
-        cliente: {
-          select: {
-            usuario: {
-              select: {
-                nombre: true,
-                apatermo: true,
-                amaterno: true,
+
+    try {  // <- Issue #45 del repo.
+      const resenas = await prisma.resena.findMany({
+        where: {
+          idrestaurante,
+        },
+        skip,
+        take,
+        include: {
+          cliente: {
+            select: {
+              usuario: {
+                select: {
+                  nombre: true,
+                  apatermo: true,
+                  amaterno: true,
+                },
               },
             },
           },
-        },
-        restaurante: {
-          select: {
-            nombre: true,
+          restaurante: {
+            select: {
+              nombre: true,
+            },
           },
         },
-      },
-    });
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+
     res.json(resenas);
   }
 );
@@ -105,28 +119,35 @@ router.post(
   ),
   async (req, res) => {
     const { idrestaurante, texto, classificacion, date } = req.body;
-    const resena = await prisma.resena.create({
-      data: {
-        texto: texto,
-        classificacion: classificacion,
-        date: date,
-        cliente: {
-          connect: { idusuario: req.user.idusuario },
-        },
-        restaurante: {
-          connect: { idrestaurante: idrestaurante },
-        },
-      },
-      include: {
-        cliente: {
-          select: {
-            nombre: true,
-            amaterno: true,
-            apatermo: true,
+
+    try {  // <- Issue #45 del repo.
+      const resena = await prisma.resena.create({
+        data: {
+          texto: texto,
+          classificacion: classificacion,
+          date: date,
+          cliente: {
+            connect: { idusuario: req.user.idusuario },
+          },
+          restaurante: {
+            connect: { idrestaurante: idrestaurante },
           },
         },
-      },
-    });
+        include: {
+          cliente: {
+            select: {
+              nombre: true,
+              amaterno: true,
+              apatermo: true,
+            },
+          },
+        },
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+    
     res.json(resena);
   }
 );

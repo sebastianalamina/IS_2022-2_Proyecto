@@ -29,49 +29,67 @@ router.post("/",
 
 		// Obtenemos el id del administrador
 		console.log("id usuario del que esta haciendo la solicitud es : ",req.user.idusuario)
-		const idAdministrador = await prisma.administrador.findFirst({
-			where:{
-				idusuario : req.user.idusuario
-			},	
-		});
+
+		try {  // <- Issue #45 del repo.
+			const idAdministrador = await prisma.administrador.findFirst({
+				where:{
+					idusuario : req.user.idusuario
+				},	
+			});
+		} catch (e) {
+		  if (e.meta.cause === "Record to update not found.")
+			  return res.status(404).send({ error: "registro no encontrado" });
+		}
 
 
 		if (rol === "MESERO"){
 
-			// Creamos un nuevo perfil de mesero 
-			const mesero = await prisma.mesero.create({
-				data:{
-					idrestaurante : idrestaurante,
-					administrador : {
-						connect : {
-							idadmin : idAdministrador.idadmin
+			// Creamos un nuevo perfil de mesero
+			try {  // <- Issue #45 del repo.
+				const mesero = await prisma.mesero.create({
+					data:{
+						idrestaurante : idrestaurante,
+						administrador : {
+							connect : {
+								idadmin : idAdministrador.idadmin
+							}
+						},
+						usuario:{
+							connect : { email : email }
+						},
+						restaurante : {
+							connect : { idrestaurante : idAdministrador.idrestaurante }
 						}
-					},
-					usuario:{
-						connect : { email : email }
-					},
-					restaurante : {
-						connect : { idrestaurante : idAdministrador.idrestaurante }
 					}
-				}
-			});
+				});
+			} catch (e) {
+			  if (e.meta.cause === "Record to update not found.")
+				  return res.status(404).send({ error: "registro no encontrado" });
+			}
 
 			res.json(mesero)
 		} else if(rol == "REPARTIDOR"){
-			const repartidor = await prisma.repartidor.create({
-				data:{
-					usuario : {
-						connectOrCreate:{
-							where:{
-								email,
-							},
-							create : {
-								...req.body
+
+			try {  // <- Issue #45 del repo.
+				const repartidor = await prisma.repartidor.create({
+					data:{
+						usuario : {
+							connectOrCreate:{
+								where:{
+									email,
+								},
+								create : {
+									...req.body
+								}
 							}
 						}
-					}
-				}	
-			});
+					}	
+				});
+			} catch (e) {
+			  if (e.meta.cause === "Record to update not found.")
+				  return res.status(404).send({ error: "registro no encontrado" });
+			}
+
 			res.json(repartidor)
 		}
 });
@@ -88,30 +106,41 @@ router.get(
 	bearerAuth,
 	async (req, res) => {	
 
-		const idAdministrador = await prisma.administrador.findFirst({
-			where : {
-				idusuario : req.user.idusuario
-			}
-		})
+		try {
+			const idAdministrador = await prisma.administrador.findFirst({
+				where : {
+					idusuario : req.user.idusuario
+				}
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
+
 		let empleados = {};
 
-		empleados["meseros"] = await prisma.mesero.findMany({
-			where:{
-				idadmin : idAdministrador.idadmin,
-			},
-			select : {
-				usuario : {
-					select :{
-						email : true,
-						nombre : true,
-						apatermo : true,
-						amaterno : true,
-						confirmado : true,
-						idusuario : true
+		try {
+			empleados["meseros"] = await prisma.mesero.findMany({
+				where:{
+					idadmin : idAdministrador.idadmin,
+				},
+				select : {
+					usuario : {
+						select :{
+							email : true,
+							nombre : true,
+							apatermo : true,
+							amaterno : true,
+							confirmado : true,
+							idusuario : true
+						}
 					}
 				}
-			}
-		});
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
 	
 		res.json(empleados)
 	}
@@ -128,11 +157,18 @@ router.delete("/mesero",
 	async (req,res)=>{
 		const {idusuario} = req.query;
 		console.log("id usuario", idusuario)
-		const usuarioeliminado = await prisma.mesero.delete({
-			where:{
-				idusuario : idusuario
-			}
-		});
+
+		try {
+			const usuarioeliminado = await prisma.mesero.delete({
+				where:{
+					idusuario : idusuario
+				}
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
+
 		console.log("datos del usuario eliminado :",JSON.stringify(usuarioeliminado));
 		res.status(202).send("Empleado borrado");
 

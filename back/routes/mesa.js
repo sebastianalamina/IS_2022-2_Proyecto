@@ -26,11 +26,16 @@ router.get(
 		let id_restaurante = req.query.id_restaurante;
 
 		// Buscamos las mesas de dicho restaurante.
-		let mesas = await prisma.mesa.findMany({
-			where:{
-				idrestaurante: id_restaurante,
-			},
-		});
+		try {
+			let mesas = await prisma.mesa.findMany({
+				where:{
+					idrestaurante: id_restaurante,
+				},
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
 
 		res.json(mesas);
 		
@@ -50,14 +55,21 @@ router.post(
 
 		let idmesa = req.body.idmesa;
 		let ocupada = req.body.ocupada;
-		const mesa = await prisma.mesa.update({
-			where: {
-				idmesa: idmesa,
-			},
-			data: {
-				ocupada: ocupada,
-			}
-		});
+
+		try {
+			const mesa = await prisma.mesa.update({
+				where: {
+					idmesa: idmesa,
+				},
+				data: {
+					ocupada: ocupada,
+				}
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
+
 		res.json(mesa);
 
 	}

@@ -25,9 +25,14 @@ router.get(
 		let id_orden = req.query.id_orden;
 
 		// Verificamos que la orden se encuentre en la BD...
-		let id_entrega_count = await prisma.orden.count({
-			where: { idorden : id_orden },
-		});
+		try {
+			let id_entrega_count = await prisma.orden.count({
+				where: { idorden : id_orden },
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
 
 		// ...Si no, devolvemos el error correspondiente.
 		if (!id_entrega_count)
@@ -36,9 +41,14 @@ router.get(
 			});
 
 		// ...Si sí, recuperamos la instancia correspondiente.
-		let orden = await prisma.orden.findFirst({
-			where: { idorden : id_orden }
-		});
+		try {
+			let orden = await prisma.orden.findFirst({
+				where: { idorden : id_orden }
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
 
 		// Debug temporal:
 		console.log(orden);
@@ -65,9 +75,14 @@ router.post(
 		let nuevo_estado = req.query.nuevo_estado;
 
 		// Verificamos que la orden se encuentre en la BD...
-		let id_entrega_count = await prisma.orden.count({
-			where: { idorden : id_orden },
-		});
+		try {
+			let id_entrega_count = await prisma.orden.count({
+				where: { idorden : id_orden },
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
 
 		// ...Si no, devolvemos el error correspondiente.
 		if (!id_entrega_count)
@@ -80,10 +95,15 @@ router.post(
 		nuevo_estado = estados_posibles[nuevo_estado]
 
 		// Actualizamos la instancia correspondiente.
-		let orden_a_modificar = await prisma.orden.update({
-			where: { idorden : id_orden },
-			data: { estado : nuevo_estado }
-		});
+		try {
+			let orden_a_modificar = await prisma.orden.update({
+				where: { idorden : id_orden },
+				data: { estado : nuevo_estado }
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
 
 		// Debug temporal:
 		console.log(orden_a_modificar);
