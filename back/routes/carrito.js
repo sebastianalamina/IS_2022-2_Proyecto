@@ -27,6 +27,7 @@ router.post("/",
     async (req, res) => {
         const {idcliente, costo, contenido} = req.body;
 
+        let carrito;
         try { // <- Issue #45 del repo.
             const carrito = await prisma.carrito.create({
                 data:{
@@ -49,6 +50,7 @@ router.post("/",
 
         console.log("Los datos del carrito son: ", JSON.stringify(carrito));
         
+        let contenidoCarrito;
         try { // <- Issue #45 del repo.
             const contenidoCarrito = await prisma.contenidoCarrito.createMany({
                 data : contenido.map( obj=>({...obj, idcarrito: carrito.idcarrito }))
@@ -87,6 +89,7 @@ router.put("/:idcarrito",
        const { idlciente, tipo, idplatillo} = req.query;
         const {idcarrito, } = req.params;
 
+        let carrito;
         try { // <- Issue #45 del repo.
             const carrito = await prisma.carrito.findFirst({
                  where:{
@@ -103,6 +106,7 @@ router.put("/:idcarrito",
          }
          if( tipo === "REMOVE"){
 
+            let contenidoRemovido;
             try { // <- Issue #45 del repo.
                 const contenidoRemovido = await prisma.contenidoCarrito.deleteMany({
                     where :{
@@ -119,6 +123,7 @@ router.put("/:idcarrito",
 
          }else if(tipo === "ADD"){
 
+            let contenidoAgregado;
             try { // <- Issue #45 del repo.
                 const contenidoAgregado = await prisma.contenidoCarrito.createMany({
                     data: idArticulos.map(obj=>({...obj, idcarrito: idcarrito}))
@@ -136,6 +141,7 @@ router.put("/:idcarrito",
 router.get('/display/:id', async (req, res) => {
     let id_cliente = req.query.id_cliente;
 
+    let id_carrito, contenido;
     try { // <- Issue #45 del repo.
         const id_carrito = await prisma.modificarCarrito.findFirst({
             where: { idcliente: id_cliente}

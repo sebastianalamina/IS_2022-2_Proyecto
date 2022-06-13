@@ -20,6 +20,7 @@ router.get("/restaurante",
     async (req, res) => {
         // Revisamos que el administrador tenga permisos de revisar la informacion de ese restaurante
 
+        let administrador;
         try { // <- Issue #45 del repo.
             const administrador = await prisma.administrador.findFirst({
                 where:{
@@ -38,6 +39,7 @@ router.get("/restaurante",
         if( administrador.idrestaurante ){
             // Recabamos la informacion
 
+            let info;
             try { // <- Issue #45 del repo.
                 const info = await prisma.restaurante.findFirst({
                     where:{

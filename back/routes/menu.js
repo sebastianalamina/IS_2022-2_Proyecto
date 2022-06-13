@@ -31,6 +31,7 @@ router.get(
   async (req, res) => {
     const { skip, take } = req.query;
 
+    let menu;
     try {  // <- Issue #45 del repo.
       const menu = await prisma.platillo.findMany({
         where: {
@@ -62,6 +63,7 @@ router.get(
   async (req, res) => {
     const { skip, take } = req.query;
 
+    let menu;
     try {  // <- Issue #45 del repo.
       const menu = await prisma.menu.findMany({
         skip,
@@ -94,6 +96,7 @@ router.post(
   async (req, res) => {
     const {idrestaurante, nombrePlatillo, costoPlatillo, imgPlatillo} = req.body
 
+    let idmenu;
     try {  // <- Issue #45 del repo.
       const idmenu = await prisma.menu.findFirst({
         where:{
@@ -126,6 +129,7 @@ router.get("/administrador",
   bearerAuth,
   async (req,res)=>{
 
+    let administradorInfo;
     try {  // <- Issue #45 del repo.
       const administradorInfo = await prisma.administrador.findFirst({
         where:{

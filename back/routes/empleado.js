@@ -30,6 +30,7 @@ router.post("/",
 		// Obtenemos el id del administrador
 		console.log("id usuario del que esta haciendo la solicitud es : ",req.user.idusuario)
 
+		let idAdministrador;
 		try {  // <- Issue #45 del repo.
 			const idAdministrador = await prisma.administrador.findFirst({
 				where:{
@@ -45,6 +46,7 @@ router.post("/",
 		if (rol === "MESERO"){
 
 			// Creamos un nuevo perfil de mesero
+			let mesero;
 			try {  // <- Issue #45 del repo.
 				const mesero = await prisma.mesero.create({
 					data:{
@@ -70,6 +72,7 @@ router.post("/",
 			res.json(mesero)
 		} else if(rol == "REPARTIDOR"){
 
+			let repartidor;
 			try {  // <- Issue #45 del repo.
 				const repartidor = await prisma.repartidor.create({
 					data:{
@@ -106,6 +109,7 @@ router.get(
 	bearerAuth,
 	async (req, res) => {	
 
+		let idAdministrador;
 		try {
 			const idAdministrador = await prisma.administrador.findFirst({
 				where : {
@@ -158,6 +162,7 @@ router.delete("/mesero",
 		const {idusuario} = req.query;
 		console.log("id usuario", idusuario)
 
+		let usuarioeliminado;
 		try {
 			const usuarioeliminado = await prisma.mesero.delete({
 				where:{

@@ -19,6 +19,7 @@ router.post(
   async (req, res) => {
     // Checking if id_restaurante its valid
 
+    let userCount;
     try { // <- Issue #45 del repo.
       const userCount = await prisma.restaurante.count({
         where: { idrestaurante: req.body.id_restaurante },
@@ -36,6 +37,7 @@ router.post(
     console.log(req.body.id_restaurante);
     // If its valid insert the new item to the table Inventario
 
+    let itemCount;
     try { // <- Issue #45 del repo.
       const itemCount = await prisma.inventario.count({
         where: {
@@ -51,6 +53,7 @@ router.post(
     if (itemCount) {
       console.log("Updating the entry for that element");
 
+      let repeatedItem;
       try { // <- Issue #45 del repo.
         const repeatedItem = await prisma.inventario.findFirst({
           where: {
@@ -66,6 +69,7 @@ router.post(
       console.log(repeatedItem.idinventario);
       console.log(repeatedItem.cantidad);
 
+      let item;
       try { // <- Issue #45 del repo.
         const item = await prisma.inventario.update({
           where: {
@@ -86,6 +90,7 @@ router.post(
       return res.status(201).json(item);
     }
 
+    let item;
     try { // <- Issue #45 del repo.
       const item = await prisma.inventario.create({
         data: {
@@ -114,6 +119,8 @@ router.get(
   ),
   async (req, res) => {
     // Checking
+
+    let userCount;
     try { // <- Issue #45 del repo.
       const userCount = await prisma.restaurante.count({
         where: { idrestaurante: req.query.id_restaurante },
@@ -129,6 +136,7 @@ router.get(
       });
     }
 
+    let inventario;
     try { // <- Issue #45 del repo.
       const inventario = await prisma.inventario.findMany({
         where: {

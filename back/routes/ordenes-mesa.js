@@ -22,6 +22,7 @@ router.get(
     }), "query"),
     async (req, res) => {
 
+        let orden;
         try {
             const orden = await prisma.orden.findMany({
                 where: {
@@ -57,6 +58,7 @@ router.post(
     }), ),
     async (req, res) => {
 
+        let orden;
         try {
             const orden = await prisma.orden.create({
                 data:{
@@ -87,6 +89,7 @@ router.get(
     }), "query"),
     async (req, res) => {
 
+        let platillos;
         try {
             const platillos = await prisma.platillo.findMany({
                 where: {
@@ -113,6 +116,7 @@ router.post(
     }), ),
     async (req, res) => {
 
+        let contenidoorden;
         try {
             const contenidoorden = await prisma.contenidoorden.create({
                 data:{
@@ -139,6 +143,7 @@ router.post(
     }), ),
     async (req, res) => {
 
+        let contenidoorden;
         try {
             const contenidoorden = await prisma.contenidoorden.delete({
                 where:{

@@ -25,8 +25,9 @@ router.get(
 		let id_orden = req.query.id_orden;
 
 		// Verificamos que la orden se encuentre en la BD...
+		let id_entrega_count;
 		try {
-			let id_entrega_count = await prisma.orden.count({
+			id_entrega_count = await prisma.orden.count({
 				where: { idorden : id_orden },
 			});
 		} catch (e) {
@@ -41,8 +42,9 @@ router.get(
 			});
 
 		// ...Si sí, recuperamos la instancia correspondiente.
+		let orden;
 		try {
-			let orden = await prisma.orden.findFirst({
+			orden = await prisma.orden.findFirst({
 				where: { idorden : id_orden }
 			});
 		} catch (e) {
@@ -75,8 +77,9 @@ router.post(
 		let nuevo_estado = req.query.nuevo_estado;
 
 		// Verificamos que la orden se encuentre en la BD...
+		let id_entrega_count;
 		try {
-			let id_entrega_count = await prisma.orden.count({
+			id_entrega_count = await prisma.orden.count({
 				where: { idorden : id_orden },
 			});
 		} catch (e) {
@@ -95,8 +98,9 @@ router.post(
 		nuevo_estado = estados_posibles[nuevo_estado]
 
 		// Actualizamos la instancia correspondiente.
+		let orden_a_modificar;
 		try {
-			let orden_a_modificar = await prisma.orden.update({
+			orden_a_modificar = await prisma.orden.update({
 				where: { idorden : id_orden },
 				data: { estado : nuevo_estado }
 			});

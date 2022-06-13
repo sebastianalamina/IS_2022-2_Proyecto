@@ -25,6 +25,7 @@ router.get(
   ),
   async (req, res) => {
 
+    let resenas;
     try {  // <- Issue #45 del repo.
       const resenas = await prisma.resena.findMany();
     } catch (e) {
@@ -63,6 +64,7 @@ router.get(
     const { skip, take } = req.query;
     const { idrestaurante } = req.params;
 
+    let resenas;
     try {  // <- Issue #45 del repo.
       const resenas = await prisma.resena.findMany({
         where: {
@@ -120,6 +122,7 @@ router.post(
   async (req, res) => {
     const { idrestaurante, texto, classificacion, date } = req.body;
 
+    let resena;
     try {  // <- Issue #45 del repo.
       const resena = await prisma.resena.create({
         data: {

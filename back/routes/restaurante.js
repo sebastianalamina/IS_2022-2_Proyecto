@@ -37,6 +37,8 @@ router.post(
   ),
   async (req, res) => {
 
+  	let restaurante;
+  	let menu;
   	try { // <- Issue #45 del repo.
 
 			// Creamos el nuevo restaurante. al mismo tiempo creamos el nuevo 
@@ -90,6 +92,7 @@ router.get("/:idrestaurante",
 	"params"),	
 	  async (req, res) => {
 
+	  	let restaurante;
 	  	try { // <- Issue #45 del repo.
 			  const restaurante = await prisma.restaurante.findFirst({
 				  where: {
@@ -123,6 +126,7 @@ router.get(
 	async (req,res)=>{
 		const {skip,take} = req.query;
 
+		let restaurante;
 		try { // <- Issue #45 del repo.
 			const restaurante = await prisma.restaurante.findMany({
 				skip,
@@ -145,6 +149,7 @@ router.delete("/",
 	async (req,res)=>{
 		const {idrestaurante} = req.query
 
+		let restauranteEliminado;
 		try { // <- Issue #45 del repo.
 			const restauranteEliminado = await prisma.restaurante.delete({
 				where:{ idrestaurante },

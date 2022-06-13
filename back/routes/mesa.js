@@ -26,8 +26,9 @@ router.get(
 		let id_restaurante = req.query.id_restaurante;
 
 		// Buscamos las mesas de dicho restaurante.
+		let mesas;
 		try {
-			let mesas = await prisma.mesa.findMany({
+			mesas = await prisma.mesa.findMany({
 				where:{
 					idrestaurante: id_restaurante,
 				},
@@ -56,6 +57,7 @@ router.post(
 		let idmesa = req.body.idmesa;
 		let ocupada = req.body.ocupada;
 
+		let mesa;
 		try {
 			const mesa = await prisma.mesa.update({
 				where: {

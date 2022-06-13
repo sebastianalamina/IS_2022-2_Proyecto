@@ -64,6 +64,7 @@ router.post(
   async (req, res) => {
     const { email, contrasegna } = req.body;
 
+    let user;
     try { // <- Issue #45 del repo.
       const user = await prisma.usuario.findFirst({
         where: {
@@ -111,6 +112,7 @@ router.post(
   async (req, res) => {
     // Checking for email uniqueness
 
+    let userCount;
     try { // <- Issue #45 del repo.
       const userCount = await prisma.usuario.count({
         where: { email: req.body.email },
@@ -127,6 +129,7 @@ router.post(
     }
     if (req.rol === "ADMINISTRADOR") {
 
+      let user;
       try { // <- Issue #45 del repo.
         const user = await prisma.usuario.create({
           data: {
@@ -147,6 +150,7 @@ router.post(
       return res.status(200).json(user);
     }
 
+    let user;
     try { // <- Issue #45 del repo.
       const user = await prisma.usuario.create({
         data: {
