@@ -54,6 +54,14 @@ function logout() {
         <va-tab>
           <router-link to="/lista-restaurantes">Restaurantes</router-link>
         </va-tab>
+        <va-tab v-if="auth.hasPermisionsOf(roles.REPARTIDOR)">
+          <router-link to="/repartidor/orden">Orden actual</router-link>
+        </va-tab>
+        <va-tab v-if="auth.hasPermisionsOf(roles.REPARTIDOR)">
+          <router-link to="/repartidor/orden/encontrar"
+            >Encontrar ordenes</router-link
+          >
+        </va-tab>
         <va-tab v-if="auth.hasPermisionsOf(roles.ADMINISTRADOR)">
           <router-link to="/view-employees">Empleados</router-link>
         </va-tab>
