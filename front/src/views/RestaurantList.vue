@@ -91,7 +91,15 @@ export default {
             <va-button @click="selectRestaurante(restaurante.idrestaurante)">
               Ver resenas
             </va-button>
-            <va-button> ver Menu </va-button>
+            <va-button
+              @click="
+                this.$router.push({
+                  path: '/menu/' + restaurante.idrestaurante,
+                })
+              "
+            >
+              ver Menu
+            </va-button>
           </va-list-item-section>
         </va-list-item>
       </va-list>
