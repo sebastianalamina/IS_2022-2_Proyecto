@@ -126,5 +126,38 @@ router.post(
     }
 )
 
+/*
+Este POST cierra una orden
+Es decir, marca el booleano esCarrito como false
+y el booleano pagado como true.
+*/
+router.post(
+    "/cerrar-orden",
+    validate(Joi.object({
+        idorden: Joi.number().integer().required(),
+    }), ),
+    async (req, res) => {
+
+
+        let orden;
+        try { // <- Issue #45 del repo.
+            const orden = await prisma.orden.update({
+                where:{
+                    idorden: req.body.idorden,
+                },
+                data:{
+                    esCarrito: false,
+                    pagado: true,
+                },
+            });
+        } catch (e) {
+            if (e.meta.cause === "Record to update not found.")
+                return res.status(404).send({ error: "registro no encontrado" });
+        }
+
+        res.json(orden);
+    }
+)
+
 module.exports = router;
 
