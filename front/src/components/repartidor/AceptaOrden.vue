@@ -1,5 +1,6 @@
 <script setup>
 import { ref } from "@vue/reactivity";
+import { useRouter } from "vue-router";
 import { useAxios } from "../../axios_common";
 
 const lugar = ref("");
@@ -8,11 +9,13 @@ const masDisponibles = ref(true);
 const error = ref("");
 
 const axios = useAxios();
+const history = useRouter();
 
 let skip = 0;
 
 async function aceptar() {
   await axios.get(`/orden/${numOrden.value}/aceptar`);
+  history.push("/repartidor/orden");
   //TODO: enviar al usuario a página informativa
 }
 function rechazar() {
