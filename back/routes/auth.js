@@ -5,6 +5,7 @@ const crypto = require("crypto");
 const Joi = require("joi");
 const validate = require("../utils/middleware/validate");
 const Mailer = require("../utils/email");
+const roles = require("../utils/constants/roles");
 
 const router = express.Router();
 const prisma = new PrismaClient();
@@ -86,7 +87,9 @@ router.post(
       email: Joi.string().email().required(),
       nombre: Joi.string().required(),
       contrasegna: Joi.string().required(),
-      rol: Joi.string().required(),
+      rol: Joi.string()
+        .valid(roles.ADMINISTRADOR, roles.CLIENTE, roles.REPARTIDOR)
+        .required(),
       nombre: Joi.string().required(),
       estado: Joi.string().required(),
       calle: Joi.string().required(),
@@ -105,20 +108,6 @@ router.post(
         error: "An account with that email already exists.",
       });
     }
-    if (req.rol === "ADMINISTRADOR") {
-      const user = await prisma.usuario.create({
-        data: {
-          administrador: {
-            create: {},
-          },
-          ...req.body,
-        },
-        select: {
-          email: true,
-        },
-      });
-      return res.status(200).json(user);
-    }
     const user = await prisma.usuario.create({
       data: {
         ...req.body,
@@ -130,6 +119,20 @@ router.post(
         idusuario: true,
       },
     });
+    try {
+      await prisma[req.body.rol].create({
+        data: {
+          idusuario: user.idusuario,
+        },
+      });
+    } catch (e) {
+      await prisma.usuario.delete({
+        select: {
+          idusuario: user.idusuario,
+        },
+      });
+      return res.status(500).send("algo salio mal");
+    }
 
     mailer
       .send({
