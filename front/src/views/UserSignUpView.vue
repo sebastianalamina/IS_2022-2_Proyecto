@@ -3,8 +3,6 @@ import { useAxios } from "../axios_common";
 import { useStore as useAuthStore } from "../stores/auth";
 import roles from "../constants/roles";
 
-const rolesLower = Object.values(roles).map((x) => x.toLowerCase());
-
 export default {
   data() {
     return {
@@ -19,7 +17,7 @@ export default {
       numero: null,
       cp: null,
       municipio: null,
-      options: rolesLower,
+      options: [roles.CLIENTE, roles.ADMINISTRADOR, roles.REPARTIDOR],
       res_error: false,
     };
   },
@@ -123,7 +121,6 @@ export default {
         input-class="va-input-style"
         :rules="[(v) => !!v || 'Por favor llena este campo']"
       />
-
       <va-select v-model="rol" :options="options" />
       <va-button type="submit" class="mt-2"> Register </va-button>
     </va-form>

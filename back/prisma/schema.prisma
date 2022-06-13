@@ -37,8 +37,8 @@ model cliente {
 //crear tabla orden
 model orden {
   idorden       Int                @id @default(autoincrement())
-  idmesa        Int
-  idrestaurante Int?
+  idmesa        Int?
+  idrestaurante Int
   idcliente     Int?
   domicilio     String?
   estado        estadoorden
