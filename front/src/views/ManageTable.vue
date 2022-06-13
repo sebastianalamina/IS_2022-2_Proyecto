@@ -223,6 +223,11 @@ export default {
 				});
 			}
 
+			let ord;
+			for (ord in this.orden) {
+				this.actualizarCostoOrden(this.orden[ord]);
+			}
+
 		}, // <- Fin de "buscarOrden".
 
 		async iniciarOrden(e) {
@@ -260,6 +265,28 @@ export default {
 				}).catch((error) => {
 					console.log(error);
 				});
+
+		}, // <-- Fin de "cambiarOcupada".
+
+		async anadirOrden(e) {
+			
+			// No recargar la página.
+			e.preventDefault();
+
+			// La creamos en el Back.
+			const axios = useAxios();
+			await axios
+				.post('/ordenes-mesa', {
+					idmesa: this.idMesa,
+					idrestaurante: this.idRestaurante,
+				}).then((res) => {
+
+				}).catch((error) => {
+					console.log(error);
+				});
+
+			// Actualizamos menús.
+			this.buscarOrden();
 
 		}, // <-- Fin de "cambiarOcupada".
 
@@ -366,7 +393,21 @@ export default {
 				return;
 			}
 
-			console.log("uwu");
+			// Marcamos la orden como no carrito y como ya pagada..
+			const axios = useAxios();
+			await axios
+				.post('/ordenes-mesa/cerrar-orden', {
+					idorden: this.ordenPorCerrar.idorden,
+				}).then((res) => {
+					console.log("Cerrando:", res.data);
+				}).catch((error) => {
+					console.log(error);
+				});
+
+			// Actualizamos menús.
+			this.buscarOrden();
+			// Borramos valores.
+			this.cancelar(e);
 
 		}, // <-- Fin de "cerrarOrden".
 
@@ -394,6 +435,18 @@ export default {
 			this.costoOrdenPorCerrar = null;
 
 		}, // <-- Fin de "cancelar".
+
+		actualizarCostoOrden(orden) {
+
+			let item;
+			let costo_total = 0;
+			for (item in orden.contenido) {
+				let costo = orden.contenido[item].platillo.costo
+				costo_total += costo;
+			}
+			orden.costo = costo_total
+
+		}, // <-- Fin de "actualizarCostoOrden".
 
 	}, // <-- Fin de "methods".
 
@@ -471,6 +524,9 @@ export default {
 
 			<!-- Cuando no se ha presionado ninguno de los botones inferiores. -->
 			<div v-if="this.mostrarBotones">
+				<form class="mismalinea" @submit="anadirOrden">
+					<input type="submit" value="Añadir orden">
+				</form>
 				<form class="mismalinea" @submit="agregarPlatillo">
 					<input type="submit" value="Agregar platillo">
 				</form>
