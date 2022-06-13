@@ -6,11 +6,7 @@ import roles from "../constants/roles";
 
 const auth = useAuthStore();
 export default {
-  props: ["idrestaurante"],
-  components: {
-    NavBar,
-    Footer,
-  },
+  props: ["idrestaurante"], 
   data() {
     return {
       addPlatilloForm : false,
@@ -171,3 +167,4 @@ export default {
   margin-bottom: 1%;
 }
 </style>
+

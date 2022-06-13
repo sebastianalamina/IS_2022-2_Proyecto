@@ -6,7 +6,6 @@ const router = express.Router();
 const prisma = new PrismaClient();
 const validate = require("../utils/middleware/validate");
 const { esAdministrador ,bearerAuth } = require("../utils/middleware/auth");
-const { valid } = require("joi");
 
 
 /**
@@ -18,45 +17,23 @@ router.get("/restaurante",
     esAdministrador,
     bearerAuth,
     async (req, res) => {
-        // Revisamos que el administrador tenga permisos de revisar la informacion de ese restaurante
-        const administrador = await prisma.administrador.findFirst({
-            where:{
-                idusuario : req.user.idusuario
-            },
-            select:{
-                idadmin : true,
-                idrestaurante : true
-            }
-        });
-        if( administrador.idrestaurante ){
-            // Recabamos la informacion
-            const info = await prisma.restaurante.findFirst({
-                where:{
-                    idrestaurante : administrador.idrestaurante
-                },
-                include:{
-                    _count:{
-                        select:{
-                            mesero : true,
-                            
-                        }
-                    },
-                    menu:{
-                        select:{
-                            _count:{
-                                select:{
-                                    platillo: true
-                                }
-                            }
-                        }
-                    }
-                }
-            })
-            res.json(info);
+       console.log("el id del usuario es", req.user.idusuario);
+       const administrador = await prisma.administrador.findFirst({
+           where:{ idusuario: req.user.idusuario },  
+       });
 
-        }else{
-            res.status(400);
-        }
+       if(!administrador){
+            res.status(404).json({"message" : "El administrador no existe"});
+       }else{
+           const restaurante = await prisma.restaurante.findFirst({
+               where:{ idrestaurante : administrador.idrestaurante, },
+               include:{
+                   _count: { select: { mesero: true } },
+                    menu:{ select : { _count:{ select:{ platillo : true } } } },
+               }
+           });
+           res.json(restaurante); 
+       }
         
     }
 );
