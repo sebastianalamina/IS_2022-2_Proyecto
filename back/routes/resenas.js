@@ -93,6 +93,7 @@ router.get(
 router.post(
   "/",
   esCliente,
+  bearerAuth, 
   validate(
     Joi.object({
       idrestaurante: Joi.number().integer().required(),
