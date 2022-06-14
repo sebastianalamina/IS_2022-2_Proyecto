@@ -3,16 +3,16 @@ import { defineStore } from "pinia";
 export const useStore = defineStore("admin",{
     state:()=>({
         idRestaurante : null,
-        nombreRestaurante : null,
     }),
     getters:{
-
     },
     actions:{
         setRestaurante(restaurante){
             this.idRestaurante = restaurante.idrestaurante;
-            this.nombreRestaurante = restaurante.nombre;
+        },
+        reset(){
+            this.idRestaurante = null;
         }
     },
-    persist : true,
+    persist : true
 });

@@ -50,6 +50,7 @@ router.get(
     const numOrdenes = await prisma.orden.count({
       where: ordenesADomicilioDisponibles,
     });
+    console.log(numOrdenes);
     if (numOrdenes == 0 || numOrdenes <= req.query.skip)
       return res
         .status(403)

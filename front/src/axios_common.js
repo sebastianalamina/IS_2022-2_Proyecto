@@ -3,10 +3,10 @@ import { useStore as useAuthStore } from "./stores/auth";
 
 export const useAxios = () => {
   const authStore = useAuthStore();
-  console.log(import.meta.env.VITE_API_ENDPOINT);
+  const baseURL = "http://" + document.location.host.split(":")[0] + ":3001";
 
   return axios.create({
-    baseURL: `${import.meta.env.VITE_API_ENDPOINT}`,
+    baseURL: `${baseURL}`,
     headers: authStore.isLogged
       ? {
           Authorization: `Bearer ${authStore.token}`,

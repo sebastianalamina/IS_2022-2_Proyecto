@@ -3,58 +3,61 @@ import { useAxios } from "../axios_common";
 import ResenaList from "../components/ResenaList.vue";
 
 export default {
-    components: { 
+  components: {
     ResenaList,
+  },
+  data() {
+    return {
+      cards: [],
+      restauranteSeleccionadoId: 1,
+      restauranteSelecionadoMax: 10,
+      mostrarResenas: 0,
+      skip: 0,
+      listaKey: 0,
+    };
+  },
+  methods: {
+    getRestaurantList: function (skip) {
+      const instance = useAxios();
+      instance
+        .get("/restaurante", {
+          params: {
+            skip: skip,
+            take: 10,
+          },
+        })
+        .then((res) => {
+          this.cards = res.data;
+          console.log("cards de restaurantes cargadas");
+          console.log(
+            "lo que cargue de restaurantes : ",
+            JSON.stringify(res.data._count)
+          );
+        })
+        .catch((err) => {
+          console.log(err.response.data.error);
+        });
     },
-    data() {
-        return {
-            cards: [],
-            restauranteSeleccionadoId : 1,
-            restauranteSelecionadoMax: 10,
-            mostrarResenas: 0,
-            skip : 0,
-            listaKey : 0
-        };
+    selectRestaurante: function (id) {
+      this.restauranteSeleccionadoId = id;
+      this.mostrarResenas += 1;
+      console.log("viendo la resena de :", id);
     },
-    methods:{
-        getRestaurantList: function(skip){
-            const instance  = useAxios();
-            instance.get("/restaurante",{
-                params:{
-                    skip : skip,
-                    take : 10
-                },
-            })
-            .then((res)=>{
-                this.cards = res.data;
-                console.log("cards de restaurantes cargadas");
-                console.log("lo que cargue de restaurantes : ", JSON.stringify(res.data._count));
-            })
-            .catch((err)=>{
-                console.log(err.response.data.error);
-            })
-            
-        },
-        selectRestaurante: function(id){
-            this.restauranteSeleccionadoId = id;
-            this.mostrarResenas += 1;
-            console.log("viendo la resena de :", id)
-        },
-        nextPage : function(){
-            this.skip += 10;
-            this.getRestaurantList(this.skip);
-            console.log("pase a la siguiente",JSON.stringify(this.cards[0]))
-            this.mostrarResenas += 1;
-        },
-        previousPage : function(){
-            if(this.skip === 0){
-                return
-            }
-            this.skip -= 10;
-            this.getRestaurantList(this.skip);
-            console.log(JSON.stringify("pase al de atras",this.cards[0]))
-            this.mostrarResenas += 1;
-        },
+    nextPage: function () {
+      this.skip += 10;
+      this.getRestaurantList(this.skip);
+      console.log("pase a la siguiente", JSON.stringify(this.cards[0]));
+      this.mostrarResenas += 1;
+    },
+    previousPage: function () {
+      if (this.skip === 0) {
+        return;
+      }
+      this.skip -= 10;
+      this.getRestaurantList(this.skip);
+      console.log(JSON.stringify("pase al de atras", this.cards[0]));
+      this.mostrarResenas += 1;
+    },
   },
   mounted() {
     this.getRestaurantList(this.skip);
@@ -64,52 +67,55 @@ export default {
 </script>
 
 <template>
-<button @click="this.previousPage">Pagina anterior</button>
-<button @click="this.nextPage">Siguiente pagina</button>
-<div>
-<va-list :key="listaKey">
-<va-list-label>
-    Restaurantes
-</va-list-label>
-
-<va-list-item v-for="restaurante in cards" :key="restaurante.restauranteid">
-<va-list-item-section>
-<va-list-item-label>
-    {{restaurante.nombre}}
-</va-list-item-label>
-<va-list-item-label
-caption>
-    {{restaurante.calle + restaurante.estado}}
-</va-list-item-label>
-</va-list-item-section>
-
-<va-list-item-section
-icon >
- <va-button @click="selectRestaurante(restaurante.idrestaurante)">
-        Ver resenas
-    </va-button>   
-    <va-button>
-        ver Menu
-    </va-button>
-</va-list-item-section>
-</va-list-item>
-
-</va-list> 
-</div>
-
-<div>
-
   <div>
-    <h3>Resenas</h3>
+    <button @click="this.previousPage">Pagina anterior</button>
+    <button @click="this.nextPage">Siguiente pagina</button>
+    <div>
+      <va-list :key="listaKey">
+        <va-list-label> Restaurantes </va-list-label>
 
-   <ResenaList
-   :idrestaurante="restauranteSeleccionadoId"
-   :maxPagination="restauranteSelecionadoMax"
-   />
+        <va-list-item
+          v-for="restaurante in cards"
+          :key="restaurante.restauranteid"
+        >
+          <va-list-item-section>
+            <va-list-item-label>
+              {{ restaurante.nombre }}
+            </va-list-item-label>
+            <va-list-item-label caption>
+              {{ restaurante.calle + restaurante.estado }}
+            </va-list-item-label>
+          </va-list-item-section>
 
+          <va-list-item-section icon>
+            <va-button @click="selectRestaurante(restaurante.idrestaurante)">
+              Ver resenas
+            </va-button>
+            <va-button
+              @click="
+                this.$router.push({
+                  path: '/menu/' + restaurante.idrestaurante,
+                })
+              "
+            >
+              ver Menu
+            </va-button>
+          </va-list-item-section>
+        </va-list-item>
+      </va-list>
+    </div>
 
-</div>
-
+    <div>
+      <div>
+        <h3>Resenas</h3>
+        {{ restauranteSeleccionadoId }}
+        <ResenaList
+          :idrestaurante="restauranteSeleccionadoId"
+          :maxPagination="restauranteSelecionadoMax"
+        />
+      </div>
+    </div>
+  </div>
 </template>
 
 <style></style>

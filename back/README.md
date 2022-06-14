@@ -24,10 +24,17 @@ DB_USER="[usuario]"
 ```
 en donde `[usuario]` y `[contraseña]` deben ser reemplazados por las credenciales necesarias para conectar con la Base de Datos.
 
-Para crear una versión de la Base de Datos basada en el *schema* de *Prisma*, ejecutar el siguiente comando:
+Para generar una versión de la Base de Datos basada en el *schema* de *Prisma*, ejecutar el siguiente comando:
 ```
-npx prisma generate
+(npx) prisma generate
 ```
+
+Para actualizar la Base de Datos con esta versión generada (i.e. para *pushear* el estado del *schema* a la BD), ejecutar el siguiente comando:
+```
+(npx) prisma db push
+```
+
+**Nota**: Los paréntesis alrededor de la palabra `npx` indican que sólo es necesario añadirla al comando si *Prisma* **no** está instalado de manera global.
 
 ## Ejecución
 

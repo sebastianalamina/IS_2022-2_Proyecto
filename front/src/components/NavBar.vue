@@ -1,83 +1,80 @@
 <script setup>
 import { reactive, ref, computed } from "@vue/reactivity";
-import { useRoute } from "vue-router";
+import { useRouter,useRoute } from "vue-router";
 import { useStore as useAuthStore } from "../stores/auth";
+import { useStore as useAdminStore } from "../stores/admin";
 import roles from "../constants/roles";
 
 //incluimos desde un inicio las rutas de invitado
 const auth = useAuthStore();
-const links = reactive([
-  { name: "home", path: "/" },
-  {
-    path: "/about",
-    name: "about",
-  },
-  {
-    path: "/lista-restaurantes",
-    name: "lista de restaurantes",
-  },
-]);
+const admin = useAdminStore();
+const router = useRouter();
+const route = useRoute();
 
-//links
-if (auth.hasPermisionsOf(roles.CLIENTE)) {
-  links.push({ path: "/inicioW/ordenes", name: "inicio_ordenes" });
-}
+// if (auth.hasPermisionsOf(roles.CLIENTE)) {
+//   links.push({
+//     path: "/view-order-status",
+//     name: "ver-estado-platillo",
+//   });
+// }
 
-if (auth.hasPermisionsOf(roles.ADMINISTRADOR)) {
-  links.push({ name: "ver-empleados", path: "/view-employees" });
-}
-if (auth.hasPermisionsOf(roles.CLIENTE)) {
-  links.push({
-    path: "/view-order-status",
-    name: "ver-estado-platillo",
-  });
-}
-if (
-  auth.hasPermisionsOf(roles.MESERO) ||
-  auth.hasPermisionsOf(roles.REPARTIDOR)
-) {
-  links.push({
-    path: "/modify-order-status",
-    name: "modificar-estado-platillo",
-  });
-}
-
-const tabIx = computed(() => {
-  return links.findIndex((x) => x.name == useRoute().name) + 1;
-});
+// const tabIx = computed(() => {
+//   return links.findIndex((x) => x.name == useRoute().name) + 1;
+// });
 
 function logout() {
   auth.logout();
+  admin.reset();
+  router.push("/")
 }
 </script>
 
 <template>
-  <va-navbar color="primary">
-    <template #left>
-      <va-navbar-item>FindYourRestaurants</va-navbar-item>
-    </template>
-    <template #right>
-      <va-navbar-item v-if="auth.isLogged">
-        <va-popover message="salir">
-          <va-button @click="logout"> <va-icon name="logout" /></va-button>
-        </va-popover>
-      </va-navbar-item>
-      <va-navbar-item v-if="!auth.isLogged">
-        <va-popover message="login">
-          <va-button href="/login"> <va-icon name="login" /></va-button>
-        </va-popover>
-      </va-navbar-item>
-    </template>
-  </va-navbar>
-  <va-tabs v-model="tabIx">
-    <template #tabs>
-      <va-tab v-for="tab in links" :key="tab">
-        <a :href="tab.path">{{
-          tab.name.replaceAll("-", " ").replaceAll("_", " ")
-        }}</a>
-      </va-tab>
-    </template>
-  </va-tabs>
+  <div>
+    <va-navbar color="primary">
+      <template #left>
+        <router-link to="/">
+          <va-navbar-item>FindYourRestaurants</va-navbar-item>
+        </router-link>
+      </template>
+      <template #right>
+        <va-navbar-item v-if="auth.isLogged">
+          <va-popover message="salir">
+            <va-button @click="logout"> <va-icon name="logout" /></va-button>
+          </va-popover>
+        </va-navbar-item>
+        <va-navbar-item v-if="!auth.isLogged">
+          <va-popover message="login">
+            <va-button>
+              <router-link to="/login"><va-icon name="login" /></router-link>
+            </va-button>
+          </va-popover>
+        </va-navbar-item>
+      </template>
+    </va-navbar>
+    <va-tabs v-model="tabIx">
+      <template #tabs>
+        <va-tab>
+          <router-link to="/">Home</router-link>
+        </va-tab>
+        <va-tab>
+          <router-link to="/lista-restaurantes">Restaurantes</router-link>
+        </va-tab>
+        <va-tab v-if="auth.hasPermisionsOf(roles.REPARTIDOR)">
+          <router-link to="/repartidor/orden">Orden actual</router-link>
+        </va-tab>
+        <va-tab v-if="auth.hasPermisionsOf(roles.REPARTIDOR)">
+          <router-link to="/repartidor/orden/encontrar"
+            >Encontrar ordenes</router-link
+          >
+        </va-tab>
+        <va-tab v-if="auth.hasPermisionsOf(roles.ADMINISTRADOR)">
+          <router-link to="/view-employees">Empleados</router-link>
+        </va-tab>
+      </template>
+    </va-tabs>
+  </div>
+  <!--  -->
 </template>
 
 <style>

@@ -38,6 +38,7 @@ router.post(
   async (req, res) => {	
 
 		// Creamos el nuevo restaurante. al mismo tiempo creamos el nuevo 
+		// perfil de administrador
 		const restaurante = await prisma.restaurante.create({
 			data : {
 				administrador : {
@@ -90,7 +91,8 @@ router.get("/:idrestaurante",
 					  select:{
 						  resena : true
 					  }
-				  }
+				  },
+				  administrador : true
 			  }
 		  });
 		  res.json(restaurante);
