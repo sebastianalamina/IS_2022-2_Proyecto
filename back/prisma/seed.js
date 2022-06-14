@@ -5,7 +5,7 @@ const { faker } = require("@faker-js/faker");
 const prisma = new PrismaClient();
 
 // Constantes para el sembrado de nuestra base de datos
-const NUMERO_RESTAURANTES = 6;
+const NUMERO_RESTAURANTES = 32;
 const NUMERO_CLIENTES = 30;
 const NUMERO_MESEROS = 10;
 const NUMERO_PLATILLOS = 20;
@@ -145,10 +145,14 @@ async function seed() {
       });
     }
 
-    // Cada uno de los clientes hace una orden
+    /**
+     * Cada uno de los clientes hace una orden, la mitad de las ordenes son a domicilio 
+     * con entrega null
+     */
+    // Se hace la primera mitad de las ordenes 
     for (
       let n = 0;
-      n < Math.min(id_clientes.length, idrepartidores.length);
+      n < parseInt(Math.min(id_clientes.length, idrepartidores.length)/2);
       n++
     ) {
       await prisma.orden.create({
@@ -186,6 +190,41 @@ async function seed() {
         },
       });
     }
+
+    for (
+      let n = parseInt(Math.min(id_clientes.length, idrepartidores.length)/2);
+      n < Math.min(id_clientes.length, idrepartidores.length);
+      n++
+    ) {
+      await prisma.orden.create({
+        data: {
+          estado: "EN_PROCESO",
+          esCarrito: false,
+          pagado: true,
+          costo: 100,
+          domicilio : faker.address.streetAddress(),
+          cliente: {
+            connect: {
+              idcliente: id_clientes[n],
+            },
+          },
+          mesa: {
+            create: {
+              idrestaurante: restaurante.idrestaurante,
+              ocupada: true,
+            },
+          },
+          restaurante: {
+            connect: {
+              idrestaurante: restaurante.idrestaurante,
+            },
+          },
+          contenido: { create: { idplatillo: id_platillos[0] } },
+          entrega: undefined
+        },
+      });
+    }
+    
   }
   console.log("BASE DE DATOS SEMBRADA");
 }
