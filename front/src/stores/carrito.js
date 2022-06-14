@@ -36,25 +36,19 @@ export const useCarrito = defineStore("carrito", {
           platillo,
           this.platillos[platillo.idplatillo].cantidad + 1);
           //se añade el platillo
-          const cart = instance.get("/carrito/cliente")
-          instance.post("/adddish", {
-            params: {
-              idorden : cart.idorden,
-              idplatillo : platillo.idplatillo
-            }
-          })
+          instance.get('/ordenes-cliente/carrito').then((res) => {
+            const ruta = "/ordenes-cliente/adddish/" + res.data.idorden + "/" + platillo.idplatillo;
+            instance.post(ruta)}           
+          );
 
       }
       else {
           this.platillos[platillo.idplatillo] = createplatillo(platillo, 1);
           //se añade el platillo
-          const cart = instance.get("/carrito/cliente")
-          instance.post("/adddish", {
-            params: {
-              idorden : cart.idorden,
-              idplatillo : platillo.idplatillo
-            }
-          })
+          instance.get('/ordenes-cliente/carrito').then((res) => {
+            const ruta = "/ordenes-cliente/adddish/" + res.data.idorden + "/" + platillo.idplatillo;
+            instance.post(ruta)}           
+          );
       }
     },
     set(platillo, cantidad) {
@@ -68,8 +62,8 @@ export const useCarrito = defineStore("carrito", {
           this.platillos[platillo.idplatillo].cantidad - 1
         );
         //eliminar el platillo
-        const cart = instance.get("/carrito/cliente")
-        instance.delete("/deletedish", {
+        const cart = instance.get("/ordenes-cliente/carrito")
+        instance.delete("/ordenes-cliente/deletedish", {
           params: {
             idorden: cart.idorden,
             idplatillo : platillo.idplatillo
@@ -83,8 +77,8 @@ export const useCarrito = defineStore("carrito", {
       const instance = useAxios()
       delete this.platillos[platillo.idplatillo];
       //eliminar el platillo
-      const cart = instance.get("/carrito/cliente")
-      instance.delete("/deletedish", {
+      const cart = instance.get("/ordenes-cliente/carrito")
+      instance.delete("/ordenes-cliente/deletedish", {
         params: {
           idorden: cart.idorden,
           idplatillo : platillo.idplatillo
