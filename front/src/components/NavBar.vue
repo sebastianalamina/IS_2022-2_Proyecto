@@ -33,7 +33,7 @@ function logout() {
   <div>
     <va-navbar color="primary">
       <template #left>
-        <router-link to="/">
+        <router-link  to="/">
           <va-navbar-item>FindYourRestaurants</va-navbar-item>
         </router-link>
       </template>
@@ -55,7 +55,8 @@ function logout() {
     <va-tabs v-model="tabIx">
       <template #tabs>
         <va-tab>
-          <router-link to="/">Home</router-link>
+          <router-link v-if="!auth.hasPermisionsOf(roles.ADMINISTRADOR)"  to="/">Home</router-link>
+          <router-link v-if="auth.hasPermisionsOf(roles.ADMINISTRADOR)"  to="/admin">Home</router-link>
         </va-tab>
         <va-tab>
           <router-link to="/lista-restaurantes">Restaurantes</router-link>
