@@ -1,4 +1,5 @@
 // Enrutamiento mediante Express.
+const roles = require("../utils/constants/roles");
 const express = require("express");
 const router = express.Router();
 
@@ -19,7 +20,7 @@ router.post("/",
 	validate(
 		Joi.object({
 			email : Joi.string().email().required(),
-			rol : Joi.string().required(),
+			rol : Joi.string().lowercase().required(),
 		}),
 		"body"
 	),
@@ -35,39 +36,31 @@ router.post("/",
 			},	
 		});
 
-
-		if (rol === "MESERO"){
-
+		if (rol === roles.MESERO) {
+			try{
 			// Creamos un nuevo perfil de mesero 
 			const mesero = await prisma.mesero.create({
-				data:{
+					data:{
 					idrestaurante : idrestaurante,
-					administrador : {
-						connect : {
-							idadmin : idAdministrador.idadmin
-						}
-					},
-					usuario:{
-						connect : { email : email }
-					},
-					restaurante : {
-						connect : { idrestaurante : idAdministrador.idrestaurante }
+					administrador : { connect : { idadmin : idAdministrador.idadmin } },
+					usuario:{ connect : { email : email } },
+					restaurante : { connect : { idrestaurante : idAdministrador.idrestaurante } }
 					}
+				});
+				res.json(mesero)
+			} catch(e){
+				if(e.meta.cause === "No 'usuario' record(s) (needed to inline the relation on 'mesero' record(s)) was found for a nested connect on one-to-many relation 'meseroTousuario'."){
+					res.status(400).send({error : "El usuario no existe"});
 				}
-			});
-
-			res.json(mesero)
-		} else if(rol == "REPARTIDOR"){
+			}
+		} else if(rol === roles.REPARTIDOR){
+			// TODO Creo que esto ya no es necesario
 			const repartidor = await prisma.repartidor.create({
 				data:{
 					usuario : {
 						connectOrCreate:{
-							where:{
-								email,
-							},
-							create : {
-								...req.body
-							}
+							where:{ email, },
+							create : { ...req.body }
 						}
 					}
 				}	
