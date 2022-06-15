@@ -1,18 +1,28 @@
 <script>
 import NavBar from '../components/NavBar.vue'
 import Footer from '../components/Footer.vue'
+import { useAxios } from '../axios_common'
 
  export default {
       data() {
           return {
-                ordenes: [
-                {id: '123', costo: '150', items: [{nombre: 'Hamburguesa', src: 'src/assets/Hamburguesa.jpeg', costo: 100, cantidad: 1}, 
-                {nombre: 'Papas', src: 'src/assets/papas.png', costo: 50, cantidad: 1}]},
-                {id: '223', costo: '50', items: [{nombre: 'Papas', src: 'src/assets/papas.png', costo:50, cantidad: 1}]},
-                {id: '323', costo: '100', items: [{nombre: 'Hamburguesa', src: 'src/assets/Hamburguesa.jpeg', costo: 100, cantidad: 1}]}
-            ]
+              ordenes: [],
           }
-      }
+      },
+      methods: {
+          async getOrdenes(){
+              const instance = useAxios()
+              instance.get("/ordenes").then(res => {
+                  this.ordenes = res.data;
+              })
+              .catch((err) => {
+                  console.log(err.response.data.error);
+              });
+          },
+      },
+      mounted() {
+          this.getOrdenes();
+      },
   }
 
 </script>

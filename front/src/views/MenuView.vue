@@ -8,7 +8,7 @@ const auth = useAuthStore();
 export default {
   props: ["idrestaurante"], 
   data() {
-    return {
+      return {
       addPlatilloForm : false,
       platilloNuevo : {
         nombre : "",

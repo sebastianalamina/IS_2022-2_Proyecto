@@ -3,16 +3,30 @@ import { useCarrito } from "../stores/carrito";
 import { mapStores } from "pinia";
 
 export default {
+  props: ["idorden"],
   components: {
   },
   data() {
-    return {};
+    return {
+      cards: [],
+    };
   },
   computed: {
     ...mapStores(useCarrito),
   },
+  async getCards(){
+    const instance = useAxios();
+    console.log(this.idorden);
+    const ruta = "/platillos" + this.idorden;
+    instance.get(ruta).then((res) => {
+        this.cards = res.data;
+    }).catch((err) => {
+      console.log("error en mounted")
+      console.log(err)
+    })
+  },
   mounted() {
-    this.cards = this.carritoStore.platillosArray;
+    this.getCards()
   },
   methods: {
     aumenta(platillo) {
@@ -29,6 +43,15 @@ export default {
     },
     calculaTotal(){
       this.carritoStore.platillosArray;
+    },
+    confirma() {
+      const instance = useAxios();
+      const ruta = "/" + this.idorden;
+      instance.put(ruta, {
+        params: {
+          idorden : this.idorden
+        }
+      }) 
     }
   },
 };

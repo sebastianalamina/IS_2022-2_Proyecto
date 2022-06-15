@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+import { useAxios } from "../axios_common";
 
 function createplatillo(platillo, cantidad) {
   return {
@@ -23,33 +24,72 @@ export const useCarrito = defineStore("carrito", {
   },
   actions: {
     // Acción para aumentar en uno el platillo
+    
     increase(platillo) {
+      const instance = useAxios()
       console.log("este es el id del platillo xd` ",platillo.idplatillo);
       if (!"idplatillo" in platillo)
         throw new Error("platillo debe tener idplatillo");
       if (platillo.idplatillo in this.platillos){
-        console.log(this.platillos[platillo.idplatillo]);
+          console.log(this.platillos[platillo.idplatillo]);
           this.platillos[platillo.idplatillo] = createplatillo(
           platillo,
-          this.platillos[platillo.idplatillo].cantidad + 1
-        );
+          this.platillos[platillo.idplatillo].cantidad + 1);
+          //se añade el platillo
+          const cart = instance.get("/carrito/cliente")
+          instance.post("/adddish", {
+            params: {
+              idorden : cart.idorden,
+              idplatillo : platillo.idplatillo
+            }
+          })
+
       }
-      else this.platillos[platillo.idplatillo] = createplatillo(platillo, 1);
+      else {
+          this.platillos[platillo.idplatillo] = createplatillo(platillo, 1);
+          //se añade el platillo
+          const cart = instance.get("/carrito/cliente")
+          instance.post("/adddish", {
+            params: {
+              idorden : cart.idorden,
+              idplatillo : platillo.idplatillo
+            }
+          })
+      }
     },
     set(platillo, cantidad) {
       this.platillos[platillo.idplatillo] = createplatillo(platillo, cantidad);
     },
     decrease(platillo) {
+      const instance = useAxios()
       if (platillo.idplatillo in this.platillos)
         this.platillos[platillo.idplatillo] = createplatillo(
           platillo,
           this.platillos[platillo.idplatillo].cantidad - 1
         );
+        //eliminar el platillo
+        const cart = instance.get("/carrito/cliente")
+        instance.delete("/deletedish", {
+          params: {
+            idorden: cart.idorden,
+            idplatillo : platillo.idplatillo
+          }
+        })
       if (this.platillos[platillo.idplatillo].cantidad <= 0)
         delete this.platillos[platillo.idplatillo];
+        
     },
     remove(platillo) {
+      const instance = useAxios()
       delete this.platillos[platillo.idplatillo];
+      //eliminar el platillo
+      const cart = instance.get("/carrito/cliente")
+      instance.delete("/deletedish", {
+        params: {
+          idorden: cart.idorden,
+          idplatillo : platillo.idplatillo
+        }
+      })
     },
     clean() {
       this.platillos = [];
