@@ -5,8 +5,6 @@ services:
     container_name: db
     build:
       context: DB/
-    ports:
-      - "5432:5432"
     environment:
       POSTGRES_PASSWORD: toor
       POSTGRES_USER: root
