@@ -45,8 +45,8 @@ class Mailer {
    * @param {object?} info.context Objeto con las variables del archivo mustache
    */
   async send(info) {
-    //if (info.html != undefined) await this.sendTemplate(info);
-    //else await this.sendMessage(info);
+    if (info.html != undefined) await this.sendTemplate(info);
+    else await this.sendMessage(info);
   }
 
   sendMessage({ to, subject, message }) {

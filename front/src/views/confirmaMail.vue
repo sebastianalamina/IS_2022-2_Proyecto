@@ -1,9 +1,10 @@
 <script setup>
-import { useRoute } from "vue-router";
+import { useRoute, useRouter } from "vue-router";
 import { useAxios } from "../axios_common";
 import { ref } from "vue";
 
 const route = useRoute();
+const router = useRouter();
 const axios = useAxios();
 
 const verificado = ref(0);
@@ -12,6 +13,7 @@ async function verifica() {
   verificado.value = 0.5;
   await axios.get(`auth/verifica/${route.params.id}`);
   verificado.value = 1;
+  setTimeout(() => router.push("/"), 1000);
 }
 </script>
 <template>
