@@ -5,7 +5,7 @@ const Joi = require("joi");
 const router = express.Router();
 const prisma = new PrismaClient();
 const validate = require("../utils/middleware/validate");
-const { esCliente, bearerAuth } = require("../utils/middleware/auth");
+const { esCliente, bearerAuth, estaAutenticado } = require("../utils/middleware/auth");
 
 /**
  * @swagger
@@ -38,7 +38,7 @@ router.get(
  */
 router.get(
   "/:idrestaurante",
-  //estaAutenticado,
+  estaAutenticado,
   validate(
     Joi.object({
       idrestaurante: Joi.number().integer().required(),
@@ -92,8 +92,8 @@ router.get(
  */
 router.post(
   "/",
-  //estaAutenticado,
-  //esCliente,
+  esCliente,
+  bearerAuth, 
   validate(
     Joi.object({
       idrestaurante: Joi.number().integer().required(),

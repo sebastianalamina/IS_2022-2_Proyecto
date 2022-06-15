@@ -2,6 +2,10 @@
 import { useAxios } from "../axios_common";
 import Footer from "../components/Footer.vue";
 import NavBar from "../components/NavBar.vue";
+
+import roles from "../constants/roles";
+import { useStore as useAuthStore } from "../stores/auth";
+
 export default {
   components: {
     NavBar,
@@ -98,6 +102,8 @@ export default {
 
   mounted() {
     // Llama al backend para obtener la lista de resenas
+    const auth = useAuthStore();
+    this.esCliente = auth.hasPermisionsOf(roles.CLIENTE);
     const instance = useAxios();
     const liga = "/resenas/" + this.idrestaurante;
     instance
@@ -169,7 +175,7 @@ export default {
         </form>
       </div>
     </div>
-
+    
     <div>
       <va-list>
         <va-list-item v-for="resena in resenas" :key="resena.idresena">
@@ -189,7 +195,10 @@ export default {
         </va-list-item>
       </va-list>
     </div>
+
+    
   </div>
+
 </template>
 
 <style></style>

@@ -1,5 +1,6 @@
 <script>
 import {useAxios} from "../axios_common";
+import roles from "../constants/roles";
 
 export default {
   mounted() {
@@ -8,12 +9,14 @@ export default {
   data(){
     return{
       empleados: {},
-      createEmpleado : false,
+      createEmpleado : false, 
+      listaKey : 0,
+      errorMensaje: null,
+      showError: false,
       datosEmpleado: {
         email : null,
-        rol : "MESERO",
+        rol : roles.MESERO,
       },
-      listaKey : 0,
     }
   },
   methods:{
@@ -46,6 +49,8 @@ export default {
         })
         .catch((err)=>{
           console.log(err.response.data.error)
+          this.errorMensaje = err.response.data.error; 
+          this.showError = true;
         });
     },
     eliminarEmpleado(id){
@@ -125,6 +130,17 @@ export default {
           Crear perfil empleado
         </va-button>
       </va-form>
+      <div v-if="showError">
+      <va-alert color="danger" outline class="mb-4">  
+        <p v-if="errorMensaje === 'El usuario no existe'">
+        El usuario no existe, por favor creelo antes de crear un perfil de empleado. Puede crearlo 
+        <router-link to="/user-signup" > aqui</router-link>
+        </p>
+        <p v-else >
+{{errorMensaje}}
+        </p>
+      </va-alert>
+      </div>
     </div> 
 
   <h1> Lista de empleados:</h1>

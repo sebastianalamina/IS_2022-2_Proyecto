@@ -31,7 +31,7 @@ export default {
           console.log("cards de restaurantes cargadas");
           console.log(
             "lo que cargue de restaurantes : ",
-            JSON.stringify(res.data._count)
+            JSON.stringify(res.data)
           );
         })
         .catch((err) => {
@@ -48,6 +48,7 @@ export default {
       this.getRestaurantList(this.skip);
       console.log("pase a la siguiente", JSON.stringify(this.cards[0]));
       this.mostrarResenas += 1;
+      this.restauranteSeleccionadoId = null;
     },
     previousPage: function () {
       if (this.skip === 0) {
@@ -67,8 +68,10 @@ export default {
 </script>
 
 <template>
-  <div>
-    <button @click="this.previousPage">Pagina anterior</button>
+<div style="width: 100%; display: table;">
+    <div style="display: table-row">
+        <div style="width: 600px; display: table-cell;">
+<button @click="this.previousPage">Pagina anterior</button>
     <button @click="this.nextPage">Siguiente pagina</button>
     <div>
       <va-list :key="listaKey">
@@ -104,18 +107,22 @@ export default {
         </va-list-item>
       </va-list>
     </div>
-
-    <div>
+        </div>
+        <div style="display: table-cell;"> 
+        <div>
       <div>
         <h3>Resenas</h3>
-        {{ restauranteSeleccionadoId }}
         <ResenaList
           :idrestaurante="restauranteSeleccionadoId"
           :maxPagination="restauranteSelecionadoMax"
+          v-bind:key="mostrarResenas"
+          v-if="restauranteSeleccionadoId"
         />
       </div>
     </div>
-  </div>
+        </div>
+    </div>
+</div>
 </template>
 
 <style></style>
