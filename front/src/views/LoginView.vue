@@ -41,6 +41,8 @@ export default {
         });
     },
     checkCienciasEmail(v) {
+      if (v == null)
+        return
       this.error_user = !(v.indexOf("@ciencias.unam.mx") >= 0);
       return v.indexOf("@ciencias.unam.mx") >= 0;
     },
@@ -62,7 +64,7 @@ export default {
             :rules="[
               (v) =>
                 checkCienciasEmail(v) ||
-                `El correo tiene que ser de la facutlad de ciencias`,
+                `El correo tiene que ser de la Facultad de Ciencias`,
             ]"
             :error="error_user"
           />

@@ -60,6 +60,7 @@ export default {
 
       // Consultamos con el Back.
       const axios = useAxios();
+      try {  // <- Issue #45 del repo.
       await axios
         .get('/estado-platillo', {
           params: { id_orden:this.id }
@@ -70,6 +71,10 @@ export default {
         .catch((error) => {
           console.log(error.response.data);
         })
+      } catch (e) {
+        if (e.meta.cause === "Record to update not found.")
+          return res.status(404).send({ error: "registro no encontrado" });
+      }
 
       // Si hubo un error, no se continúa.
       if (this.orden == null) {

@@ -197,18 +197,19 @@ router.put('/:idorden',
     ),
     async (req,res) => {
         const {idorden} = req.params
+        let anterior, actualizado;
         try {
-            const anterior = await prisma.orden.findUnique({
+            anterior = await prisma.orden.findUnique({
                 where: {idorden :idorden},
                 select: {
                     esCarrito : true,
                 },
-            })
+            });
 
-            const actualizado = await prisma.orden.update({
+            actualizado = await prisma.orden.update({
                 where: {idorden : idorden},
-                data: {esCarrito: !anterior?.esCarrito},
-            })
+                data: {esCarrito: !anterior.esCarrito},
+            });
             res.json(actualizado)
         } catch (error) {
             res.json({error: `La orden ${idorden} no existe en la base de datos`})

@@ -26,26 +26,39 @@ router.post("/",
     "body"),
     async (req, res) => {
         const {idcliente, costo, contenido} = req.body;
-        const carrito = await prisma.carrito.create({
-            data:{
-                costo : costo,
-                cliente :{
-                    connect:{
-                        idcliente : idcliente
-                    }
+
+        let carrito;
+        try { // <- Issue #45 del repo.
+            carrito = await prisma.carrito.create({
+                data:{
+                    costo : costo,
+                    cliente :{
+                        connect:{
+                            idcliente : idcliente
+                        }
+                    },
                 },
-            },
-            select: {
-                idcarrito : true,
-                cliente : true
-            }
-        });
+                select: {
+                    idcarrito : true,
+                    cliente : true
+                }
+            });
+        } catch (e) {
+          if (e.meta.cause === "Record to update not found.")
+              return res.status(404).send({ error: "registro no encontrado" });
+        }
+
         console.log("Los datos del carrito son: ", JSON.stringify(carrito));
         
-
-        const contenidoCarrito = await prisma.contenidoCarrito.createMany({
-            data : contenido.map( obj=>({...obj, idcarrito: carrito.idcarrito }))
-        });
+        let contenidoCarrito;
+        try { // <- Issue #45 del repo.
+            contenidoCarrito = await prisma.contenidoCarrito.createMany({
+                data : contenido.map( obj=>({...obj, idcarrito: carrito.idcarrito }))
+            });
+        } catch (e) {
+          if (e.meta.cause === "Record to update not found.")
+              return res.status(404).send({ error: "registro no encontrado" });
+        }
 
         prisma.modificarCarrito.create({
             data:{
@@ -75,27 +88,51 @@ router.put("/:idcarrito",
        // Determinamos si el id del carrito existe
        const { idlciente, tipo, idplatillo} = req.query;
         const {idcarrito, } = req.params;
-        const carrito = await prisma.carrito.findFirst({
-             where:{
-                 idcarrito : idcarrito 
-             }
-         }); 
+
+        let carrito;
+        try { // <- Issue #45 del repo.
+            carrito = await prisma.carrito.findFirst({
+                 where:{
+                     idcarrito : idcarrito 
+                 }
+             });
+        } catch (e) {
+          if (e.meta.cause === "Record to update not found.")
+              return res.status(404).send({ error: "registro no encontrado" });
+        }
+
          if (!carrito) {
             res.code(101);
          }
          if( tipo === "REMOVE"){
-             const contenidoRemovido = await prisma.contenidoCarrito.deleteMany({
-                where :{
-                    idplatillo : idplatillo,
-                    idcarrito : idcarrito
-                }
-             });
-             req.json(contenidoRemovido);
+
+            let contenidoRemovido;
+            try { // <- Issue #45 del repo.
+                contenidoRemovido = await prisma.contenidoCarrito.deleteMany({
+                    where :{
+                        idplatillo : idplatillo,
+                        idcarrito : idcarrito
+                    }
+                });
+            } catch (e) {
+              if (e.meta.cause === "Record to update not found.")
+                  return res.status(404).send({ error: "registro no encontrado" });
+            }
+  
+            req.json(contenidoRemovido);
 
          }else if(tipo === "ADD"){
-            const contenidoAgregado = await prisma.contenidoCarrito.createMany({
-                data: idArticulos.map(obj=>({...obj, idcarrito: idcarrito}))
-            })
+
+            let contenidoAgregado;
+            try { // <- Issue #45 del repo.
+                contenidoAgregado = await prisma.contenidoCarrito.createMany({
+                    data: idArticulos.map(obj=>({...obj, idcarrito: idcarrito}))
+                });
+            } catch (e) {
+              if (e.meta.cause === "Record to update not found.")
+                  return res.status(404).send({ error: "registro no encontrado" });
+            }
+
             req.json(contenidoAgregado)
          }
     }
@@ -103,12 +140,21 @@ router.put("/:idcarrito",
 
 router.get('/display/:id', async (req, res) => {
     let id_cliente = req.query.id_cliente;
-    const id_carrito = await prisma.modificarCarrito.findFirst({
-        where: { idcliente: id_cliente}
-    })
-    const contenido = await prisma.contenidoCarrito.findMany({
-        where: {idcarrito: id_carrito}
-    })
+
+    let id_carrito, contenido;
+    try { // <- Issue #45 del repo.
+        id_carrito = await prisma.modificarCarrito.findFirst({
+            where: { idcliente: id_cliente}
+        });
+        const contenido = await prisma.contenidoCarrito.findMany({
+            where: {idcarrito: id_carrito}
+        });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+          return res.status(404).send({ error: "registro no encontrado" });
+    }
+
+
     console.log(contenido)
     res.json(contenido)
   });

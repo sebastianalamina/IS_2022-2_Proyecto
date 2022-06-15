@@ -35,36 +35,45 @@ router.post(
       }),
 	  "body"
   ),
-  async (req, res) => {	
+  async (req, res) => {
 
-		// Creamos el nuevo restaurante. al mismo tiempo creamos el nuevo 
-		// perfil de administrador
-		const restaurante = await prisma.restaurante.create({
-			data : {
-				administrador : {
-					connectOrCreate:{
-						where : {
-							idusuario : req.user.idusuario,
-						},
-						create : {
-							idusuario : req.user.idusuario,
+  	let restaurante;
+  	let menu;
+  	try { // <- Issue #45 del repo.
+
+			// Creamos el nuevo restaurante. al mismo tiempo creamos el nuevo 
+			restaurante = await prisma.restaurante.create({
+				data : {
+					administrador : {
+						connectOrCreate:{
+							where : {
+								idusuario : req.user.idusuario,
+							},
+							create : {
+								idusuario : req.user.idusuario,
+							}
 						}
-					}
+					},
+					...req.body
 				},
-				...req.body
-			},
-			select:{
-				idrestaurante: true,
-				nombre : true
-			}	
-		}) 
-		// Inicializamos un menu vacio para el nuevo restaurante 
-		const menu = await prisma.menu.create({
-			data:{
-				idrestaurante : restaurante.idrestaurante
-			}
-		})
-      res.json(restaurante);
+				select:{
+					idrestaurante: true,
+					nombre : true
+				}	
+			});
+			// Inicializamos un menu vacio para el nuevo restaurante 
+			menu = await prisma.menu.create({
+				data:{
+					idrestaurante : restaurante.idrestaurante
+				}
+			});
+
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
+
+    res.json(restaurante);
   }
 );
 
@@ -82,19 +91,27 @@ router.get("/:idrestaurante",
 	  }),
 	"params"),	
 	  async (req, res) => {
-		  const restaurante = await prisma.restaurante.findFirst({
-			  where: {
-				  idrestaurante: req.params.idrestaurante,
-			  },
-			  include:{
-				  _count: {
-					  select:{
-						  resena : true
-					  }
+
+	  	let restaurante;
+	  	try { // <- Issue #45 del repo.
+			  restaurante = await prisma.restaurante.findFirst({
+				  where: {
+					  idrestaurante: req.params.idrestaurante,
 				  },
+				  include:{
+					  _count: {
+						  select:{
+							  resena : true
+						  }
+					  },
 				  administrador : true
-			  }
+				  }
 		  });
+			} catch (e) {
+				if (e.meta.cause === "Record to update not found.")
+					return res.status(404).send({ error: "registro no encontrado" });
+			}
+
 		  res.json(restaurante);
 	  }
 )
@@ -109,10 +126,18 @@ router.get(
 		}), "query"),
 	async (req,res)=>{
 		const {skip,take} = req.query;
-		const restaurante = await prisma.restaurante.findMany({
-			skip,
-			take,	
-		});
+
+		let restaurante;
+		try { // <- Issue #45 del repo.
+			restaurante = await prisma.restaurante.findMany({
+				skip,
+				take,	
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
+
 		res.json(restaurante)			
 	}
 );
@@ -124,9 +149,17 @@ router.delete("/",
 	),
 	async (req,res)=>{
 		const {idrestaurante} = req.query
-		const restauranteEliminado = await prisma.restaurante.delete({
-			where:{ idrestaurante },
-		})
+
+		let restauranteEliminado;
+		try { // <- Issue #45 del repo.
+			restauranteEliminado = await prisma.restaurante.delete({
+				where:{ idrestaurante },
+			});
+		} catch (e) {
+			if (e.meta.cause === "Record to update not found.")
+				return res.status(404).send({ error: "registro no encontrado" });
+		}
+		
 		res.json(restauranteEliminado);
 	}
 );
