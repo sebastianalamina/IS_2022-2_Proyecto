@@ -1,9 +1,9 @@
 <script>
+import { useAxios } from "../axios_common";
 import { useCarrito } from "../stores/carrito";
 import { mapStores } from "pinia";
 
 export default {
-  props: ["idorden"],
   components: {
   },
   data() {
@@ -17,13 +17,15 @@ export default {
   async getCards(){
     const instance = useAxios();
     console.log(this.idorden);
-    const ruta = "/platillos" + this.idorden;
-    instance.get(ruta).then((res) => {
+    
+    instance.get("ordenes-cliente/carrito").then((res) => { 
+      const ruta = "/ordenes-cliente/platillos" + res.data.idorden;
+      instance.get(ruta).then((res) => {
         this.cards = res.data;
-    }).catch((err) => {
-      console.log("error en mounted")
-      console.log(err)
-    })
+      }).catch((err) => {
+        console.log("error en mounted")
+        console.log(err)
+      })})
   },
   mounted() {
     this.getCards()

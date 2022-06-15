@@ -72,6 +72,9 @@ function logout() {
         <va-tab v-if="auth.hasPermisionsOf(roles.ADMINISTRADOR)">
           <router-link to="/view-employees">Empleados</router-link>
         </va-tab>
+        <va-tab v-if="auth.hasPermisionsOf(roles.CLIENTE)">
+          <router-link to="/carrito">Mi carrito</router-link>
+        </va-tab>
       </template>
     </va-tabs>
   </div>

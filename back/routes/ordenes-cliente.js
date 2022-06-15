@@ -42,8 +42,33 @@ router.post("/",
     }
 )
 
+//Regresa el carrito de un cliente
+router.get("/carrito",
+     bearerAuth,
+     async (req, res) => {
+
+        const cliente = await prisma.cliente.findFirst({
+            where: {
+                idusuario : req.user.idusuario,
+            }
+        })
+
+        const orden = await prisma.orden.findFirst({
+            
+            where: {
+                idcliente: cliente.idcliente,
+                esCarrito: true,
+            },
+
+        });
+
+        res.json(orden)
+
+    }
+)
+
 //Regresa la orden dado un id
-router.get("/:idorden",
+router.get("/orden/:idorden",
     validate(
         Joi.object({
             idorden: Joi.number().integer().required(),
@@ -55,37 +80,6 @@ router.get("/:idorden",
         const orden = await prisma.orden.findFirst({
             where: {
                 idorden: req.params.idorden,
-            },
-
-        });
-
-        res.json(orden)
-
-    }
-)
-
-//Regresa el carrito de un cliente
-router.get("/carrito/cliente",
-     bearerAuth,
-     validate(
-        Joi.object({
-            idcliente: Joi.number().integer().required(),
-        }),
-        "params"
-    ),
-    async (req, res) => {
-
-        const cliente = await prisma.cliente.findFirst({
-            where: {
-                idcliente : req.user.idcliente,
-            }
-        })
-
-        const orden = await prisma.orden.findFirst({
-            
-            where: {
-                idcliente: cliente.idcliente,
-                esCarrito: true,
             },
 
         });
@@ -147,8 +141,8 @@ router.get("/platillos/:idorden",
 
 //agregar platillos
 router.post('/adddish/:idorden/:idplatillo',
-    estaAutenticado,
-    hasRole("cliente"),
+    //estaAutenticado,
+    //hasRole("cliente"),
     validate(
         Joi.object({
             idorden: Joi.number().integer().required(),
@@ -159,8 +153,10 @@ router.post('/adddish/:idorden/:idplatillo',
     async (req,res) => {
         const { idorden, idplatillo} = req.params;
         const platillo = await prisma.contenidoorden.create({
-            idorden : idorden,
-            idplatillo : idplatillo,
+            data: {
+                idorden : idorden,
+                idplatillo : idplatillo,
+            }
         });
         res.json(platillo)
     }
