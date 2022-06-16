@@ -25,6 +25,13 @@ export default {
       this.carritoStore.remove(platillo);
     },
     eliminaTodo() {
+      console.log("hola")
+      const instance = useAxios();
+      console.log("obteniendo carrito");
+      instance.get('/ordenes-cliente/carrito').then((res) => {
+        const ruta = "/ordenes-cliente/deletecontenido/" + res.data.idorden;
+        instance.delete(ruta)}           
+      );
       this.carritoStore.clean();
     },
     calculaTotal(){
@@ -40,21 +47,25 @@ export default {
       }) 
     },
     async getCards(){
-    const instance = useAxios();
-    console.log(this.idorden);
-    
-    instance.get("ordenes-cliente/carrito").then((res) => { 
-      const ruta = "/ordenes-cliente/platillos" + res.data.idorden;
-      instance.get(ruta).then((res) => {
-        this.cards = res.data;
-      }).catch((err) => {
-        console.log("error en mounted")
-        console.log(err)
-      })})
+      console.log("obteniendo cards");
+      const instance = useAxios();
+      instance.get("ordenes-cliente/carrito").then((res) => { 
+        console.log("carrito obtenido")
+        console.log(res.data)
+        const ruta = "/ordenes-cliente/platillos/" + res.data.idorden;
+        instance.get(ruta).then((res) => {
+          console.log("contenido del carrito obtenido")
+          console.log(res.data)
+          this.cards = res.data;
+        }).catch((err) => {
+          console.log("error en mounted")
+          console.log(err)
+        })
+      })
+    },
   },
   mounted() {
     this.getCards()
-  },
   },
 };
 </script>

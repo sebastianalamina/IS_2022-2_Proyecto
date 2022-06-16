@@ -162,10 +162,10 @@ router.post('/adddish/:idorden/:idplatillo',
     }
 )
 
-//eliminar platillos
+//eliminar algun platillos
 router.delete('/deletedish/:idorden/:idplatillo',
-    estaAutenticado,
-    hasRole("cliente"),
+    //estaAutenticado,
+    //hasRole("cliente"),
     validate(
         Joi.object({
             idorden: Joi.number().integer().required(),
@@ -175,7 +175,7 @@ router.delete('/deletedish/:idorden/:idplatillo',
     ),
     async (req, res) => {
         const {idorden, idplatillo} = req.params;
-        const paltillo = await prisma.contenidoorden.delete({
+        const platillo = await prisma.contenidoorden.delete({
             where: {
                 idorden : idorden,
                 idplatillo : idplatillo,
@@ -185,10 +185,31 @@ router.delete('/deletedish/:idorden/:idplatillo',
     }
 )
 
+//eliminar platillos de una orden
+router.delete('/deletecontenido/:idorden',
+    //estaAutenticado,
+    //hasRole("cliente"),
+    validate(
+        Joi.object({
+            idorden: Joi.number().integer().required(),
+        }),
+        "params"
+    ),
+    async (req, res) => {
+        const {idorden} = req.params;
+        const platillo = await prisma.contenidoorden.deleteMany({
+            where: {
+                idorden : idorden,
+            }
+        });
+        res.json(platillo)
+    }
+)
+
 //confirmar una orden
 router.put('/:idorden',
     estaAutenticado,
-    hasRole("cleinte"),
+    hasRole("cliente"),
     validate(
         Joi.object({
             idorden: Joi.number().integer().required(),
