@@ -61,14 +61,7 @@ export const useCarrito = defineStore("carrito", {
           platillo,
           this.platillos[platillo.idplatillo].cantidad - 1
         );
-        //eliminar el platillo
-        const cart = instance.get("/ordenes-cliente/carrito")
-        instance.delete("/ordenes-cliente/deletedish", {
-          params: {
-            idorden: cart.idorden,
-            idplatillo : platillo.idplatillo
-          }
-        })
+        
       if (this.platillos[platillo.idplatillo].cantidad <= 0)
         delete this.platillos[platillo.idplatillo];
         

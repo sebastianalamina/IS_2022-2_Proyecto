@@ -139,6 +139,27 @@ router.get("/platillos/:idorden",
     }
 )
 
+//para obtener índice
+router.get("/contenidoorden/:idorden/:idplatillo",
+    validate(
+        Joi.object({
+            idorden: Joi.number().integer().required(),
+            idplatillo: Joi.number().integer().required(),
+        }),
+        "params"
+    ),
+    async(req,res) => {
+        const {idorden, idplatillo} = req.params;
+        const contenidoorden = await prisma.contenidoorden.findFirst({
+            where: {
+                idorden: idorden,
+                idplatillo : idplatillo,
+            }
+        });
+        res.json(contenidoorden)
+    }
+)
+
 //agregar platillos
 router.post('/adddish/:idorden/:idplatillo',
     //estaAutenticado,
@@ -163,22 +184,20 @@ router.post('/adddish/:idorden/:idplatillo',
 )
 
 //eliminar algun platillos
-router.delete('/deletedish/:idorden/:idplatillo',
+router.delete('/deletedish/:idcontenidoorden',
     //estaAutenticado,
     //hasRole("cliente"),
     validate(
         Joi.object({
-            idorden: Joi.number().integer().required(),
-            idplatillo: Joi.number().integer().required(),
+            idcontenidoorden: Joi.number().integer().required(),
         }),
         "params"
     ),
     async (req, res) => {
-        const {idorden, idplatillo} = req.params;
+        const {idcontenidoorden} = req.params;
         const platillo = await prisma.contenidoorden.delete({
             where: {
-                idorden : idorden,
-                idplatillo : idplatillo,
+                idcontenidoorden : idcontenidoorden,
             }
         });
         res.json(platillo)

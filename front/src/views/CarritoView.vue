@@ -19,7 +19,15 @@ export default {
       this.carritoStore.increase(platillo);
     },
     disminuye(platillo) {
-      this.carritoStore.decrease(platillo);
+      const instance = useAxios();
+      instance.get("/ordenes-cliente/carrito").then((res) => {
+          const ruta1 = "/ordenes-cliente/contenidoorden/" + res.data.idorden + "/" + platillo.idplatillo;
+          instance.get(ruta1).then((res) => {
+            const ruta2 = "/ordenes-cliente/deletedish/" + res.data.idcontenidoorden;
+            instance.delete(ruta2)
+        })
+      });
+      this.carritoStore.decrease(platillo);   
     },
     elimina(platillo) {
       this.carritoStore.remove(platillo);
@@ -28,6 +36,7 @@ export default {
       console.log("hola")
       const instance = useAxios();
       console.log("obteniendo carrito");
+
       instance.get('/ordenes-cliente/carrito').then((res) => {
         const ruta = "/ordenes-cliente/deletecontenido/" + res.data.idorden;
         instance.delete(ruta)}           
