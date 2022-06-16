@@ -14,22 +14,6 @@ export default {
   computed: {
     ...mapStores(useCarrito),
   },
-  async getCards(){
-    const instance = useAxios();
-    console.log(this.idorden);
-    
-    instance.get("ordenes-cliente/carrito").then((res) => { 
-      const ruta = "/ordenes-cliente/platillos" + res.data.idorden;
-      instance.get(ruta).then((res) => {
-        this.cards = res.data;
-      }).catch((err) => {
-        console.log("error en mounted")
-        console.log(err)
-      })})
-  },
-  mounted() {
-    this.getCards()
-  },
   methods: {
     aumenta(platillo) {
       this.carritoStore.increase(platillo);
@@ -54,7 +38,23 @@ export default {
           idorden : this.idorden
         }
       }) 
-    }
+    },
+    async getCards(){
+    const instance = useAxios();
+    console.log(this.idorden);
+    
+    instance.get("ordenes-cliente/carrito").then((res) => { 
+      const ruta = "/ordenes-cliente/platillos" + res.data.idorden;
+      instance.get(ruta).then((res) => {
+        this.cards = res.data;
+      }).catch((err) => {
+        console.log("error en mounted")
+        console.log(err)
+      })})
+  },
+  mounted() {
+    this.getCards()
+  },
   },
 };
 </script>
