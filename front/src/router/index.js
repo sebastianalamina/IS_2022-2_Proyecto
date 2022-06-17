@@ -60,7 +60,8 @@ const router = createRouter({
       },
     },
     {
-      path: "/view-order-status",
+      path: "/view-order-status/:id",
+      props: true,
       name: "ver-estado-platillo",
       component: () => import("../views/ViewOrderStatusView.vue"),
       meta: {
@@ -163,7 +164,7 @@ const router = createRouter({
       path: "/admin",
       name: "vista principal del administrador",
       component: () => import("../views/AdminView.vue"),
-    }
+    },
   ],
 });
 
