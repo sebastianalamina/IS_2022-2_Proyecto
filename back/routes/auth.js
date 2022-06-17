@@ -179,6 +179,7 @@ router.post(
         },
       })
       .catch(() => {});
+
     delete user.idusuario;
     return res.status(200).json(user);
   }

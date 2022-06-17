@@ -17,6 +17,7 @@ export default {
         costo: 0,
       },
       cards: [],
+      showError: false,
     };
   },
   methods: {
@@ -25,6 +26,15 @@ export default {
     },
     addPlatillo(platillo) {
       let carrito = useCarrito();
+      if (
+        carrito.cantidadPlatillos > 1 &&
+        carrito.restaurante != this.idrestaurante
+      ) {
+        this.showError = true;
+        return;
+      }
+
+      carrito.restaurante = this.idrestaurante;
       carrito.increase(platillo);
       this.$vaToast.init({
         message: `1 ${platillo.nombre} agregado al carrito`,
@@ -78,13 +88,19 @@ export default {
   },
   mounted() {
     this.getCards();
+    const instance = useAxios();
+    instance.get("/ordenes-cliente/carrito");
   },
 };
 </script>
 
 <template>
   <div>
-    <h1 class="display-3">Menu</h1>
+    <va-modal
+      v-model="showError"
+      message="No puedes seleccionar platillos de dos restaurantes distintos"
+      title="Oops"
+    />
 
     <va-button v-if="checkAdmin()" @click="addPlatilloForm = !addPlatilloForm">
       Agregar platillo.

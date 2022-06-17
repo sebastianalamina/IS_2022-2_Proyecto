@@ -2,6 +2,7 @@
 import { useAxios } from "../axios_common";
 import { useCarrito } from "../stores/carrito";
 import { mapStores } from "pinia";
+import humanize from "humanize-number";
 
 export default {
   components: {},
@@ -14,11 +15,14 @@ export default {
     ...mapStores(useCarrito),
   },
   methods: {
+    humanize,
     confirmar(total) {
-      console.log("confirmando");
+      this.$vaToast.init({
+        message: `Orden pedida`,
+        color: "primary",
+      });
       const instance = useAxios();
       instance.get("/ordenes-cliente/carrito").then((res) => {
-        console.log(res.data.idorden);
         const ruta =
           "/ordenes-cliente/confirmar/" + res.data.idorden + "/" + total;
         instance.put(ruta);
@@ -51,7 +55,6 @@ export default {
       this.carritoStore.remove(platillo);
     },
     eliminaTodo() {
-      console.log("hola");
       const instance = useAxios();
       console.log("obteniendo carrito");
 
@@ -105,24 +108,20 @@ export default {
       v-for="card in this.carritoStore.platillosArray"
       v-bind:key="card.nombre"
     >
-      <div class="contenedor-img">
-        <img class="imagen-item" :src="card.src" />
-      </div>
       <div class="informacion">
         <h1 class="item-nombre">{{ card.nombre }}</h1>
-        <h3 class="item-info">Más información</h3>
       </div>
       <div class="contador"></div>
       <button class="b-contador" @click="disminuye(card)">-</button>
       <div class="count">{{ card.cantidad }}</div>
       <button class="b-contador" @click="aumenta(card)">+</button>
       <div class="precios">
-        <div class="cantidad">${{ card.costo }}</div>
+        <div class="cantidad">${{ humanize(card.costo) }}</div>
         <button class="b-elimina-item" @click="elimina(card)">Elimina</button>
       </div>
     </div>
     <div>
-      <p>Consumo total: {{ this.carritoStore.totalPagar }} $</p>
+      <p>Consumo total: ${{ humanize(this.carritoStore.totalPagar) }}</p>
     </div>
     <div class="confirmar">
       <button
@@ -197,7 +196,7 @@ export default {
 
 .item-nombre {
   padding-top: 2px;
-  line-height: 10px;
+
   font-size: 28px;
 }
 

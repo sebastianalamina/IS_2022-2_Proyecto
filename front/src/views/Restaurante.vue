@@ -25,24 +25,26 @@ export default {
 };
 </script>
 <template>
-  <h1>{{ restaurante.nombre }}</h1>
-  <p>
-    {{ restaurante.calle }} {{ restaurante.numero }} {{ restaurante.estado }},
-    {{ restaurante.municipio }}
-  </p>
-  <router-link :to="'/menu/' + restaurante.idrestaurante + '/1'">
-    menu del restaurante</router-link
-  >
-  <br />
+  <div>
+    <h1>{{ restaurante.nombre }}</h1>
+    <p>
+      {{ restaurante.calle }} {{ restaurante.numero }} {{ restaurante.estado }},
+      {{ restaurante.municipio }}
+    </p>
+    <router-link :to="'/menu/' + restaurante.idrestaurante + '/1'">
+      menu del restaurante</router-link
+    >
+    <br />
 
-  <router-link
-    :to="{
-      path: '/resenas/' + restaurante.idrestaurante,
-      query: { max: this.maxPages },
-    }"
-  >
-    Resenas
-  </router-link>
+    <router-link
+      :to="{
+        path: '/resenas/' + restaurante.idrestaurante,
+        query: { max: this.maxPages },
+      }"
+    >
+      Resenas
+    </router-link>
+  </div>
 </template>
 
 <style></style>

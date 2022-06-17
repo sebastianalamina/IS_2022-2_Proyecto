@@ -12,9 +12,9 @@ const prisma = new PrismaClient();
 // TODO:  agregar restaurantes a la base de datos y query
 
 async function bloqueaSiTieneOrdenesPendientes(req, res, next) {
-
   let repartidor, ordenesPendientes;
-  try { // <- Issue #45 del repo.
+  try {
+    // <- Issue #45 del repo.
     repartidor = await prisma.repartidor.findFirst({
       where: { idusuario: req.user.idusuario },
     });
@@ -57,7 +57,8 @@ router.get(
     };
 
     let numOrdenes;
-    try { // <- Issue #45 del repo.
+    try {
+      // <- Issue #45 del repo.
       numOrdenes = await prisma.orden.count({
         where: ordenesADomicilioDisponibles,
       });
@@ -90,9 +91,9 @@ router.get(
   ),
   bloqueaSiTieneOrdenesPendientes,
   async (req, res) => {
-
     let count;
-    try { // <- Issue #45 del repo.
+    try {
+      // <- Issue #45 del repo.
       count = await prisma.orden.count({
         where: {
           estado: { in: [estadoorden.EN_PROCESO, estadoorden.RECIBIDA] },
@@ -109,7 +110,8 @@ router.get(
     if (count == 0) return res.send({ error: "orden no disponible" });
 
     let repartidor, entrega;
-    try { // <- Issue #45 del repo.
+    try {
+      // <- Issue #45 del repo.
       repartidor = await prisma.repartidor.findFirst({
         where: { idusuario: req.user.idusuario },
       });
@@ -142,9 +144,9 @@ router.post(
     })
   ),
   async (req, res) => {
-
     let orden;
-    try { // <- Issue #45 del repo.
+    try {
+      // <- Issue #45 del repo.
       orden = await prisma.orden.update({
         where: { idorden: req.params.id },
         data: { estado: req.body.estado },
@@ -162,9 +164,9 @@ router.get(
   "/pendiente",
   //hasRole(roles.REPARTIDOR),
   async (req, res) => {
-
     let repartidor, orden;
-    try { // <- Issue #45 del repo.
+    try {
+      // <- Issue #45 del repo.
       repartidor = await prisma.repartidor.findFirst({
         where: { idusuario: req.user.idusuario },
       });
@@ -195,85 +197,27 @@ router.post(
   "/",
   validate(
     Joi.object({
-      idcarrito: Joi.number().required(),
-      metodopago: Joi.string().required(),
-    }),
-    "body"
+      restaurante: Joi.number().required(),
+      platillos: Joi.array().required(),
+    })
   ),
   async (req, res) => {
-    const { idcarrito, metodopago } = req.body;
-    //Checamos si existe el carrito con el ID dado.
-
-    let carrito;
-    try { // <- Issue #45 del repo.
-      carrito = await prisma.carrito.findFirst({
-        where: {
-          idcarrito: idcarrito,
+    let orden = await prisma.orden.create({
+      data: {
+        idrestaurante: req.body.restaurante,
+        estado: estadoorden.RECIBIDA,
+        esCarrito: false,
+        pagado: false,
+        costo: 0,
+        contenido: {
+          createMany: {
+            data: platillos,
+          },
         },
-      });
-    } catch (e) {
-      if (e.meta.cause === "Record to update not found.")
-        return res.status(404).send({ error: "registro no encontrado" });
-    }
-
-    if (!carrito) {
-      return res.status(404).json({
-        message: "No existe el carrito con el ID dado.",
-      });
-    }
-
-    let contenidoCarrito, ordenNormal, ordenEnvio, contenidoOrden, confirmacionCarrito;
-    try { // <- Issue #45 del repo.
-
-      // Consultamos el contenido del carrito.
-      contenidoCarrito = await prisma.contenidoCarrito.findMany({
-        where: {
-          idcarrito: idcarrito,
-        },
-        select: {
-          idplatillo: true,
-        },
-      });
-
-      // Creamos la orden normal.
-      ordenNormal = await prisma.ordennormal.create({
-        data: {
-          costo: carrito.costo,
-          estado: "EN_PROCESO",
-        },
-      });
-      // Creamos la orden de envio.
-      ordenEnvio = await prisma.ordenenvio.create({
-        data: {
-          costo: carrito.costo,
-        },
-      });
-
-      // creamos el contenido de la orden.
-      contenidoOrden = await prisma.contenidoorden.createMany({
-        data: contenidoCarrito.map((obj) => ({
-          ...obj,
-          idordennormal: ordenNormal.idordennormal,
-          idordenenvio: ordenEnvio.idordenenvio,
-        })),
-      });
-
-      // Creamos la confirmacion de carrito.
-      console.log("el problema esta en la cofinmacion de carrito");
-      confirmacionCarrito = await prisma.confirmacionCarrito.create({
-        data: {
-          metodopago: metodopago,
-          idcarrito: parseInt(carrito.idcarrito),
-          idordenenvio: ordenEnvio.idordenenvio,
-          idordennormal: ordenNormal.idordennormal,
-        },
-      });
-    } catch (e) {
-      if (e.meta.cause === "Record to update not found.")
-        return res.status(404).send({ error: "registro no encontrado" });
-    }
-    
-    res.json(confirmacionCarrito);
+      },
+    });
+    console.log(orden);
+    res.send("ok");
   }
 );
 
