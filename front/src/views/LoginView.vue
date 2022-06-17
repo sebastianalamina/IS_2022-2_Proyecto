@@ -26,7 +26,7 @@ export default {
         .then((res) => {
           const token = res.data.token;
           const rol = res.data.rol;
-          authStore.login(token, rol); //TODO: comprobar
+          authStore.login(token, rol, this.username); //TODO: comprobar
           if (rol === roles.ADMINISTRADOR) {
             // Debugeo
             console.log("Administrador Iniciando sesion");
