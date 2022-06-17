@@ -1,6 +1,9 @@
 <script>
 import {useAxios} from "../axios_common";
+import {useStore as useAuthStore } from "../stores/auth";
 import roles from "../constants/roles";
+
+
 
 export default {
   mounted() {
@@ -88,7 +91,10 @@ export default {
           return x['idrestaurante'] == parseInt(this.id);
         });
       }
-
+    },
+    isAdmin(){
+      const auth = useAuthStore();
+      return auth.hasPermisionsOf(roles.ADMINISTRADOR) 
     }
   }
 }
@@ -99,10 +105,15 @@ export default {
 
 
   <div class="columna">
-  
+    <div v-if="this.isAdmin()">
     <va-button icon-right="create" class="mr-4" @click="createEmpleado = !createEmpleado" > Habilitar empleado</va-button> 
     <div v-if="createEmpleado">
     <h1 > Inserte el correo electronico del usuario</h1>
+    <p>
+      Para poder agregar un empleado, es encesario que el usuario tenga una cuenta en la plataforma.
+    La cuenta se puede crear <router-link to="/user-signup" > <b> en este link</b> </router-link>
+    </p> 
+    <br>
         <va-form 
         tag="form"
         style="width : 300px"
@@ -134,14 +145,16 @@ export default {
       <va-alert color="danger" outline class="mb-4">  
         <p v-if="errorMensaje === 'El usuario no existe'">
         El usuario no existe, por favor creelo antes de crear un perfil de empleado. Puede crearlo 
-        <router-link to="/user-signup" > aqui</router-link>
+        <router-link to="/user-signup" > <b>con este link</b> </router-link>
         </p>
         <p v-else >
-{{errorMensaje}}
+        {{errorMensaje}}
         </p>
       </va-alert>
       </div>
     </div> 
+    </div>
+    
 
   <h1> Lista de empleados:</h1>
   

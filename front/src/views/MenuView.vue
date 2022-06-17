@@ -2,9 +2,11 @@
 import { useAxios } from "../axios_common";
 import { useCarrito } from "../stores/carrito";
 import { useStore as useAuthStore} from "../stores/auth";
+import { useStore as useAdminStore} from "../stores/admin";
 import roles from "../constants/roles";
 
 const auth = useAuthStore();
+const admin = useAdminStore();
 export default {
   props: ["idrestaurante"], 
   data() {
@@ -48,7 +50,7 @@ export default {
     checkAdmin(){
       // TODO Verificar que sea el restaurante que esta logueado
       ``
-      return auth.hasPermisionsOf(roles.ADMINISTRADOR);
+      return auth.hasPermisionsOf(roles.ADMINISTRADOR) && admin.isAdminOf(this.idrestaurante);
     },
     async getCards(){
       const instance = useAxios();
@@ -69,7 +71,7 @@ export default {
           console.log("aaaa")
           console.log(err.response.data.error);
         });
-    },
+    }, 
   },
   mounted() {
     this.getCards();
@@ -81,7 +83,7 @@ export default {
   <h1>Menu del Restaurante:</h1>
 
   <va-button 
-  v-if="checkAdmin"
+  v-if="checkAdmin()"
   @click="addPlatilloForm = !addPlatilloForm" 
   >
   Agregar platillo.
