@@ -122,7 +122,7 @@ export default {
         >
           <h2>{{ card.nombre }}</h2>
           <p>{{ card.idplatillo }}</p>
-          <img class="img_menu" :src="card.src" alt="imagen nos disponible" />
+          <img class="img_menu" :src="card.img" alt="imagen nos disponible" />
           <input
             type="button"
             class="carrito"
