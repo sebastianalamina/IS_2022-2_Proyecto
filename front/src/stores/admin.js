@@ -5,6 +5,7 @@ export const useStore = defineStore("admin",{
         idRestaurante : null,
     }),
     getters:{
+        isAdminOf:(state)=>(idRestaurante)=>(state.idRestaurante == idRestaurante),
     },
     actions:{
         setRestaurante(restaurante){
