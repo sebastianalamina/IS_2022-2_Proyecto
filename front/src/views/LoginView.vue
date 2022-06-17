@@ -1,6 +1,7 @@
 <script>
 import { useAxios } from "../axios_common";
 import { useStore as useAuthStore } from "../stores/auth";
+import { useCarrito } from "../stores/carrito";
 import roles from "../constants/roles";
 
 export default {
@@ -17,6 +18,7 @@ export default {
       e.preventDefault();
       if (!this.checkCienciasEmail(this.username)) return;
       const authStore = useAuthStore();
+      const carrito = useCarrito();
       const axios = useAxios();
       axios
         .post("/auth/login", {
@@ -26,6 +28,7 @@ export default {
         .then((res) => {
           const token = res.data.token;
           const rol = res.data.rol;
+          carrito.clean();
           authStore.login(token, rol, this.username); //TODO: comprobar
           if (rol === roles.ADMINISTRADOR) {
             // Debugeo
