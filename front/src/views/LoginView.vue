@@ -27,12 +27,12 @@ export default {
           const token = res.data.token;
           const rol = res.data.rol;
           authStore.login(token, rol); //TODO: comprobar
-          if(rol === roles.ADMINISTRADOR ){
+          if (rol === roles.ADMINISTRADOR) {
             // Debugeo
             console.log("Administrador Iniciando sesion");
             this.$router.push("/admin");
-          }else{
-          this.$router.push("/");
+          } else {
+            this.$router.push("/");
           }
         })
         .catch((e) => {
@@ -41,8 +41,10 @@ export default {
         });
     },
     checkCienciasEmail(v) {
-      if (v == null)
-        return
+      if (!v) {
+        this.error_user = true;
+        return false;
+      }
       this.error_user = !(v.indexOf("@ciencias.unam.mx") >= 0);
       return v.indexOf("@ciencias.unam.mx") >= 0;
     },

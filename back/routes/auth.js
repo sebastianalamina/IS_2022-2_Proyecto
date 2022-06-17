@@ -20,7 +20,8 @@ async function obtainAuthToken(user) {
   if (user.token) return user.token;
   const token = crypto.randomBytes(40).toString("hex");
 
-  try { // <- Issue #45 del repo.
+  try {
+    // <- Issue #45 del repo.
     await prisma.usuario.update({
       where: {
         idusuario: user.idusuario,
@@ -28,8 +29,8 @@ async function obtainAuthToken(user) {
       data: { token },
     });
   } catch (e) {
-      if (e.meta.cause === "Record to update not found.")
-          return res.status(404).send({ error: "registro no encontrado" });
+    if (e.meta.cause === "Record to update not found.")
+      return res.status(404).send({ error: "registro no encontrado" });
   }
 
   return token;
@@ -66,7 +67,8 @@ router.post(
     const { email, contrasegna } = req.body;
 
     let user;
-    try { // <- Issue #45 del repo.
+    try {
+      // <- Issue #45 del repo.
       user = await prisma.usuario.findFirst({
         where: {
           email,
@@ -80,8 +82,8 @@ router.post(
         }
       }
     } catch (e) {
-        if (e.meta.cause === "Record to update not found.")
-            return res.status(404).send({ error: "registro no encontrado" });
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
     }
 
     return res.status(401).json({ message: "Invalid credentials" });
@@ -116,13 +118,14 @@ router.post(
     // Checking for email uniqueness
 
     let userCount;
-    try { // <- Issue #45 del repo.
+    try {
+      // <- Issue #45 del repo.
       userCount = await prisma.usuario.count({
         where: { email: req.body.email },
       });
     } catch (e) {
-        if (e.meta.cause === "Record to update not found.")
-            return res.status(404).send({ error: "registro no encontrado" });
+      console.log(e);
+      return res.status(404).send({ error: "registro no encontrado" });
     }
 
     if (userCount) {
@@ -132,7 +135,8 @@ router.post(
     }
 
     let user;
-    try { // <- Issue #45 del repo.
+    try {
+      // <- Issue #45 del repo.
       user = await prisma.usuario.create({
         data: {
           ...req.body,
@@ -145,8 +149,8 @@ router.post(
         },
       });
     } catch (e) {
-        if (e.meta.cause === "Record to update not found.")
-            return res.status(404).send({ error: "registro no encontrado" });
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
     }
 
     try {

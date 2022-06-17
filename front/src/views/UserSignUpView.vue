@@ -17,8 +17,14 @@ export default {
       numero: null,
       cp: null,
       municipio: null,
-      options: [roles.CLIENTE, roles.ADMINISTRADOR, roles.REPARTIDOR],
+      options: [
+        roles.CLIENTE,
+        roles.ADMINISTRADOR,
+        roles.REPARTIDOR,
+        roles.MESERO,
+      ],
       res_error: false,
+      res_error_msg: "algo salio mal",
     };
   },
   methods: {
@@ -41,7 +47,15 @@ export default {
           municipio: this.municipio,
         })
         .then((res) => this.$router.push("/login"))
-        .catch((error) => (this.res_error = true));
+        .catch((error) => {
+          this.res_error = true;
+          if (
+            error.response.data.error ==
+            "An account with that email already exists."
+          )
+            this.res_error_msg = "Un usuario con este correo ya existe.";
+          else this.res_error_msg = "Algo salio mal";
+        });
     },
   },
 };
@@ -56,12 +70,12 @@ export default {
       @submit.prevent="register"
       id="signup-box"
     >
-      <div style="color: red" v-if="res_error">Algo salio mal</div>
+      <div style="color: red" v-if="res_error">{{ res_error_msg }}</div>
       <va-input
         v-model="correo"
         :rules="[
           (v) =>
-            v.indexOf('@ciencias.unam.mx') >= 0 ||
+            (!!v && v.indexOf('@ciencias.unam.mx') >= 0) ||
             `El correo tiene que ser de la facutlad de ciencias`,
         ]"
         label="Correo de ciencias"
@@ -73,7 +87,7 @@ export default {
         label="contraseña"
         type="password"
         input-class="va-input-style"
-        :rules="[(v) => v.length > 0 || 'Por favor llena este campo']"
+        :rules="[(v) => (!!v && v.length > 0) || 'Por favor llena este campo']"
       />
       <va-input
         v-model="passwordConf"
@@ -107,13 +121,13 @@ export default {
         v-model="numero"
         label="número"
         input-class="va-input-style"
-        :rules="[(v) => !!v || 'Por favor llena este campo']"
+        :rules="[(v) => (!!v && !isNaN(v)) || 'Por favor llena este campo']"
       />
       <va-input
         v-model="cp"
         label="cp"
         input-class="va-input-style"
-        :rules="[(v) => !!v || 'Por favor llena este campo']"
+        :rules="[(v) => (!!v && !isNaN(v)) || 'Por favor llena este campo']"
       />
       <va-input
         v-model="municipio"
