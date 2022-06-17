@@ -42,6 +42,31 @@ router.post("/",
     }
 )
 
+router.post("/newcart",
+    bearerAuth,
+    async (req,res) => {
+        const cliente = await prisma.cliente.findFirst({
+            where: {
+                idusuario : req.user.idusuario,
+            }
+        })
+
+        const carrito = await prisma.orden.create({
+            data: {
+                cliente: { connect: {idcliente: cliente.idcliente}},
+                restaurante: {connect: {idrestaurante: 1}},
+                mesa: {connect: {idmesa:1}},
+                estado: "RECIBIDA",
+                esCarrito: true,
+                pagado: false,
+                costo: 0,
+            }
+        })
+
+        res.json(carrito)
+    }
+)
+
 //Regresa el carrito de un cliente
 router.get("/carrito",
      bearerAuth,
@@ -92,17 +117,11 @@ router.get("/orden/:idorden",
 //ordenes de un cliente que no son carrito
 router.get("/ordenes",
      bearerAuth,
-     validate(
-        Joi.object({
-            idcliente: Joi.number().integer().required(),
-        }),
-        "params"
-    ),
     async (req, res) => {
 
         const cliente = await prisma.cliente.findFirst({
             where: {
-                idcliente : req.user.idcliente,
+                idusuario : req.user.idusuario,
             }
         })
 
@@ -226,17 +245,18 @@ router.delete('/deletecontenido/:idorden',
 )
 
 //confirmar una orden
-router.put('/:idorden',
-    estaAutenticado,
-    hasRole("cliente"),
+router.put('/confirmar/:idorden/:costo',
+    //estaAutenticado,
+    //hasRole("cliente"),
     validate(
         Joi.object({
             idorden: Joi.number().integer().required(),
+            costo: Joi.number(),
         }),
         "params"
     ),
     async (req,res) => {
-        const {idorden} = req.params
+        const {idorden, costo} = req.params
         let anterior, actualizado;
         try {
             anterior = await prisma.orden.findUnique({
@@ -248,7 +268,8 @@ router.put('/:idorden',
 
             actualizado = await prisma.orden.update({
                 where: {idorden : idorden},
-                data: {esCarrito: !anterior.esCarrito},
+                data: {esCarrito: !anterior.esCarrito,
+                        costo: costo},
             });
             res.json(actualizado)
         } catch (error) {

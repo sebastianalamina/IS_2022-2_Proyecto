@@ -12,7 +12,7 @@ import { useAxios } from '../axios_common'
       methods: {
           async getOrdenes(){
               const instance = useAxios()
-              instance.get("/ordenes").then(res => {
+              instance.get("/ordenes-cliente/ordenes").then(res => {
                   this.ordenes = res.data;
               })
               .catch((err) => {
@@ -36,7 +36,7 @@ import { useAxios } from '../axios_common'
         <div class="orden" v-for="orden in ordenes" v-bind:key="orden">
             <div class="informacion">
                 <div class="id-contenedor">
-                    <h1 class="id">ID de orden: {{orden.id}}</h1>
+                    <h1 class="id">ID de orden: {{orden.idorden}}</h1>
                 </div>
                 <div class="costo-contenedor">
                     <h3 class="costo">Total: ${{orden.costo}}</h3>

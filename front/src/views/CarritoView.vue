@@ -15,6 +15,19 @@ export default {
     ...mapStores(useCarrito),
   },
   methods: {
+    confirmar(total) {
+      console.log("confirmando");
+      const instance = useAxios();
+      instance.get("/ordenes-cliente/carrito").then((res)=> {
+        console.log(res.data.idorden);
+        const ruta = "/ordenes-cliente/confirmar/" + res.data.idorden + "/" + total;
+        instance.put(ruta);
+      });
+
+      this.carritoStore.clean();
+
+      instance.post("/ordenes-cliente/newcart");
+    },
     aumenta(platillo) {
       this.carritoStore.increase(platillo);
     },
@@ -45,15 +58,6 @@ export default {
     },
     calculaTotal(){
       this.carritoStore.platillosArray;
-    },
-    confirma() {
-      const instance = useAxios();
-      const ruta = "/" + this.idorden;
-      instance.put(ruta, {
-        params: {
-          idorden : this.idorden
-        }
-      }) 
     },
     async getCards(){
       console.log("obteniendo cards");
@@ -112,7 +116,7 @@ export default {
     <p>Consumo total: {{ this.carritoStore.totalPagar}} $ </p>      
     </div>
     <div class="confirmar">
-      <button class="b-confirmar">Confirmar</button>
+      <button class="b-confirmar" @click="confirmar(this.carritoStore.totalPagar)">Confirmar</button>
     </div>
   </div>
 </template>
