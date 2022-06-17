@@ -109,7 +109,7 @@ export default {
             class="col-lg-6"
           >
             <va-image
-              src="http://www.comedera.com/wp-content/uploads/2019/11/arroz-blanco-cocido.jpg"
+              :src="card.img"
               alt="comida sabrosa"
             />
             <va-card-title>{{ card.nombre }}</va-card-title>

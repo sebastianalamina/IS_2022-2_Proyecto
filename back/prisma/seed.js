@@ -86,6 +86,7 @@ async function seed() {
       nombre: faker.commerce.productName(),
       costo: parseInt(faker.commerce.price()),
       idrestaurante: restaurante.idrestaurante,
+      img : faker.image.food(640, 480, true),
     }));
 
     const menu = await prisma.menu.create({
