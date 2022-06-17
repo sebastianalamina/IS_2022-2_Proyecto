@@ -1,20 +1,20 @@
 <script>
 import { useAxios } from "../axios_common";
 import { useCarrito } from "../stores/carrito";
-import { useStore as useAuthStore} from "../stores/auth";
-import { useStore as useAdminStore} from "../stores/admin";
+import { useStore as useAuthStore } from "../stores/auth";
+import { useStore as useAdminStore } from "../stores/admin";
 import roles from "../constants/roles";
 
 const auth = useAuthStore();
 const admin = useAdminStore();
 export default {
-  props: ["idrestaurante"], 
+  props: ["idrestaurante"],
   data() {
-      return {
-      addPlatilloForm : false,
-      platilloNuevo : {
-        nombre : "",
-        costo : 0,
+    return {
+      addPlatilloForm: false,
+      platilloNuevo: {
+        nombre: "",
+        costo: 0,
       },
       cards: [],
     };
@@ -25,36 +25,39 @@ export default {
     },
     addPlatillo(platillo) {
       let carrito = useCarrito();
-      console.log("este es el id del platillo", platillo.idplatillo);
       carrito.increase(platillo);
-    },
-    postPlatillo(){
-      const instance = useAxios();
-      instance.post("menu/", 
-      {
-        idrestaurante : this.idrestaurante,
-        nombrePlatillo : this.platilloNuevo.nombre,
-        costoPlatillo : this.platilloNuevo.costo, 
-      })
-      .then((res)=>{
-        console.log("Se logro")
-        console.log(JSON.stringify(res.data));
-        this.getCards();
-        this.addPlatilloForm = !this.addPlatilloForm;
-      })
-      .catch((err)=>{
-        console.log(err.response.data.error)
+      this.$vaToast.init({
+        message: `1 ${platillo.nombre} agregado al carrito`,
+        color: "primary",
       });
-
     },
-    checkAdmin(){
-      // TODO Verificar que sea el restaurante que esta logueado
-      ``
-      return auth.hasPermisionsOf(roles.ADMINISTRADOR) && admin.isAdminOf(this.idrestaurante);
-    },
-    async getCards(){
+    postPlatillo() {
       const instance = useAxios();
-      console.log(this.idrestaurante);
+      instance
+        .post("menu/", {
+          idrestaurante: this.idrestaurante,
+          nombrePlatillo: this.platilloNuevo.nombre,
+          costoPlatillo: this.platilloNuevo.costo,
+        })
+        .then((res) => {
+          console.log("Se logro");
+          console.log(JSON.stringify(res.data));
+          this.getCards();
+          this.addPlatilloForm = !this.addPlatilloForm;
+        })
+        .catch((err) => {
+          console.log(err.response.data.error);
+        });
+    },
+    checkAdmin() {
+      // TODO Verificar que sea el restaurante que esta logueado
+      return (
+        auth.hasPermisionsOf(roles.ADMINISTRADOR) &&
+        admin.isAdminOf(this.idrestaurante)
+      );
+    },
+    async getCards() {
+      const instance = useAxios();
       const ruta = "/menu/" + this.idrestaurante;
       instance
         .get(ruta, {
@@ -64,14 +67,14 @@ export default {
           },
         })
         .then((res) => {
-          console.log("Funciono")
+          console.log("Funciono");
           this.cards = res.data;
         })
         .catch((err) => {
-          console.log("aaaa")
+          console.log("aaaa");
           console.log(err.response.data.error);
         });
-    }, 
+    },
   },
   mounted() {
     this.getCards();
@@ -80,61 +83,45 @@ export default {
 </script>
 
 <template>
-  <h1>Menu del Restaurante:</h1>
+  <div>
+    <h1 class="display-3">Menu</h1>
 
-  <va-button 
-  v-if="checkAdmin()"
-  @click="addPlatilloForm = !addPlatilloForm" 
-  >
-  Agregar platillo.
-  </va-button>
-
-  <va-form
-  v-if="addPlatilloForm" 
-  tag="form"
-  @submit.prevent="postPlatillo"
-  >
-    <va-input
-    v-model="platilloNuevo.nombre"
-    label="Nombre de platillo"
-    />
-
-    <va-input
-    v-model="platilloNuevo.costo" 
-    label="Precio de platillo"
-    />
-
-    <va-button
-    type="submit" 
-    class="mt-2"
-    >
-    Agregar platillo al menu
+    <va-button v-if="checkAdmin()" @click="addPlatilloForm = !addPlatilloForm">
+      Agregar platillo.
     </va-button>
-  </va-form>
-  <form id="login-box" @submit="checkForm">
-    <!-- action="/something" method="post"> -->
-    <div class="container-fluid">
-      <div class="row">
-        <div
-          class="col-lg-6"
-          v-for="card in cards"
-          v-bind:key="card.idplatillo"
-        >
-          <h2>{{ card.nombre }}</h2>
-          <p>{{ card.idplatillo }}</p>
-          <img class="img_menu" :src="card.img" alt="imagen nos disponible" />
-          <input
-            type="button"
-            class="carrito"
-            value="Añadir al carrito: "
-            @click="addPlatillo(card)"
-          />
 
-          <h3>${{ card.costo }}</h3>
+    <va-form v-if="addPlatilloForm" tag="form" @submit.prevent="postPlatillo">
+      <va-input v-model="platilloNuevo.nombre" label="Nombre de platillo" />
+
+      <va-input v-model="platilloNuevo.costo" label="Precio de platillo" />
+
+      <va-button type="submit" class="mt-2">
+        Agregar platillo al menu
+      </va-button>
+    </va-form>
+    <form id="login-box" @submit="checkForm">
+      <!-- action="/something" method="post"> -->
+      <div class="container-fluid">
+        <div class="row">
+          <va-card
+            v-for="card in cards"
+            v-bind:key="card.idplatillo"
+            class="col-lg-6"
+          >
+            <va-image
+              :src="card.img"
+              alt="comida sabrosa"
+            />
+            <va-card-title>{{ card.nombre }}</va-card-title>
+            <va-card-content>${{ card.costo }} </va-card-content>
+            <va-card-actions align="stretch" vertical>
+              <va-button @click="addPlatillo(card)">Agregar </va-button>
+            </va-card-actions>
+          </va-card>
         </div>
       </div>
-    </div>
-  </form>
+    </form>
+  </div>
 </template>
 
 <style scoped>
@@ -169,4 +156,3 @@ export default {
   margin-bottom: 1%;
 }
 </style>
-

@@ -19,12 +19,20 @@ const mailer = new Mailer();
 async function obtainAuthToken(user) {
   if (user.token) return user.token;
   const token = crypto.randomBytes(40).toString("hex");
-  await prisma.usuario.update({
-    where: {
-      idusuario: user.idusuario,
-    },
-    data: { token },
-  });
+
+  try {
+    // <- Issue #45 del repo.
+    await prisma.usuario.update({
+      where: {
+        idusuario: user.idusuario,
+      },
+      data: { token },
+    });
+  } catch (e) {
+    if (e.meta.cause === "Record to update not found.")
+      return res.status(404).send({ error: "registro no encontrado" });
+  }
+
   return token;
 }
 
@@ -57,17 +65,25 @@ router.post(
   ),
   async (req, res) => {
     const { email, contrasegna } = req.body;
-    const user = await prisma.usuario.findFirst({
-      where: {
-        email,
-      },
-    });
-    if (user) {
-      const match = await bcrypt.compare(contrasegna, user.contrasegna);
-      if (match) {
-        const token = await obtainAuthToken(user);
-        return res.json({ token, rol: user.rol });
+
+    let user;
+    try {
+      // <- Issue #45 del repo.
+      user = await prisma.usuario.findFirst({
+        where: {
+          email,
+        },
+      });
+      if (user) {
+        const match = await bcrypt.compare(contrasegna, user.contrasegna);
+        if (match) {
+          const token = await obtainAuthToken(user);
+          return res.json({ token, rol: user.rol });
+        }
       }
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
     }
 
     return res.status(401).json({ message: "Invalid credentials" });
@@ -100,25 +116,43 @@ router.post(
   ),
   async (req, res) => {
     // Checking for email uniqueness
-    const userCount = await prisma.usuario.count({
-      where: { email: req.body.email },
-    });
+
+    let userCount;
+    try {
+      // <- Issue #45 del repo.
+      userCount = await prisma.usuario.count({
+        where: { email: req.body.email },
+      });
+    } catch (e) {
+      console.log(e);
+      return res.status(404).send({ error: "registro no encontrado" });
+    }
+
     if (userCount) {
       return res.status(400).json({
         error: "An account with that email already exists.",
       });
     }
-    const user = await prisma.usuario.create({
-      data: {
-        ...req.body,
-        confirmado: false,
-        contrasegna: await hashPassword(req.body.contrasegna),
-      },
-      select: {
-        email: true,
-        idusuario: true,
-      },
-    });
+
+    let user;
+    try {
+      // <- Issue #45 del repo.
+      user = await prisma.usuario.create({
+        data: {
+          ...req.body,
+          confirmado: false,
+          contrasegna: await hashPassword(req.body.contrasegna),
+        },
+        select: {
+          email: true,
+          idusuario: true,
+        },
+      });
+    } catch (e) {
+      if (e.meta.cause === "Record to update not found.")
+        return res.status(404).send({ error: "registro no encontrado" });
+    }
+
     try {
       await prisma[req.body.rol].create({
         data: {

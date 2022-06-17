@@ -51,7 +51,7 @@ async function bearerAuth(req, res, next) {
 function hasRole() {
   let roles = Array.from(arguments);
   return function hasRole(req, res, next) {
-    if (roles.includes(req.user.rol)) return next();
+    if (req.user && roles.includes(req.user.rol)) return next();
     return res.status(403).json({
       error: `route only available to ${roles}.`,
     });

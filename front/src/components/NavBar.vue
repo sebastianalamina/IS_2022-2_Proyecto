@@ -1,6 +1,6 @@
 <script setup>
 import { reactive, ref, computed } from "@vue/reactivity";
-import { useRouter,useRoute } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { useStore as useAuthStore } from "../stores/auth";
 import { useStore as useAdminStore } from "../stores/admin";
 import roles from "../constants/roles";
@@ -25,7 +25,7 @@ const route = useRoute();
 function logout() {
   auth.logout();
   admin.reset();
-  router.push("/")
+  router.push("/");
 }
 </script>
 
@@ -33,11 +33,16 @@ function logout() {
   <div>
     <va-navbar color="primary">
       <template #left>
-        <router-link  to="/">
+        <router-link to="/">
           <va-navbar-item>FindYourRestaurants</va-navbar-item>
         </router-link>
       </template>
       <template #right>
+        <va-navbar-item v-if="auth.isLogged">
+          <va-avatar
+            :src="`https://avatars.dicebear.com/api/bottts/${auth.email}.svg`"
+          />
+        </va-navbar-item>
         <va-navbar-item v-if="auth.isLogged">
           <va-popover message="salir">
             <va-button @click="logout"> <va-icon name="logout" /></va-button>
@@ -55,8 +60,14 @@ function logout() {
     <va-tabs v-model="tabIx">
       <template #tabs>
         <va-tab>
-          <router-link v-if="!auth.hasPermisionsOf(roles.ADMINISTRADOR)"  to="/">Home</router-link>
-          <router-link v-if="auth.hasPermisionsOf(roles.ADMINISTRADOR)"  to="/admin">Home</router-link>
+          <router-link v-if="!auth.hasPermisionsOf(roles.ADMINISTRADOR)" to="/"
+            >Home</router-link
+          >
+          <router-link
+            v-if="auth.hasPermisionsOf(roles.ADMINISTRADOR)"
+            to="/admin"
+            >Home</router-link
+          >
         </va-tab>
         <va-tab>
           <router-link to="/lista-restaurantes">Restaurantes</router-link>
@@ -74,6 +85,9 @@ function logout() {
         </va-tab>
         <va-tab v-if="auth.hasPermisionsOf(roles.CLIENTE)">
           <router-link to="/carrito">Mi carrito</router-link>
+        </va-tab>
+        <va-tab v-if="auth.hasPermisionsOf(roles.CLIENTE)">
+          <router-link to="/ordenes">Mis ordenes</router-link>
         </va-tab>
       </template>
     </va-tabs>

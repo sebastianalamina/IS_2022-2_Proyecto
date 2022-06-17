@@ -1,6 +1,7 @@
 <script>
 import { useAxios } from "../axios_common";
 import { useStore as useAuthStore } from "../stores/auth";
+import { useCarrito } from "../stores/carrito";
 import roles from "../constants/roles";
 
 export default {
@@ -17,6 +18,7 @@ export default {
       e.preventDefault();
       if (!this.checkCienciasEmail(this.username)) return;
       const authStore = useAuthStore();
+      const carrito = useCarrito();
       const axios = useAxios();
       axios
         .post("/auth/login", {
@@ -26,13 +28,14 @@ export default {
         .then((res) => {
           const token = res.data.token;
           const rol = res.data.rol;
-          authStore.login(token, rol); //TODO: comprobar
-          if(rol === roles.ADMINISTRADOR ){
+          carrito.clean();
+          authStore.login(token, rol, this.username); //TODO: comprobar
+          if (rol === roles.ADMINISTRADOR) {
             // Debugeo
             console.log("Administrador Iniciando sesion");
             this.$router.push("/admin");
-          }else{
-          this.$router.push("/");
+          } else {
+            this.$router.push("/");
           }
         })
         .catch((e) => {
@@ -41,6 +44,10 @@ export default {
         });
     },
     checkCienciasEmail(v) {
+      if (!v) {
+        this.error_user = true;
+        return false;
+      }
       this.error_user = !(v.indexOf("@ciencias.unam.mx") >= 0);
       return v.indexOf("@ciencias.unam.mx") >= 0;
     },
@@ -62,7 +69,7 @@ export default {
             :rules="[
               (v) =>
                 checkCienciasEmail(v) ||
-                `El correo tiene que ser de la facutlad de ciencias`,
+                `El correo tiene que ser de la Facultad de Ciencias`,
             ]"
             :error="error_user"
           />

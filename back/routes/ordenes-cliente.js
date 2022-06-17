@@ -42,6 +42,31 @@ router.post("/",
     }
 )
 
+router.post("/newcart",
+    bearerAuth,
+    async (req,res) => {
+        const cliente = await prisma.cliente.findFirst({
+            where: {
+                idusuario : req.user.idusuario,
+            }
+        })
+
+        const carrito = await prisma.orden.create({
+            data: {
+                cliente: { connect: {idcliente: cliente.idcliente}},
+                restaurante: {connect: {idrestaurante: 1}},
+                mesa: {connect: {idmesa:1}},
+                estado: "RECIBIDA",
+                esCarrito: true,
+                pagado: false,
+                costo: 0,
+            }
+        })
+
+        res.json(carrito)
+    }
+)
+
 //Regresa el carrito de un cliente
 router.get("/carrito",
      bearerAuth,
@@ -92,17 +117,11 @@ router.get("/orden/:idorden",
 //ordenes de un cliente que no son carrito
 router.get("/ordenes",
      bearerAuth,
-     validate(
-        Joi.object({
-            idcliente: Joi.number().integer().required(),
-        }),
-        "params"
-    ),
     async (req, res) => {
 
         const cliente = await prisma.cliente.findFirst({
             where: {
-                idcliente : req.user.idcliente,
+                idusuario : req.user.idusuario,
             }
         })
 
@@ -139,6 +158,27 @@ router.get("/platillos/:idorden",
     }
 )
 
+//para obtener índice
+router.get("/contenidoorden/:idorden/:idplatillo",
+    validate(
+        Joi.object({
+            idorden: Joi.number().integer().required(),
+            idplatillo: Joi.number().integer().required(),
+        }),
+        "params"
+    ),
+    async(req,res) => {
+        const {idorden, idplatillo} = req.params;
+        const contenidoorden = await prisma.contenidoorden.findFirst({
+            where: {
+                idorden: idorden,
+                idplatillo : idplatillo,
+            }
+        });
+        res.json(contenidoorden)
+    }
+)
+
 //agregar platillos
 router.post('/adddish/:idorden/:idplatillo',
     //estaAutenticado,
@@ -162,23 +202,42 @@ router.post('/adddish/:idorden/:idplatillo',
     }
 )
 
-//eliminar platillos
-router.delete('/deletedish/:idorden/:idplatillo',
-    estaAutenticado,
-    hasRole("cliente"),
+//eliminar algun platillos
+router.delete('/deletedish/:idcontenidoorden',
+    //estaAutenticado,
+    //hasRole("cliente"),
     validate(
         Joi.object({
-            idorden: Joi.number().integer().required(),
-            idplatillo: Joi.number().integer().required(),
+            idcontenidoorden: Joi.number().integer().required(),
         }),
         "params"
     ),
     async (req, res) => {
-        const {idorden, idplatillo} = req.params;
-        const paltillo = await prisma.contenidoorden.delete({
+        const {idcontenidoorden} = req.params;
+        const platillo = await prisma.contenidoorden.delete({
+            where: {
+                idcontenidoorden : idcontenidoorden,
+            }
+        });
+        res.json(platillo)
+    }
+)
+
+//eliminar platillos de una orden
+router.delete('/deletecontenido/:idorden',
+    //estaAutenticado,
+    //hasRole("cliente"),
+    validate(
+        Joi.object({
+            idorden: Joi.number().integer().required(),
+        }),
+        "params"
+    ),
+    async (req, res) => {
+        const {idorden} = req.params;
+        const platillo = await prisma.contenidoorden.deleteMany({
             where: {
                 idorden : idorden,
-                idplatillo : idplatillo,
             }
         });
         res.json(platillo)
@@ -186,29 +245,32 @@ router.delete('/deletedish/:idorden/:idplatillo',
 )
 
 //confirmar una orden
-router.put('/:idorden',
-    estaAutenticado,
-    hasRole("cleinte"),
+router.put('/confirmar/:idorden/:costo',
+    //estaAutenticado,
+    //hasRole("cliente"),
     validate(
         Joi.object({
             idorden: Joi.number().integer().required(),
+            costo: Joi.number(),
         }),
         "params"
     ),
     async (req,res) => {
-        const {idorden} = req.params
+        const {idorden, costo} = req.params
+        let anterior, actualizado;
         try {
-            const anterior = await prisma.orden.findUnique({
+            anterior = await prisma.orden.findUnique({
                 where: {idorden :idorden},
                 select: {
                     esCarrito : true,
                 },
-            })
+            });
 
-            const actualizado = await prisma.orden.update({
+            actualizado = await prisma.orden.update({
                 where: {idorden : idorden},
-                data: {esCarrito: !anterior?.esCarrito},
-            })
+                data: {esCarrito: !anterior.esCarrito,
+                        costo: costo},
+            });
             res.json(actualizado)
         } catch (error) {
             res.json({error: `La orden ${idorden} no existe en la base de datos`})

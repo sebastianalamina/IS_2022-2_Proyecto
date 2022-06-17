@@ -4,8 +4,7 @@ import { useCarrito } from "../stores/carrito";
 import { mapStores } from "pinia";
 
 export default {
-  components: {
-  },
+  components: {},
   data() {
     return {
       cards: [],
@@ -14,47 +13,81 @@ export default {
   computed: {
     ...mapStores(useCarrito),
   },
-  async getCards(){
-    const instance = useAxios();
-    console.log(this.idorden);
-    
-    instance.get("ordenes-cliente/carrito").then((res) => { 
-      const ruta = "/ordenes-cliente/platillos" + res.data.idorden;
-      instance.get(ruta).then((res) => {
-        this.cards = res.data;
-      }).catch((err) => {
-        console.log("error en mounted")
-        console.log(err)
-      })})
-  },
-  mounted() {
-    this.getCards()
-  },
   methods: {
+    confirmar(total) {
+      console.log("confirmando");
+      const instance = useAxios();
+      instance.get("/ordenes-cliente/carrito").then((res) => {
+        console.log(res.data.idorden);
+        const ruta =
+          "/ordenes-cliente/confirmar/" + res.data.idorden + "/" + total;
+        instance.put(ruta);
+      });
+
+      this.carritoStore.clean();
+
+      instance.post("/ordenes-cliente/newcart");
+    },
     aumenta(platillo) {
       this.carritoStore.increase(platillo);
     },
     disminuye(platillo) {
+      const instance = useAxios();
+      instance.get("/ordenes-cliente/carrito").then((res) => {
+        const ruta1 =
+          "/ordenes-cliente/contenidoorden/" +
+          res.data.idorden +
+          "/" +
+          platillo.idplatillo;
+        instance.get(ruta1).then((res) => {
+          const ruta2 =
+            "/ordenes-cliente/deletedish/" + res.data.idcontenidoorden;
+          instance.delete(ruta2);
+        });
+      });
       this.carritoStore.decrease(platillo);
     },
     elimina(platillo) {
       this.carritoStore.remove(platillo);
     },
     eliminaTodo() {
+      console.log("hola");
+      const instance = useAxios();
+      console.log("obteniendo carrito");
+
+      instance.get("/ordenes-cliente/carrito").then((res) => {
+        const ruta = "/ordenes-cliente/deletecontenido/" + res.data.idorden;
+        instance.delete(ruta);
+      });
       this.carritoStore.clean();
     },
-    calculaTotal(){
+    calculaTotal() {
       this.carritoStore.platillosArray;
     },
-    confirma() {
+    async getCards() {
+      console.log("obteniendo cards");
       const instance = useAxios();
-      const ruta = "/" + this.idorden;
-      instance.put(ruta, {
-        params: {
-          idorden : this.idorden
-        }
-      }) 
-    }
+      instance.get("ordenes-cliente/carrito").then((res) => {
+        console.log("carrito obtenido");
+        console.log(res.data);
+        if (!res.data) return;
+        const ruta = "/ordenes-cliente/platillos/" + res.data.idorden;
+        instance
+          .get(ruta)
+          .then((res) => {
+            console.log("contenido del carrito obtenido");
+            console.log(res.data);
+            this.cards = res.data;
+          })
+          .catch((err) => {
+            console.log("error en mounted");
+            console.log(err);
+          });
+      });
+    },
+  },
+  mounted() {
+    this.getCards();
   },
 };
 </script>
@@ -89,10 +122,15 @@ export default {
       </div>
     </div>
     <div>
-    <p>Consumo total: {{ this.carritoStore.totalPagar}} $ </p>      
+      <p>Consumo total: {{ this.carritoStore.totalPagar }} $</p>
     </div>
     <div class="confirmar">
-      <button class="b-confirmar">Confirmar</button>
+      <button
+        class="b-confirmar"
+        @click="confirmar(this.carritoStore.totalPagar)"
+      >
+        Confirmar
+      </button>
     </div>
   </div>
 </template>
