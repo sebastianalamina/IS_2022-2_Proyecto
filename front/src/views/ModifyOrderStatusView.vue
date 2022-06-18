@@ -1,5 +1,6 @@
 <script>
 import {useAxios} from "../axios_common";
+import {useStore as useAuthStore } from "../stores/auth";
 
 export default {
   data(){
@@ -14,7 +15,7 @@ export default {
     }
   },
   methods:{
-    cambiar_estado: function(e) {
+    async cambiar_estado(e) {
       // Para que no recargue la página.
       e.preventDefault()
 
@@ -28,14 +29,13 @@ export default {
 
       // Hacemos POST con el Back.
       const axios = useAxios();
-      axios
+      await axios
         .post('/estado-platillo', {
           id_orden: this.id,
           nuevo_estado: this.nuevo_estado,
         })
         .then((res) => {
-          console.log("uwu")//res.data); // DEBUG TEMPORAL.
-          console.log(res)
+          console.log("Nueva orden:", res.data)
         })
         .catch((error) => {
           console.log(error.response.data);
@@ -58,8 +58,37 @@ export default {
         return
       }
 
-      // Consultamos con el Back.
+      // Consultamos con el Back...
       const axios = useAxios();
+      const auth = useAuthStore();
+
+      // Comprobamos que la orden corresponda al restaurante del mesero.
+      try {  // <- Issue #45 del repo.
+      await axios
+        .get('/mesero/orden', {
+          params: {
+            email: auth.email,
+            idorden: this.id,
+          }
+        })
+        .then((res) => {
+          this.idValido = true;
+          if (res.data == null)
+            this.idValido = false;
+        })
+        .catch((error) => {
+          console.log(error.response.data);
+        })
+      } catch (e) {
+        return res.status(404).send({ error: e });
+      }
+
+      if (!this.idValido) {
+        this.orden_error = "Esta orden no corresponde a tu restaurante.";
+        return;
+      }
+
+      // Buscamos la orden.
       try {  // <- Issue #45 del repo.
       await axios
         .get('/estado-platillo', {
@@ -72,8 +101,7 @@ export default {
           console.log(error.response.data);
         })
       } catch (e) {
-        if (e.meta.cause === "Record to update not found.")
-          return res.status(404).send({ error: "registro no encontrado" });
+        return res.status(404).send({ error: e });
       }
 
       // Si hubo un error, no se continúa.
@@ -89,10 +117,13 @@ export default {
       // Se actualiza el "estado" de la orden.
       // Si no, se queda en "null".
       if (this.orden != null) {
+        console.log("UWU")
         this.estado = this.orden.data.estado;
+        console.log(this.estado)
         for (var i = 0; i < this.estados_posibles.length; i++)
           if (this.estado == this.estados_posibles[i])
             this.estado = i
+        console.log(this.estado)
       }
     },
   },

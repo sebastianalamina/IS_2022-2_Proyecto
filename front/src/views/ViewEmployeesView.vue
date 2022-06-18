@@ -1,6 +1,7 @@
 <script>
 import {useAxios} from "../axios_common";
 import {useStore as useAuthStore } from "../stores/auth";
+import { useStore as useAdminStore } from '../stores/admin';
 import roles from "../constants/roles";
 
 
@@ -40,6 +41,16 @@ export default {
       console.log("funciona")
     },
     handleSubmit (e){
+
+      // Cancelando la solicitud si el administrador
+      // no tiene ningún restaurante asociado...
+      const adminStore = useAdminStore();
+      if (adminStore.idRestaurante == null) {
+        this.showError = true;
+        this.errorMensaje = "Primero has de registrar un restaurante.";
+        return
+      }
+
       console.log("Haciendo solicitud post ");
       const instance = useAxios();
       instance.post('/empleado', {

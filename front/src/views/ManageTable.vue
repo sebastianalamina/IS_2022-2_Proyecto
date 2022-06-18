@@ -321,7 +321,6 @@ export default {
 			// No recargar la página.
 			e.preventDefault();
 
-
 			if (this.mostrarBotones) {
 				// Cambiamos vistas.
 				this.mostrarBotones = false;
@@ -345,6 +344,11 @@ export default {
 						return res.status(404).send({ error: "registro no encontrado" });
 				}
 			} else {
+				// Error si faltan parámetros.
+				if (this.ordenParaAgregar == null || this.platilloParaAgregar == null) {
+					return;
+				}
+			
 				// Agregamos el platillo a la orden dada.
 				const axios = useAxios();
 				try {  // <- Issue #45 del repo.

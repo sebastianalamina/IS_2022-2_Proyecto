@@ -192,5 +192,33 @@ router.post(
     }
 )
 
+/*
+Este POST agrega una mesa al restaurante dado.
+*/
+router.post(
+    "/agregar-mesa",
+    validate(Joi.object({
+        idrestaurante: Joi.number().integer().required(),
+    }), ),
+    async (req, res) => {
+
+        const idrestaurante = req.body.idrestaurante;
+
+        let mesa;
+        try { // <- Issue #45 del repo.
+            mesa = await prisma.mesa.create({
+                data:{
+                    idrestaurante: idrestaurante,
+                    ocupada: false,
+                },
+            });
+        } catch (e) {
+            return res.status(404).send({ error: e });
+        }
+
+        res.json(mesa);
+    }
+)
+
 module.exports = router;
 

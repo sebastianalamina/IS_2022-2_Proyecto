@@ -1,7 +1,41 @@
 <script>
 import {useAxios} from "../axios_common";
+import {useStore as useAuthStore} from "../stores/auth";
+import roles from "../constants/roles";
 
 export default {
+
+	mounted() {
+		const auth = useAuthStore();
+		if (auth.hasPermisionsOf(roles.MESERO)) {
+
+		// Buscamos el ID del restaurante.
+		const axios = useAxios();
+
+		try { // <- Issue #45 del repo.
+			axios
+			.get("/mesero/get-restaurante", {
+				params: {
+					email: auth.email,
+				}
+			})
+			.then((res) => {
+				if (res.data) {
+					this.idRestaurante = res.data;
+					this.buscarRestaurante();
+				}
+			})
+			.catch((e) => {
+				// console.log(e);
+			});
+		} catch (e) {
+			// console.log(e);
+		}
+
+		} else {
+			this.errForm = "ERROR: Debes estar loggeado con una cuenta de mesero.";
+		}
+	},
 
 	data() {
 		return {
@@ -17,10 +51,16 @@ export default {
 
 	methods: {
 
-		async buscarRestaurante(e) {
-			
+		async buscarRestauranteBoton(e) {
+
 			// No recargar la página.
 			e.preventDefault();
+
+			// Redirección.
+			this.buscarRestaurante();
+		},
+
+		async buscarRestaurante() {
 
 			// Limpiamos.
 			this.errForm = null;
@@ -143,7 +183,32 @@ export default {
 				}
 			});
 
-		} // <- Fin de "administrarMesa".
+		}, // <- Fin de "administrarMesa".
+
+		async agregarMesa(e) {
+			
+			// No recargar la página.
+			e.preventDefault();
+
+			// Agregamos la mesa al restaurante.
+			const axios = useAxios();
+			try {  // <- Issue #45 del repo.
+				await axios
+					.post('/ordenes-mesa/agregar-mesa', {
+						idrestaurante: this.idRestaurante,
+					}).then((res) => {
+						console.log("Agregando:", res.data);
+					}).catch((error) => {
+						console.log(error);
+					});
+			} catch (e) {
+				return res.status(404).send({ error: e });
+			}
+
+			// Recargamos la lista de mesas.
+			this.buscarRestaurante();
+
+		}, // <- Fin de "agregarMesa".
 
 	}, // <- Fin de "methods".
 
@@ -154,7 +219,7 @@ export default {
 <template>
 
 	<div v-if="!this.restQueried">
-		<form @submit="buscarRestaurante">
+		<form @submit="buscarRestauranteBoton">
 			<label>
 				<h1>
 					Introduce el ID del restaurante:
@@ -189,6 +254,10 @@ export default {
 
 		<form @submit="administrarMesa">
 			<input type="submit" value="Administrar mesa">
+		</form>
+		<br>
+		<form @submit="agregarMesa">
+			<input type="submit" value="Añadir nueva mesa">
 		</form>
 	</div>
 

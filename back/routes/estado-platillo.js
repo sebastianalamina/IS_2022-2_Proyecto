@@ -52,8 +52,6 @@ router.get(
 				return res.status(404).send({ error: "registro no encontrado" });
 		}
 
-		// Debug temporal:
-		console.log(orden);
 		return res.status(201).json(orden);
 	}
 );
@@ -69,12 +67,12 @@ router.post(
 			.required()
 			.min(0)
 			.max(3),
-	}), "query"),
+	})),
 	async (req, res) => {
 
 		// Almacenamos las variables pasadas como parámetros.
-		let id_orden = req.query.id_orden;
-		let nuevo_estado = req.query.nuevo_estado;
+		let id_orden = req.body.id_orden;
+		let nuevo_estado = req.body.nuevo_estado;
 
 		// Verificamos que la orden se encuentre en la BD...
 		let id_entrega_count;
@@ -83,8 +81,7 @@ router.post(
 				where: { idorden : id_orden },
 			});
 		} catch (e) {
-			if (e.meta.cause === "Record to update not found.")
-				return res.status(404).send({ error: "registro no encontrado" });
+			return res.status(404).send({ error: e });
 		}
 
 		// ...Si no, devolvemos el error correspondiente.
@@ -105,12 +102,9 @@ router.post(
 				data: { estado : nuevo_estado }
 			});
 		} catch (e) {
-			if (e.meta.cause === "Record to update not found.")
-				return res.status(404).send({ error: "registro no encontrado" });
+			return res.status(404).send({ error: e });
 		}
 
-		// Debug temporal:
-		console.log(orden_a_modificar);
 		return res.status(201).json(orden_a_modificar);
 	}
 );
