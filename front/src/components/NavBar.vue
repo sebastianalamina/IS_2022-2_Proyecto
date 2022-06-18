@@ -83,11 +83,17 @@ function logout() {
         <va-tab v-if="auth.hasPermisionsOf(roles.ADMINISTRADOR)">
           <router-link to="/view-employees">Empleados</router-link>
         </va-tab>
-        <va-tab v-if="auth.hasPermisionsOf(roles.CLIENTE)">
+        <va-tab v-if="auth.hasPermisionsOf(roles.CLIENTE) && !auth.hasPermisionsOf(roles.MESERO)">
           <router-link to="/carrito">Mi carrito</router-link>
         </va-tab>
-        <va-tab v-if="auth.hasPermisionsOf(roles.CLIENTE)">
+        <va-tab v-if="auth.hasPermisionsOf(roles.CLIENTE) && !auth.hasPermisionsOf(roles.MESERO)">
           <router-link to="/ordenes">Mis ordenes</router-link>
+        </va-tab>
+        <va-tab v-if="auth.hasPermisionsOf(roles.MESERO)">
+          <router-link to="/mesas">Ver mesas</router-link>
+        </va-tab>
+        <va-tab v-if="auth.hasPermisionsOf(roles.MESERO)">
+          <router-link to="/modify-order-status">Modificar estado de orden</router-link>
         </va-tab>
       </template>
     </va-tabs>
