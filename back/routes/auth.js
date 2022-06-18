@@ -104,7 +104,7 @@ router.post(
       nombre: Joi.string().required(),
       contrasegna: Joi.string().required(),
       rol: Joi.string()
-        .valid(roles.ADMINISTRADOR, roles.CLIENTE, roles.REPARTIDOR)
+        .valid(roles.ADMINISTRADOR, roles.CLIENTE, roles.REPARTIDOR, roles.MESERO)
         .required(),
       nombre: Joi.string().required(),
       estado: Joi.string().required(),
@@ -153,19 +153,23 @@ router.post(
         return res.status(404).send({ error: "registro no encontrado" });
     }
 
-    try {
-      await prisma[req.body.rol].create({
-        data: {
-          idusuario: user.idusuario,
-        },
-      });
-    } catch (e) {
-      await prisma.usuario.delete({
-        select: {
-          idusuario: user.idusuario,
-        },
-      });
-      return res.status(500).send("algo salio mal");
+    if (req.body.rol != roles.MESERO) {
+
+      try {
+        await prisma[req.body.rol].create({
+          data: {
+            idusuario: user.idusuario,
+          },
+        });
+      } catch (e) {
+        await prisma.usuario.delete({
+          select: {
+            idusuario: user.idusuario,
+          },
+        });
+        return res.status(500).send("algo salio mal");
+      }
+
     }
 
     mailer
