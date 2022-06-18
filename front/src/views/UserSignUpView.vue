@@ -121,13 +121,13 @@ export default {
         v-model="numero"
         label="número"
         input-class="va-input-style"
-        :rules="[(v) => (!!v && !isNaN(v)) || 'Por favor llena este campo']"
+        :rules="[(v) => (!!v && !isNaN(v)) || 'Por favor llena correctamente este campo']"
       />
       <va-input
         v-model="cp"
         label="cp"
         input-class="va-input-style"
-        :rules="[(v) => (!!v && !isNaN(v)) || 'Por favor llena este campo']"
+        :rules="[(v) => (!!v && !isNaN(v)) || 'Por favor llena correctamente este campo']"
       />
       <va-input
         v-model="municipio"
