@@ -49,7 +49,7 @@ router.post("/",
 			// Creamos un nuevo perfil de mesero
 			mesero = await prisma.mesero.create({
 					data:{
-					idrestaurante : idrestaurante,
+					restaurante : { connect : { idrestaurante: idAdministrador.idrestaurante } },
 					administrador : { connect : { idadmin : idAdministrador.idadmin } },
 					usuario:{ connect : { email : email } },
 					restaurante : { connect : { idrestaurante : idAdministrador.idrestaurante } }
@@ -57,11 +57,16 @@ router.post("/",
 				});
 				res.json(mesero)
 			} catch(e){
+				if (e.code == "P2002")
+					return res.status(400).send({error : "Este empleado ya fue asignado a algún restaurante."});
+
 				if(e.meta.cause === "No 'usuario' record(s) (needed to inline the relation on 'mesero' record(s)) was found for a nested connect on one-to-many relation 'meseroTousuario'.")
-					res.status(400).send({error : "El usuario no existe"});
+					return res.status(400).send({error : "El usuario no existe"});
 
 				if (e.meta.cause === "Record to update not found.")
 					return res.status(404).send({ error: "registro no encontrado" });
+
+				return res.status(400).send({error : e});
 			}
 		} else if(rol === roles.REPARTIDOR){
 			// TODO Creo que esto ya no es necesario
