@@ -11,15 +11,49 @@ export default {
       password: null, // Contraseña del form.
       error_user: false,
       res_error: false,
+      error_mesero: false,
     };
   },
   methods: {
-    login(e) {
+    async login(e) {
       e.preventDefault();
       if (!this.checkCienciasEmail(this.username)) return;
       const authStore = useAuthStore();
       const carrito = useCarrito();
       const axios = useAxios();
+
+      // Reset de errores.
+      this.res_error = false;
+      this.error_mesero = false;
+
+      // Si es un mesero, comprobamos primero si ya fue
+      // registrado por algún administrador. Si no, no
+      // se loggea...
+
+      try { // <- Issue #45 del repo.
+        await axios
+          .get("/mesero", {
+            params: {
+              email: this.username,
+            }
+          })
+          .then((res) => {
+            if (res.data) // Si es un mesero aún no registrado por algún administrador.
+              this.res_error = true;
+          })
+          .catch((e) => {
+            // console.log(e);
+          });
+      } catch (e) {
+        // console.log(e);
+      }
+
+      if (this.res_error) {
+        console.log("Mesero aún no registrado por algún administrador.");
+        this.error_mesero = true;
+        return;
+      }
+
       axios
         .post("/auth/login", {
           email: this.username,
@@ -61,7 +95,8 @@ export default {
       <div>
         <va-form style="width: 300px" tag="form" @submit.prevent="login">
           <div style="color: red" v-if="res_error">
-            Credenciales incorrectas
+            <div v-if="error_mesero">Un administrador ha de registrarte en el sistema.</div>
+            <div v-else>Credenciales incorrectas</div>
           </div>
           <va-input
             v-model="username"
