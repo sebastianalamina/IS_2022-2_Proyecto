@@ -38,9 +38,10 @@ export default {
       enableForm: false,
       resenaNueva: {
         texto: null,
-        calificacion: null,
+        calificacion: '1',
       },
       pagActual: 0,
+      options: ['1','2','3','4','5']
     };
   },
   methods: {
@@ -71,7 +72,8 @@ export default {
       this.pagActual = 10 * (page - 1);
       this.getPage(this.pagActual);
     },
-    publishReview: function (e) {
+    publishReview: function () {
+      console.log("posteando resena")
       const date = new Date(Date.now()).toISOString();
       console.log("fecha actual : ", date);
       const instance = useAxios();
@@ -88,6 +90,12 @@ export default {
           this.resenas.unshift(res.data);
           this.resenas.pop();
           this.enableForm = false;
+          this.$vaToast.init({
+            message: `Resena posteada `,
+            color: "primary",
+          });
+          this.resenaNueva.texto = null;
+          this.resenaNueva.calificacion = '1';
         })
         .catch((err) => {
           console.log("Resena fallo su posteo")
@@ -138,40 +146,26 @@ export default {
         >
           Cancelar resena
         </va-button>
-        <form v-if="this.enableForm" @submit.prevent="publishReview">
-          <div class="form-group">
-            <label for="exampleFormControlSelect1"
-              >Seleccione la cantidad de estrellas</label
-            >
-            <select
-              class="form-control"
-              id="resenaSelect"
-              v-model="this.resenaNueva.calificacion"
-            >
-              <option>1</option>
-              <option>2</option>
-              <option>3</option>
-              <option>4</option>
-              <option>5</option>
-            </select>
-          </div>
-
-          <div class="form-group pb-3">
-            <label for="exampleFormControlTextarea1">Resena : </label>
-            <textarea
-              class="form-control"
-              id="resenaFormat"
-              rows="3"
-              v-model="this.resenaNueva.texto"
-            ></textarea>
-          </div>
-
-          <input
-            class="btn btn-secondary"
-            type="submit"
-            value="publicar resena"
+        <va-form
+          v-if="this.enableForm" 
+          @submit.prevent="publishReview"
+        >
+          <va-input
+            class="mb-4" 
+            type="textarea"
+            label="Resena"
+            v-model="resenaNueva.texto"
           />
-        </form>
+         
+          <va-select
+         v-model="resenaNueva.calificacion" 
+         :options="options"
+          />
+
+         <va-button class="mt-2" @click="publishReview">
+        Publicar resena 
+      </va-button> 
+        </va-form>
       </div>
     </div>
     
