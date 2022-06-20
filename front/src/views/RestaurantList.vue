@@ -119,9 +119,7 @@ export default {
         </div>
       </div>
       <div style="display: table-cell">
-        <div
-        v-if="isCliente()" 
-        >
+        <div>
           <div>
             <h3>Resenas</h3>
             <ResenaList
