@@ -12,15 +12,15 @@ const axios = useAxios();
 // enviar si es aceptada
 
 const preparando = {
-  title: "Marca en camino cuando recibas la orden",
+  title: "Marca 'En camino' cuando recibas la orden.",
   confirmMessage:
-    "Estas seguro de que quieres marcar la orden como 'en camino' ",
+    "¿Estás seguro de que quieres marcar la orden como 'En camino'?",
   btnMessage: "En camino",
 };
 const enCamino = {
-  title: "Marca en como entregada cuando el cliente teng la orden orden",
+  title: "Marca en como 'Entregada' cuando el cliente tenga la orden.",
   confirmMessage:
-    "Estas seguro de que quieres marcar la orden como 'entregada' ",
+    "¿Estás seguro de que quieres marcar la orden como 'Entregada'?",
   btnMessage: "Entregada",
 };
 const estadoOrden = [preparando, enCamino];
@@ -44,6 +44,7 @@ async function load() {
     ixEstadoOrden.value = 0;
   else if (data.orden.estado === "EN_CAMINO") ixEstadoOrden.value = 1;
   numOrden.value = data.idorden;
+  lugar.value = data.orden.domicilio
 }
 
 load();
@@ -55,7 +56,7 @@ load();
         <va-card-title>{{ estadoOrden[ixEstadoOrden].title }}</va-card-title>
         <va-card-content class="negative">
           <h5 class="display-5">Orden: {{ numOrden }}</h5>
-          Dirección restaurante: {{ lugar }}
+          Dirección: {{ lugar }}
         </va-card-content>
         <va-card-actions>
           <va-button @click="showModal = true">{{
