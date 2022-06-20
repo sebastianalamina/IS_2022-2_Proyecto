@@ -23,15 +23,9 @@ export const useStore = defineStore("auth", {
         case INVITADO:
           return true;
         case CLIENTE:
-          return [
-            CLIENTE,
-            MESERO,
-            COCINERO,
-            ADMINISTRADOR,
-            REPARTIDOR,
-          ].includes(state.rol);
+          return state.rol === CLIENTE;
         case MESERO:
-          return [MESERO, COCINERO, ADMINISTRADOR].includes(state.rol);
+          return MESERO === state.rol;
         case COCINERO:
           return [MESERO, ADMINISTRADOR].includes(state.rol);
         case ADMINISTRADOR:
