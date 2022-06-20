@@ -6,14 +6,14 @@ const router = express.Router();
 const prisma = new PrismaClient();
 const validate = require("../utils/middleware/validate");
 
-const { hasRole, bearerAuth } = require("../utils/middleware/auth");
+const { hasRole, bearerAuth, esCliente } = require("../utils/middleware/auth");
 const { estaAutenticado } = require("../utils/middleware/auth");
 
 //crea una orden
 router.post(
   "/",
   estaAutenticado,
-  hasRole("cliente"),
+  esCliente,
   validate(
     Joi.object({
       idorden: Joi.number().integer().required(),
@@ -66,7 +66,9 @@ router.post("/newcart", async (req, res) => {
 });
 
 //Regresa el carrito de un cliente
-router.get("/carrito", async (req, res) => {
+router.get("/carrito",
+esCliente,
+ async (req, res) => {
   const cliente = await prisma.cliente.findFirst({
     where: {
       idusuario: req.user.idusuario,

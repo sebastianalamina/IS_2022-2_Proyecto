@@ -9,6 +9,7 @@ const validate = require("../utils/middleware/validate");
 const { hasRole, esAdministrador, bearerAuth } = require("../utils/middleware/auth");
 const { estaAutenticado } = require("../utils/middleware/auth");
 const { get } = require("./restaurante");
+const { valid } = require("joi");
 
 //@ts-check
 
@@ -156,4 +157,32 @@ router.get("/administrador",
     res.json(administradorInfo);
   }
 );
+
+/**
+ * Permite eliminar un platillo dado su id
+ */
+router.delete("/:idplatillo",
+  esAdministrador,
+  bearerAuth,
+  validate(Joi.object({
+    idplatillo : Joi.number().integer().required()
+  }),
+  "params" 
+  ),
+  async (req,res) =>{
+    let platillo;
+    try{
+      platillo = await prisma.platillo.delete({
+        where:{ idplatillo : req.params.idplatillo }
+      });
+      return res.json({ideliminado:req.params.idplatillo });
+    } catch(e){
+      console.log(e.meta.cause)
+      if(e.meta.cause == "Record to delete does not exist."){
+        return res.status(400).json({ error: "No existe el id del platillo"});
+      }
+      return res.status(400).json({ error: "chale"});
+    }
+
+  });
 module.exports = router;
