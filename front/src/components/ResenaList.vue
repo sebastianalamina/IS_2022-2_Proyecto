@@ -1,19 +1,15 @@
 <script>
 import { useAxios } from "../axios_common";
-import Footer from "../components/Footer.vue";
-import NavBar from "../components/NavBar.vue";
-
 import roles from "../constants/roles";
 import { useStore as useAuthStore } from "../stores/auth";
 
-export default {
-  components: {
-    NavBar,
-    Footer,
-  },
+const auth = useAuthStore();
+
+export default { 
   props: {
     idrestaurante: null,
     maxPagination: 0,
+    isCliente : false
   },
   watch: {
     idrestaurante: function (newVal, oldVal) {
@@ -84,7 +80,6 @@ export default {
           texto: this.resenaNueva.texto,
           classificacion: this.resenaNueva.calificacion,
           idrestaurante: this.idrestaurante,
-          idusuario: 2,
           date: date,
         })
         .then((res) => {
@@ -95,6 +90,7 @@ export default {
           this.enableForm = false;
         })
         .catch((err) => {
+          console.log("Resena fallo su posteo")
           console.log(err);
         });
     },
@@ -128,7 +124,10 @@ export default {
 <template>
   <div class="container pt-3 pb-3">
     <div class="container">
-      <va-button class="btn btn-primary" @click="this.showForm">
+      <va-button
+      class="btn btn-primary"
+      @click="this.showForm"
+      v-if="isCliente">
         Anadir resena
       </va-button>
 
@@ -187,8 +186,7 @@ export default {
             <va-list-item-label caption>
               {{
                 resena.cliente.usuario.nombre +
-                resena.cliente.usuario.apatermo +
-                resena.cliente.usuario.amaterno
+                resena.cliente.usuario.apatermo 
               }}
             </va-list-item-label>
           </va-list-item-section>

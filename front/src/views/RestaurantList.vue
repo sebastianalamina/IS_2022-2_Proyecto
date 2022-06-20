@@ -71,6 +71,7 @@ export default {
   },
   mounted() {
     this.getRestaurantList(this.skip); 
+    console.log("es cliente ? l", this.isCliente())
   }, 
 };
 </script>
@@ -119,14 +120,13 @@ export default {
         </div>
       </div>
       <div style="display: table-cell">
-        <div
-        v-if="isCliente()" 
-        >
+        <div>
           <div>
             <h3>Resenas</h3>
             <ResenaList
               :idrestaurante="restauranteSeleccionadoId"
               :maxPagination="restauranteSelecionadoMax"
+              :isCliente="isCliente()"
               v-bind:key="mostrarResenas"
               v-if="restauranteSeleccionadoId"
             />
