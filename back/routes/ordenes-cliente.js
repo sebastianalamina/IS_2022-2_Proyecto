@@ -242,6 +242,28 @@ router.delete(
   }
 );
 
+//elimar todas las apariciones de un platillo en una orden
+router.delete(
+  "/deletedishes/:idorden/:idplatillo",
+  validate(
+    Joi.object({
+      idorden: Joi.number().integer().required(),
+      idplatillo: Joi.number().integer().required(),
+    }),
+    "params"
+  ),
+  async (req, res) => {
+    const { idorden, idplatillo} = req.params;
+    const platillos = await prisma.contenidoorden.deleteMany({
+      where: {
+        idorden: idorden,
+        idplatillo: idplatillo,
+      },
+    });
+    res.json(platillos);
+  }
+)
+
 //confirmar una orden
 router.put(
   "/confirmar/:idorden/:costo",
