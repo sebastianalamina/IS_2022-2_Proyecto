@@ -220,6 +220,26 @@ router.delete(
   }
 );
 
+//elimina una orden
+router.delete(
+  "/deleteorden/:idorden",
+  validate(
+    Joi.object({
+      idorden: Joi.number().integer().required(),
+    }),
+    "params"
+  ),
+  async (req, res) => {
+    const {idorden} = req.params;
+    const orden = await prisma.orden.delete({
+      where: {
+        idorden: idorden,
+      },
+    });
+    res.json(orden);
+  }
+);
+
 //eliminar platillos de una orden
 router.delete(
   "/deletecontenido/:idorden",

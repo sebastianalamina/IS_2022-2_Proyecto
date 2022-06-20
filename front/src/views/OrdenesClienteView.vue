@@ -21,6 +21,13 @@ export default {
           console.log(err.response.data.error);
         });
     },
+    removeOrden(idorden) {
+      const instance = useAxios();
+      const ruta = "/ordenes-cliente/deleteorden/" + idorden;
+      instance.delete(ruta).then((res) => {
+        this.getOrdenes();
+      });
+    }
   },
   mounted() {
     this.getOrdenes();
@@ -56,6 +63,10 @@ export default {
             >Ver estado</router-link
           ></va-chip
         >
+        <va-button 
+            @click="removeOrden(orden.idorden)">
+             Eliminar orden
+        </va-button>
       </div>
     </div>
   </div>
