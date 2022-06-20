@@ -12,6 +12,7 @@ export default {
       passwordConf: null,
       rol: "cliente",
       nombre: null,
+      apellido: null,
       estado: null,
       calle: null,
       numero: null,
@@ -40,6 +41,7 @@ export default {
           contrasegna: this.password,
           rol: this.rol,
           nombre: this.nombre,
+          apellido: this.apellido,
           estado: this.estado,
           calle: this.calle,
           numero: this.numero,
@@ -106,6 +108,12 @@ export default {
         :rules="[(v) => !!v || 'Por favor llena este campo']"
       />
       <va-input
+        v-model="apellido"
+        label="Apellido"
+        input-class="va-input-style"
+        :rules="[(v) => !!v || 'Por favor llena este campo']"
+      />
+      <va-input
         v-model="estado"
         label="estado"
         input-class="va-input-style"
@@ -121,13 +129,19 @@ export default {
         v-model="numero"
         label="número"
         input-class="va-input-style"
-        :rules="[(v) => (!!v && !isNaN(v)) || 'Por favor llena correctamente este campo']"
+        :rules="[
+          (v) =>
+            (!!v && !isNaN(v)) || 'Por favor llena correctamente este campo',
+        ]"
       />
       <va-input
         v-model="cp"
         label="cp"
         input-class="va-input-style"
-        :rules="[(v) => (!!v && !isNaN(v)) || 'Por favor llena correctamente este campo']"
+        :rules="[
+          (v) =>
+            (!!v && !isNaN(v)) || 'Por favor llena correctamente este campo',
+        ]"
       />
       <va-input
         v-model="municipio"

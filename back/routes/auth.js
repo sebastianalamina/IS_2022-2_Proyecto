@@ -102,9 +102,15 @@ router.post(
     Joi.object({
       email: Joi.string().email().required(),
       nombre: Joi.string().required(),
+      apellido: Joi.string().required(),
       contrasegna: Joi.string().required(),
       rol: Joi.string()
-        .valid(roles.ADMINISTRADOR, roles.CLIENTE, roles.REPARTIDOR, roles.MESERO)
+        .valid(
+          roles.ADMINISTRADOR,
+          roles.CLIENTE,
+          roles.REPARTIDOR,
+          roles.MESERO
+        )
         .required(),
       nombre: Joi.string().required(),
       estado: Joi.string().required(),
@@ -137,6 +143,8 @@ router.post(
     let user;
     try {
       // <- Issue #45 del repo.
+      req.body.apatermo = req.body.apellido;
+      delete req.body["apellido"];
       user = await prisma.usuario.create({
         data: {
           ...req.body,
@@ -149,12 +157,17 @@ router.post(
         },
       });
     } catch (e) {
-      if (e.meta.cause === "Record to update not found.")
+      if (
+        !!e.meta &&
+        !!e.meta.cause &&
+        e.meta.cause === "Record to update not found."
+      )
         return res.status(404).send({ error: "registro no encontrado" });
+      console.log(e);
+      return res.status(500).send("algo salio mal");
     }
 
     if (req.body.rol != roles.MESERO) {
-
       try {
         await prisma[req.body.rol].create({
           data: {
@@ -169,7 +182,6 @@ router.post(
         });
         return res.status(500).send("algo salio mal");
       }
-
     }
 
     mailer
