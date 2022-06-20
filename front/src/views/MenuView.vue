@@ -15,6 +15,7 @@ export default {
       platilloNuevo: {
         nombre: "",
         costo: 0,
+        img: ""
       },
       cards: [],
       showError: false,
@@ -48,9 +49,14 @@ export default {
           idrestaurante: this.idrestaurante,
           nombrePlatillo: this.platilloNuevo.nombre,
           costoPlatillo: this.platilloNuevo.costo,
+          imgPlatillo : this.platilloNuevo.img
         })
         .then((res) => {
           console.log("Se logro");
+          // TODO hacer esto mas elengante
+          this.platilloNuevo.nombre = ""
+          this.platilloNuevo.costo = 0
+          this.platilloNuevo.img = ""
           console.log(JSON.stringify(res.data));
           this.getCards();
           this.addPlatilloForm = !this.addPlatilloForm;
@@ -63,7 +69,12 @@ export default {
       // TODO Verificar que sea el restaurante que esta logueado
       return (
         auth.hasPermisionsOf(roles.ADMINISTRADOR) &&
-        admin.isAdminOf(this.idrestaurante)
+        admin.idRestaurante == this.idrestaurante
+      );
+    },
+    checkCliente(){
+      return(
+        auth.rol == roles.CLIENTE
       );
     },
     async getCards() {
@@ -85,11 +96,27 @@ export default {
           console.log(err.response.data.error);
         });
     },
+    async removePlatillo(idplatillo){
+      console.log("idplatillo a borrar", idplatillo);
+      const instance = useAxios();
+      instance.delete("menu/" + idplatillo)
+      .then((res)=>{
+        console.log("Borre el elemento con este id", res.data)
+        this.getCards()
+      })
+      .catch((err)=>{
+        console.log(err.response.data.error)
+
+      })
+    }
   },
   mounted() {
     this.getCards();
-    const instance = useAxios();
-    instance.get("/ordenes-cliente/carrito");
+    if( auth.rol == roles.CLIENTE){
+      const instance = useAxios();
+      instance.get("/ordenes-cliente/carrito");
+    }
+    
   },
 };
 </script>
@@ -108,6 +135,7 @@ export default {
 
     <va-form v-if="addPlatilloForm" tag="form" @submit.prevent="postPlatillo">
       <va-input v-model="platilloNuevo.nombre" label="Nombre de platillo" />
+      <va-input v-model="platilloNuevo.img" label="Link de la imagen"  />
 
       <va-input v-model="platilloNuevo.costo" label="Precio de platillo" />
 
@@ -129,9 +157,17 @@ export default {
               alt="comida sabrosa"
             />
             <va-card-title>{{ card.nombre }}</va-card-title>
-            <va-card-content>${{ card.costo }} </va-card-content>
+            <va-card-content>${{ card.costo}} </va-card-content>
             <va-card-actions align="stretch" vertical>
-              <va-button @click="addPlatillo(card)">Agregar </va-button>
+              <va-button
+              v-if="checkCliente() " 
+              @click="addPlatillo(card)">Agregar </va-button>
+              <va-button 
+              v-if="checkAdmin()"
+              @click="removePlatillo(card.idplatillo)"
+              >
+              Eliminar platillo
+              </va-button>
             </va-card-actions>
           </va-card>
         </div>
