@@ -37,7 +37,7 @@ export const useCarrito = defineStore("carrito", {
         console.log(this.platillos[platillo.idplatillo]);
         this.platillos[platillo.idplatillo] = createplatillo(
           platillo,
-          this.platillos[platillo.idplatillo].cantidad + 1
+          this.platillos[platillo.idplatillo]?.cantidad + 1
         );
         //se añade el platillo
         instance.get("/ordenes-cliente/carrito").then((res) => {
@@ -80,11 +80,13 @@ export const useCarrito = defineStore("carrito", {
       delete this.platillos[platillo.idplatillo];
       //eliminar el platillo
       const cart = instance.get("/ordenes-cliente/carrito");
-      instance.delete("/ordenes-cliente/deletedish", {
-        params: {
-          idorden: cart.idorden,
-          idplatillo: platillo.idplatillo,
-        },
+      instance.get("/ordenes-cliente/carrito").then((res) => {
+        const ruta =
+          "/ordenes-cliente/deletedishes/" +
+          res.data.idorden +
+          "/" +
+          platillo.idplatillo;
+        instance.delete(ruta);
       });
     },
     clean() {
