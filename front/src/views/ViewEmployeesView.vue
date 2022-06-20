@@ -179,7 +179,7 @@ export default {
     <va-list-item v-for="empleado in empleados" :key="empleado.usuario.idusuario">
       <va-list-item-section>
         <va-list-item-label>
-        {{empleado.usuario.nombre + " " + empleado.usuario.apatermo + " " + empleado.usuario.amaterno }}
+        Nombre: {{empleado.usuario.nombre + " " + empleado.usuario.apatermo + " " + empleado.usuario.amaterno }}
         </va-list-item-label>
         <va-list-item-label>
           Email : {{empleado.usuario.email}}
@@ -214,7 +214,7 @@ export default {
 .columna {
   padding-right: 20px;
   float: left;
-  width: 33%;
+  width: 70%;
 }
 
 .empleado {
