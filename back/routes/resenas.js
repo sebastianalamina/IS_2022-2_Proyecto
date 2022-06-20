@@ -109,7 +109,6 @@ router.get(
 router.post(
   "/",
   esCliente,
-  bearerAuth, 
   validate(
     Joi.object({
       idrestaurante: Joi.number().integer().required(),
@@ -138,15 +137,20 @@ router.post(
         },
         include: {
           cliente: {
-            select: {
-              nombre: true,
-              amaterno: true,
-              apatermo: true,
-            },
+            select:{
+              usuario:{
+                select:{
+                  nombre: true,
+                  amaterno: true,
+                  apatermo : true
+                }
+              }
+            }
           },
         },
       });
     } catch (e) {
+      console.log(e)
       if (e.meta.cause === "Record to update not found.")
         return res.status(404).send({ error: "registro no encontrado" });
     }
