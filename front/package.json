@@ -11,7 +11,7 @@
   },
   "dependencies": {
     "axios": "^0.26.1",
-    "humanize-number": "github:component/humanize-number",
+    "humanize-number": "^0.0.2",
     "node-fetch": "^3.2.3",
     "pinia": "^2.0.13",
     "pinia-plugin-persistedstate": "^1.5.1",
