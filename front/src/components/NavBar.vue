@@ -69,7 +69,7 @@ function logout() {
             >Home</router-link
           >
         </va-tab>
-        <va-tab>
+        <va-tab v-if="!auth.hasPermisionsOf(roles.MESERO) && !auth.hasPermisionsOf(roles.ADMINISTRADOR) && !auth.hasPermisionsOf(roles.REPARTIDOR)">
           <router-link to="/lista-restaurantes">Restaurantes</router-link>
         </va-tab>
         <va-tab v-if="auth.hasPermisionsOf(roles.REPARTIDOR)">
