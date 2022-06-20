@@ -143,9 +143,9 @@ export default {
         Agregar platillo al menu
       </va-button>
     </va-form>
-    <form id="login-box" @submit="checkForm">
+    <!-- <form id="login-box" @submit="checkForm"> -->
       <!-- action="/something" method="post"> -->
-      <div class="container-fluid">
+      <div id="login-box" class="container-fluid">
         <div class="row">
           <va-card
             v-for="card in cards"
@@ -172,7 +172,7 @@ export default {
           </va-card>
         </div>
       </div>
-    </form>
+    <!-- </form> -->
   </div>
 </template>
 
