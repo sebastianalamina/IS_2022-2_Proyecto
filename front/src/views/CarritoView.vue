@@ -17,6 +17,13 @@ export default {
   methods: {
     humanize,
     confirmar(total) {
+      if(this.carritoStore.platillosArray.length == 0) {
+        this.$vaToast.init({
+          message: 'Error: Carrito vacío',
+          color: "red",
+        });
+        return;
+      }
       this.$vaToast.init({
         message: `Orden pedida`,
         color: "primary",
