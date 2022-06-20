@@ -25,6 +25,7 @@ function rechazar() {
 async function risky_fetch() {
   const res = await axios.get("/orden/disponibles", { params: { skip } });
   numOrden.value = res.data.orden.idorden;
+  lugar.value = res.data.orden.domicilio;
   return res;
 }
 async function fetch() {
@@ -45,7 +46,7 @@ fetch();
         <va-card-title>Aceptar Orden?</va-card-title>
         <va-card-content class="negative">
           <h5 class="display-5">Orden: {{ numOrden }}</h5>
-          Dirección restaurante: {{ lugar }}
+          Llevalo a: {{ lugar }}
         </va-card-content>
         <va-card-actions align="between">
           <va-button @click="rechazar">Rechazar</va-button>

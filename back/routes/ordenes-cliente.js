@@ -66,9 +66,7 @@ router.post("/newcart", async (req, res) => {
 });
 
 //Regresa el carrito de un cliente
-router.get("/carrito",
-esCliente,
- async (req, res) => {
+router.get("/carrito", esCliente, async (req, res) => {
   const cliente = await prisma.cliente.findFirst({
     where: {
       idusuario: req.user.idusuario,
@@ -255,7 +253,7 @@ router.delete(
     "params"
   ),
   async (req, res) => {
-    const { idorden, idplatillo} = req.params;
+    const { idorden, idplatillo } = req.params;
     const platillos = await prisma.contenidoorden.deleteMany({
       where: {
         idorden: idorden,
@@ -264,7 +262,7 @@ router.delete(
     });
     res.json(platillos);
   }
-)
+);
 
 //confirmar una orden
 router.put(
@@ -289,9 +287,11 @@ router.put(
         },
       });
 
+      const { calle, numero, municipio } = req.user;
+      const domicilio = `${calle} ${numero}, ${municipio}`;
       actualizado = await prisma.orden.update({
         where: { idorden: idorden },
-        data: { esCarrito: !anterior.esCarrito, costo: costo },
+        data: { esCarrito: !anterior.esCarrito, costo: costo, domicilio },
       });
       res.json(actualizado);
     } catch (error) {
