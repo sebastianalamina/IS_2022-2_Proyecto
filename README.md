@@ -1,6 +1,6 @@
 # Ingeniería de Software - Equipo 3 :heavy_check_mark:
 
-Este proyecto **escolar** consiste en la implementación de un sistema para el manejo y administración de un conjunto de restaurantes. Se pueden encontrar más detalles en la documentación.
+Este proyecto consiste en la implementación de un sistema para el manejo y administración de un conjunto de restaurantes. Se pueden encontrar más detalles en la documentación.
 
 ## Autores :busts_in_silhouette:
 
@@ -12,7 +12,7 @@ Este proyecto **escolar** consiste en la implementación de un sistema para el m
 
 - [sebastianalamina](https://github.com/sebastianalamina) (Sebastián Alamina Ramírez)
 
-- Transitoriamente: [DiegoMendezMedina](https://github.com/DiegoMendezMedina) (Diego Méndez Médina)
+- [DiegoMendezMedina](https://github.com/DiegoMendezMedina) (Diego Méndez Médina)
 
 ## Estructura del proyecto :open_file_folder:
 
