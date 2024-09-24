@@ -10,7 +10,7 @@
     "test:e2e:ci": "start-server-and-test preview http://127.0.0.1:5050/ 'cypress run'"
   },
   "dependencies": {
-    "axios": "^0.26.1",
+    "axios": "^1.7.7",
     "humanize-number": "^0.0.2",
     "node-fetch": "^3.2.3",
     "pinia": "^2.0.13",
@@ -23,7 +23,7 @@
     "@vitejs/plugin-vue": "^5.1.4",
     "@vue/test-utils": "^2.0.0-rc.18",
     "jsdom": "^19.0.0",
-    "start-server-and-test": "^1.14.0",
+    "start-server-and-test": "^2.0.8",
     "vite": "^5.4.7",
     "vitest": "^2.1.1"
   }
